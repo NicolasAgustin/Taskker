@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="TDatabaseStoreContainer" CdmEntityContainer="Database">
+    <EntitySetMapping Name="Grupoes">
+      <EntityTypeMapping TypeName="TDatabase.Grupo">
+        <MappingFragment StoreEntitySet="Grupo">
+          <ScalarProperty Name="grupoId" ColumnName="grupoId" />
+          <ScalarProperty Name="nombre" ColumnName="nombre" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Usuarios">
+      <EntityTypeMapping TypeName="TDatabase.Usuario">
+        <MappingFragment StoreEntitySet="Usuario">
+          <ScalarProperty Name="usuarioId" ColumnName="usuarioId" />
+          <ScalarProperty Name="nombre_apellido" ColumnName="nombre_apellido" />
+          <ScalarProperty Name="email" ColumnName="email" />
+          <ScalarProperty Name="profile_picture_path" ColumnName="profile_picture_path" />
+          <ScalarProperty Name="e_password" ColumnName="e_password" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

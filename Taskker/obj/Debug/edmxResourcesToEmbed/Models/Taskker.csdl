@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="TDatabase" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Grupo">
+    <Key>
+      <PropertyRef Name="grupoId" />
+    </Key>
+    <Property Name="grupoId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Usuario">
+    <Key>
+      <PropertyRef Name="usuarioId" />
+    </Key>
+    <Property Name="usuarioId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="nombre_apellido" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="profile_picture_path" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+    <Property Name="e_password" Type="Binary" MaxLength="64" FixedLength="true" Nullable="false" />
+  </EntityType>
+  <EntityContainer Name="Database" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Grupoes" EntityType="Self.Grupo" />
+    <EntitySet Name="Usuarios" EntityType="Self.Usuario" />
+  </EntityContainer>
+</Schema>
