@@ -7,19 +7,12 @@ using System.Collections.Generic;
 
 namespace Taskker.Controllers
 {
+    // Este controlador tiene que estar segurizado
     public class HomeController : Controller
     {
         public ActionResult Index()
         {
-            Database db = new Database();
-
-            var lista = db.Grupoes.ToList();
-
-            return new JsonResult
-            {
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet,
-                Data = lista
-            };
+            return View();
         }
 
         public ActionResult About()
