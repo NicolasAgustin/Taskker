@@ -45,6 +45,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -182,6 +183,7 @@
     </Compile>
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Modelos.cs" />
     <Compile Include="Models\Tarea.cs" />
     <Compile Include="Models\Taskker.Context.cs">
       <AutoGen>True</AutoGen>
@@ -219,6 +221,7 @@
     <Content Include="Models\Taskker.edmx.diagram">
       <DependentUpon>Taskker.edmx</DependentUpon>
     </Content>
+    <Content Include="appsettings.json" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Models\Taskker.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -274,6 +277,7 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Auth\Register.cshtml" />
     <Content Include="Views\Auth\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
