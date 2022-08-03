@@ -1,5 +1,6 @@
 ﻿using System;
 using Taskker.Models;
+using Taskker.Models.DAL;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -36,11 +37,11 @@ namespace Taskker.Controllers
                 return View(_user);
 
             // Obtenemos el contexto
-            Database db = new Database();
+            TaskkerContext db = new TaskkerContext();
 
             byte[] hashed_password = this.hashPassword(_user.Password);
 
-            var user_found = from user in db.Usuarios
+            var user_found = from user in db.usuarios
                              where _user.Email == user.email &
                                    hashed_password == user.e_password
                              select user;
@@ -73,10 +74,10 @@ namespace Taskker.Controllers
                 return View(_user);
 
             // Contexto de la base de datos
-            Database db = new Database();
+            TaskkerContext db = new TaskkerContext();
 
             // Buscamos si el email ya esta registrado
-            var found = from user in db.Usuarios
+            var found = from user in db.usuarios
                         where _user.Email == user.email
                         select user;
 
@@ -103,7 +104,7 @@ namespace Taskker.Controllers
                 }
                 else
                 {
-                    string serverPath = ConfigurationManager.AppSettings["server_dirname"];
+                    string serverPath = ConfigurationManager.AppSettings["ServerDirname"];
                     DirectoryInfo info = new DirectoryInfo(serverPath);
                     
                     // Si el directorio no existe lo creo
@@ -122,7 +123,7 @@ namespace Taskker.Controllers
                 }
 
                 // Agregamos el usuario nuevo al contexto
-                db.Usuarios.Add(nuevo);
+                db.usuarios.Add(nuevo);
                 // Hacemos un commit de los cambios
                 db.SaveChanges();
             }
