@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Taskker.Models.DAL;
 
 namespace Taskker.Models
 {
