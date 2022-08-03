@@ -120,8 +120,8 @@ C:\Users\Nico\Projects\Taskker\Taskker\bin\es\Microsoft.Owin.Security.Facebook.r
 C:\Users\Nico\Projects\Taskker\Taskker\bin\es\Microsoft.Owin.Security.Google.resources.dll
 C:\Users\Nico\Projects\Taskker\Taskker\bin\es\Microsoft.Owin.Security.Twitter.resources.dll
 C:\Users\Nico\Projects\Taskker\Taskker\bin\es\Microsoft.Owin.Security.MicrosoftAccount.resources.dll
-C:\Users\Nico\Projects\Taskker\Taskker\obj\Debug\Taskker.csproj.AssemblyReference.cache
 C:\Users\Nico\Projects\Taskker\Taskker\obj\Debug\Taskker.csproj.CoreCompileInputs.cache
 C:\Users\Nico\Projects\Taskker\Taskker\obj\Debug\Taskker.csproj.CopyComplete
 C:\Users\Nico\Projects\Taskker\Taskker\obj\Debug\Taskker.dll
 C:\Users\Nico\Projects\Taskker\Taskker\obj\Debug\Taskker.pdb
+C:\Users\Nico\Projects\Taskker\Taskker\obj\Debug\Taskker.csproj.AssemblyReference.cache
