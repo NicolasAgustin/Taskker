@@ -14,36 +14,50 @@ namespace Taskker.Models.DAL
             List<Usuario> usuarios = new List<Usuario>
             {
                 new Usuario{ 
-                    nombre_apellido = "nicolas sandez",
-                    email = "nicolas.a.sandez@gmail.com",
-                    profile_picture_path = "",
-                    e_password = new SHA512Managed().ComputeHash(UTF8Encoding.UTF8.GetBytes("pass123")) 
+                    NombreApellido = "nicolas sandez",
+                    Email = "nicolas.a.sandez@gmail.com",
+                    ProfilePicturePath = "C:\\Users\\Nico\\Desktop\\Server\\nico.jpg",
+                    EncptPassword = new SHA512Managed().ComputeHash(UTF8Encoding.UTF8.GetBytes("pass123")) 
                 },
                 new Usuario{
-                    nombre_apellido = "milagros insaurralde",
-                    email = "milagrosinsaurralde382@gmail.com",
-                    profile_picture_path = "",
-                    e_password = new SHA512Managed().ComputeHash(UTF8Encoding.UTF8.GetBytes("Hoseokytae1"))
+                    NombreApellido = "milagros insaurralde",
+                    Email = "milagrosinsaurralde382@gmail.com",
+                    ProfilePicturePath = "C:\\Users\\Nico\\Desktop\\Server\\milu.jpg",
+                    EncptPassword = new SHA512Managed().ComputeHash(UTF8Encoding.UTF8.GetBytes("Hoseokytae1"))
                 },
                 new Usuario{
-                    nombre_apellido = "agustin sandez",
-                    email = "agustin@gmail.com",
-                    profile_picture_path = "",
-                    e_password = new SHA512Managed().ComputeHash(UTF8Encoding.UTF8.GetBytes("pass123"))
+                    NombreApellido = "agustin sandez",
+                    Email = "agustin@gmail.com",
+                    ProfilePicturePath = "C:\\Users\\Nico\\Desktop\\Server\\default.png",
+                    EncptPassword = new SHA512Managed().ComputeHash(UTF8Encoding.UTF8.GetBytes("pass123"))
                 }
             };
 
-            usuarios.ForEach(user => context.usuarios.Add(user));
+            usuarios.ForEach(user => context.Usuarios.Add(user));
+
             context.SaveChanges();
 
             List<Grupo> grupos = new List<Grupo>
             {
-                new Grupo{ nombre = "RPA" },
-                new Grupo{ nombre = "ODOO" },
-                new Grupo{ nombre = "Angular" }
+                new Grupo{ Nombre = "RPA" },
+                new Grupo{ Nombre = "ODOO" },
+                new Grupo{ Nombre = "Angular" }
             };
 
-            grupos.ForEach(group => context.grupos.Add(group));
+            grupos.ForEach(group => context.Grupos.Add(group));
+
+            context.SaveChanges();
+
+            List<Tarea> tareas = new List<Tarea>
+            {
+                new Tarea{
+                    Titulo = "tarea1",
+                    Descripcion = "descripcion para tarea 1",
+                    GrupoID = grupos.Single(g => g.Nombre == "RPA").ID
+                }
+            };
+
+            tareas.ForEach(task => context.Tareas.Add(task));
             context.SaveChanges();
 
             base.Seed(context);

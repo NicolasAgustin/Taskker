@@ -1,0 +1,133 @@
+﻿@using Taskker.Models.DAL
+@model List<Tarea>
+@{
+    ViewBag.Title = "Index";
+}
+
+@section scripts{
+    @Scripts.Render("~/Scripts/jquery-3.4.1.min.js")
+}
+
+<script>
+    // Inicializamos el sidenav
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.sidenav');
+        var instances = M.Sidenav.init(
+            elems,
+            {
+                edge: 'left',
+            });
+    });
+
+    // Inicializamos el modal
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('#details');
+        var instances = M.Modal.init(
+            elems,
+            {
+                preventScrolling: true
+            }
+        );
+    });
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#details').modal({
+            onOpenStart: function (modal, trigger) {
+                console.log('Se abre el modal details')
+                $.ajax({
+                    url: "/Browse/TaskDetails",
+                    type: 'GET',
+                    data: { titulo: trigger.children[0].textContent },
+                    success: function (data) {
+                        $("#details").html(data);
+                    }
+                });
+            }
+        });
+    })
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#create').modal({
+            onOpenStart: function (modal, trigger) {
+                console.log('Se abre el modal create')
+                $.ajax({
+                    type: 'GET',
+                    url: "/Browse/CreateTask",
+                    success: function (data) {
+                        $("#create").html(data);
+                    }
+                });
+            },
+            onOpenEnd: function (modal, trigger) {
+                console.log('Termino de abrirse el modal create')
+            }
+        })
+    })
+
+    $(document).ready(function () {
+        $('#add-task').on('click', function () {
+            M.Modal.getInstance($("#create")).open()
+        });
+    });
+    
+</script>
+
+<h2>Index</h2>
+
+<nav> <!-- navbar content here  --> </nav>
+
+<ul id="slide-out" class="sidenav">
+    <li>
+        <div class="user-view">
+            <div class="background">
+                <img src="#">
+            </div>
+            <a href="#user"><img class="circle" src="#"></a>
+            <a href="#name"><span class="white-text name">John Doe</span></a>
+            <a href="#email"><span class="white-text email">jdandturk@gmail.com</span></a>
+        </div>
+    </li>
+    <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
+    <li><a href="#!">Second Link</a></li>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">Subheader</a></li>
+    <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
+</ul>
+
+<a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+<a class="btn-floating btn-large waves-effect waves-light red modal-trigger" data-target="create" id="add-task">
+    <i class="material-icons">add</i>
+</a>
+
+<!-- Modal Trigger -->
+<div id="details" class="modal">
+</div>
+
+<div id="create" class="modal">
+</div>
+
+<div class="row">
+    <table class="highlight">
+        <thead>
+            <tr>
+                <th>Titulo</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @{
+                foreach (var tarea in Model)
+                {
+                    <tr data-target="details" class="modal-trigger">
+                        <td>@tarea.Titulo</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

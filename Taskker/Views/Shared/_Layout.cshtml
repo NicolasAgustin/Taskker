@@ -1,26 +1,26 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     @Styles.Render("~/Content/css")
-    @Styles.Render("~/lib/materialize/css/materialize.min.css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
 
+    @RenderSection("scripts", required: false)
 </head>
 <body>
-    
+    @Scripts.Render("~/lib/materialize/js/materialize.min.js")
+    @Styles.Render("~/lib/materialize/css/materialize.min.css")
     @RenderBody()
-    
+
     <hr />
     <footer>
         <p>&copy; @DateTime.Now.Year - Mi aplicación ASP.NET</p>
     </footer>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/lib/materialize/js/materialize.min.js")
-    @RenderSection("scripts", required: false)
 </body>
 </html>

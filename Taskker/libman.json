@@ -4,11 +4,11 @@
   "libraries": [
     {
       "library": "materialize@1.0.0",
-      "destination": "lib/materialize/",
-      "files": [
-        "css/materialize.min.css",
-        "js/materialize.min.js"
-      ]
+      "destination": "lib/materialize/"
+    },
+    {
+      "library": "jquery@3.6.0",
+      "destination": "lib/jquery/"
     }
   ]
 }

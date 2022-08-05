@@ -1,0 +1,81 @@
+﻿@using Taskker.Models.DAL
+@model Tarea
+
+
+<!-- Modal Structure -->
+<div class="modal-content">
+    <h4>Crear tarea</h4>
+    @using (Html.BeginForm("CreateTask", "Browse", FormMethod.Post, new { @class = "col s6" }))
+    {
+        <div class="row">
+            <div class="input-field col s6">
+                <input id="modal-task-titulo" type="text" class="validate">
+                <label for="modal-task-titulo">Titulo</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s6">
+                <select>
+                    <option value="" disabled selected>Seleccionar tipo</option>
+                    <option value="1">Desarrollo</option>
+                    <option value="2">Tarea</option>
+                    <option value="3">Ticket comercial</option>
+                </select>
+                <label>Tipo de tarea</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s6">
+                <div id="asignees-chips" class="chips-autocomplete"></div>
+            </div>
+        </div>
+    }
+
+
+</div>
+<div class="modal-footer">
+    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+</div>
+
+<script>
+    $(document).ready(function () {
+        console.log('en modal create')
+        var elems = document.querySelectorAll('select');
+        var instances = M.FormSelect.init(elems);
+
+        var usuarios = {}
+        var chipsUsers = []
+        var selectedText = ""
+
+        $.ajax({
+            type: 'GET',
+            url: "/Browse/GetUsers",
+            success: function (data) {
+                for (const [key, value] of Object.entries(data)) {
+                    usuarios[key] = value;
+                    chipsUsers[key] = value;
+                }
+            }
+        });
+
+        var elems = document.querySelectorAll('.chips-autocomplete');
+        var chipInstance = M.Chips.init(
+            elems,
+            {
+                data: chipsUsers,
+                onChipAdd: function (chip) {
+                    $('#asignees-chips > div.chip').each(function () {
+                        var selected = $(this).text().replace(/close/g, '')
+                        $(this).children().last().append(
+                            '<img src="' + chipsUsers[selected] + '"/>'
+                        );
+                    })
+                },
+                autocompleteOptions: {
+                    data: usuarios
+                },
+                placeholder: 'Asignar'
+            }
+        );
+    })
+</script>

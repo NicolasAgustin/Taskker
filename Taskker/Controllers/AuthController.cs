@@ -23,7 +23,8 @@ namespace Taskker.Controllers
         private byte[] hashPassword(string password)
         {
             byte[] result = new SHA512Managed().ComputeHash(
-                UTF8Encoding.UTF8.GetBytes(password));
+                UTF8Encoding.UTF8.GetBytes(password)
+            );
 
             return result;
         }
@@ -31,9 +32,9 @@ namespace Taskker.Controllers
         [HttpPost]
         public ActionResult Login(LoginModel _user)
         {
+            // Mockear para testear vista con usuarios de la base de datos
             // Falta implementar
             if (!ModelState.IsValid)
-                //ModelState.AddModelError("name", "Student Name Already Exists.");
                 return View(_user);
 
             // Obtenemos el contexto
@@ -41,9 +42,10 @@ namespace Taskker.Controllers
 
             byte[] hashed_password = this.hashPassword(_user.Password);
 
-            var user_found = from user in db.usuarios
-                             where _user.Email == user.email &
-                                   hashed_password == user.e_password
+            // Buscamos el usuario en la base de datos
+            var user_found = from user in db.Usuarios
+                             where _user.Email == user.Email &
+                                   hashed_password == user.EncptPassword
                              select user;
             try
             {
@@ -77,8 +79,8 @@ namespace Taskker.Controllers
             TaskkerContext db = new TaskkerContext();
 
             // Buscamos si el email ya esta registrado
-            var found = from user in db.usuarios
-                        where _user.Email == user.email
+            var found = from user in db.Usuarios
+                        where _user.Email == user.Email
                         select user;
 
             try
@@ -92,15 +94,15 @@ namespace Taskker.Controllers
             catch (InvalidOperationException)
             {
                 Usuario nuevo = new Usuario();
-                nuevo.email = _user.Email;
+                nuevo.Email = _user.Email;
                 // Hasheamos la password para guardarla en la base de datos
-                nuevo.e_password = this.hashPassword(_user.Password);
-                nuevo.nombre_apellido = _user.Nombre + " " + _user.Apellido;
+                nuevo.EncptPassword = this.hashPassword(_user.Password);
+                nuevo.NombreApellido = _user.Nombre + " " + _user.Apellido;
                 // Si el usuario no subio una foto entonces se asigna la foto por defecto
                 if (_user.Photo == null)
                 {
                     // Obtenemos el path desde appsettings en web.config
-                    nuevo.profile_picture_path = ConfigurationManager.AppSettings["DefaultProfile"];
+                    nuevo.ProfilePicturePath = ConfigurationManager.AppSettings["DefaultProfile"];
                 }
                 else
                 {
@@ -119,11 +121,11 @@ namespace Taskker.Controllers
 
                     // Guardamos la foto que subio el usuario
                     _user.Photo.SaveAs(new_filepath);
-                    nuevo.profile_picture_path = new_filepath;
+                    nuevo.ProfilePicturePath = new_filepath;
                 }
 
                 // Agregamos el usuario nuevo al contexto
-                db.usuarios.Add(nuevo);
+                db.Usuarios.Add(nuevo);
                 // Hacemos un commit de los cambios
                 db.SaveChanges();
             }
