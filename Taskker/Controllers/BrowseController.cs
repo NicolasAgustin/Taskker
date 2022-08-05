@@ -1,4 +1,5 @@
 ﻿using System;
+using Taskker.Models;
 using Taskker.Models.DAL;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,44 @@ namespace Taskker.Controllers
         public ActionResult CreateTask()
         {
             return PartialView();
+        }
+
+        [HttpPost]
+        public ActionResult CreateTask(TareaModel t)
+        {
+            TaskkerContext db = new TaskkerContext();
+            List<string> asignees = new List<string>(t.Asignees.Split(','));
+            List<Usuario> asigneesToAdd = new List<Usuario>();
+            asignees.ForEach(nombre =>
+            {
+                var found = from user in db.Usuarios
+                            where nombre == user.NombreApellido
+                            select user;
+
+                try
+                {
+                    Usuario asigneeFound = found.Single();
+                    asigneesToAdd.Add(asigneeFound);
+                } catch (InvalidOperationException)
+                {
+
+                }
+
+            });
+
+            Tarea newTarea = new Tarea()
+            {
+                Titulo = t.Titulo,
+                Descripcion = t.Descripcion,
+                Usuarios = asigneesToAdd,
+                GrupoID = 1
+            };
+
+            db.Tareas.Add(newTarea);
+
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
 
         [HttpGet]

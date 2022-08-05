@@ -24,14 +24,14 @@ namespace Taskker.Models.DAL
             modelBuilder.Entity<Grupo>()
                 .HasMany(g => g.Usuarios)
                 .WithMany(u => u.Grupos)
-                .Map(t => t.MapLeftKey("UsuarioID")
-                     .MapRightKey("GrupoID")
+                .Map(t => t.MapLeftKey("GrupoID")
+                     .MapRightKey("UsuarioID")
                      .ToTable("UsuarioGrupo"));
 
             modelBuilder.Entity<Tarea>()
                 .HasMany(t => t.Usuarios).WithMany(u => u.Tareas)
-                .Map(tb => tb.MapLeftKey("UsuarioID")
-                     .MapRightKey("TareaID")
+                .Map(tb => tb.MapLeftKey("TareaID")
+                     .MapRightKey("UsuarioID")
                      .ToTable("UsuarioTarea"));
 
             modelBuilder.Entity<Tarea>()

@@ -39,4 +39,14 @@ namespace Taskker.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
     }
+
+    public class TareaModel
+    {
+        [Required(ErrorMessage = "El campo Titulo es obligatorio.")]
+        public string Titulo { get; set; }
+        public string Descripcion { get; set; }
+        public string Asignees { get; set; }
+        public string Tipo { get; set; }
+
+    }
 }
