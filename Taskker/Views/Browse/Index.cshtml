@@ -1,12 +1,19 @@
 ﻿@using Taskker.Models.DAL
 @model List<Tarea>
 @{
-    ViewBag.Title = "Index";
+    
 }
 
 @section scripts{
     @Scripts.Render("~/Scripts/jquery-3.4.1.min.js")
 }
+
+<style>
+    tr {
+        background-color: rgba(0, 0, 0, 0.45);
+        border-radius: 5px;
+    }
+</style>
 
 <script>
     // Inicializamos el sidenav
@@ -77,15 +84,17 @@
     
 </script>
 
-<h2>Index</h2>
-
-<nav> <!-- navbar content here  --> </nav>
+<nav>
+    <div class="nav-wrapper">
+        <a href="#" class="brand-logo">Taskker</a>
+    </div>
+</nav>
 
 <ul id="slide-out" class="sidenav">
     <li>
         <div class="user-view">
             <div class="background">
-                <img src="#">
+                <img src="@Session["picture"]">
             </div>
             <a href="#user"><img class="circle" src="#"></a>
             <a href="#name"><span class="white-text name">John Doe</span></a>

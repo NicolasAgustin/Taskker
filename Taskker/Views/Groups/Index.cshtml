@@ -1,0 +1,84 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+    .parallax-container {
+        height: 100px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .container {
+        height: auto;
+    }
+
+</style>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.parallax');
+        var instances = M.Parallax.init(elems);
+    });
+
+</script>
+
+<nav>
+    <div class="nav-wrapper">
+        <a href="@Url.Action("Index", "Home")" class="brand-logo">Taskker</a>
+    </div>
+</nav>
+
+<div class="parallax-container">
+    <div class="parallax"><img src="https://img.freepik.com/fotos-premium/cielo-estrellado-galaxia-via-lactea-estrellas-polvo-espacial-universo_33900-101.jpg?w=2000"></div>
+</div>
+<div class="section blue transparent">
+    <div class="row container" style="margin-bottom: 0px">
+        <!--CONTENIDO DEL PARALLAX-->
+        <!--UNIRSE A UN GRUPO-->
+        <div class="row" style="margin-bottom: 0px">
+            <div class="col s6">
+                <div class="card" style="margin-bottom: 0px; margin-top: 0px">
+                    <div class="card-image">
+                        <img src="~/images/fondo-rosa.jpg">
+                        <span class="card-title">Unirse a un grupo</span>
+                    </div>
+                    <div class="card-content">
+                        <p>
+                            Unirse a un grupo
+                        </p>
+                    </div>
+                    <div class="card-action">
+                        <a href="@Url.Action("Join", "Groups")">Unirse</a>
+                    </div>
+                </div>
+            </div>
+            <!--CREAR UN GRUPO-->
+            <div class="col s6">
+                <div class="card" style="margin-bottom: 0px; margin-top: 0px">
+                    <div class="card-image">
+                        <img src="~/images/fondo-rosa.jpg">
+                        <span class="card-title">Crear un grupo</span>
+                    </div>
+                    <div class="card-content">
+                        <p>
+                            Crear un nuevo grupo
+                        </p>
+                    </div>
+                    <div class="card-action">
+                        <a href="@Url.Action("Create", "Groups")">Crear</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="parallax-container">
+    <div class="parallax"><img src="https://img.freepik.com/fotos-premium/cielo-estrellado-galaxia-via-lactea-estrellas-polvo-espacial-universo_33900-101.jpg?w=2000"></div>
+</div>
+
+
+
+

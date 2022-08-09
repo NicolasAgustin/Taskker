@@ -13,9 +13,37 @@ namespace Taskker.Controllers
         // GET: Browse
         public ActionResult Index()
         {
-            TaskkerContext db = new TaskkerContext();
+            UserSession userSession = Session["UserSession"] as UserSession;
 
-            var tareas = from tarea in db.Tareas
+            if (userSession is null)
+                return RedirectToAction("Login", "Auth");
+            // Buscar todos los grupos a los que pertenece el usuario para mostrarlos en el navbar
+            // Si no tiene grupos redireccionar a Groups
+            TaskkerContext db = new TaskkerContext();
+            Usuario loggedUser = null;
+            try 
+            {
+                var usuario = from user in db.Usuarios
+                              where user.Email == userSession.Email
+                              select user;
+                loggedUser = usuario.Single();
+                if (loggedUser.Grupos.Count == 0)
+                {
+                    return RedirectToAction("Index", "Groups");
+                }
+
+            } catch (InvalidOperationException)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            List<Grupo> grupos = loggedUser.Grupos.ToList();
+            List<string> nombresGrupos = new List<string>();
+            grupos.ForEach(g => nombresGrupos.Add(g.Nombre));
+
+            ViewData["Grupos"] = nombresGrupos;
+
+            var tareas = from tarea in grupos[0].Tareas
                          select tarea;
 
             List<Tarea> tareasList = tareas.ToList();

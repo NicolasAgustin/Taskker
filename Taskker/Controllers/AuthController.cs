@@ -20,15 +20,6 @@ namespace Taskker.Controllers
             return View();
         }
 
-        private byte[] hashPassword(string password)
-        {
-            byte[] result = new SHA512Managed().ComputeHash(
-                UTF8Encoding.UTF8.GetBytes(password)
-            );
-
-            return result;
-        }
-
         [HttpPost]
         public ActionResult Login(LoginModel _user)
         {
@@ -40,7 +31,7 @@ namespace Taskker.Controllers
             // Obtenemos el contexto
             TaskkerContext db = new TaskkerContext();
 
-            byte[] hashed_password = this.hashPassword(_user.Password);
+            byte[] hashed_password = Utils.HashPassword(_user.Password);
 
             // Buscamos el usuario en la base de datos
             var user_found = from user in db.Usuarios
@@ -51,14 +42,21 @@ namespace Taskker.Controllers
             {
                 // Single arroja una excepcion
                 Usuario user_logged = user_found.Single();
-            }catch(InvalidOperationException)
+                UserSession userSession = new UserSession()
+                {
+                    NombreApellido = Utils.Capitalize(user_logged.NombreApellido),
+                    Email = user_logged.Email,
+                    EncodedPicture = Utils.EncodePicture(user_logged.ProfilePicturePath)
+                };
+                Session["UserSession"] = userSession;
+                // Hay que redirigir al controlador de grupos o Home
+                return RedirectToAction("Index", "Browse");
+            }
+            catch(InvalidOperationException)
             {
                 ModelState.AddModelError("login", "Usuario incorrecto.");
                 return View(_user);
             }
-
-            // Hay que redirigir al controlador de grupos o Home
-            return View();
         }
 
         [HttpGet]
@@ -96,7 +94,7 @@ namespace Taskker.Controllers
                 Usuario nuevo = new Usuario();
                 nuevo.Email = _user.Email;
                 // Hasheamos la password para guardarla en la base de datos
-                nuevo.EncptPassword = this.hashPassword(_user.Password);
+                nuevo.EncptPassword = Utils.HashPassword(_user.Password);
                 nuevo.NombreApellido = _user.Nombre + " " + _user.Apellido;
                 // Si el usuario no subio una foto entonces se asigna la foto por defecto
                 if (_user.Photo == null)
@@ -124,13 +122,21 @@ namespace Taskker.Controllers
                     nuevo.ProfilePicturePath = new_filepath;
                 }
 
+                UserSession userSession = new UserSession()
+                {
+                    NombreApellido = Utils.Capitalize(nuevo.NombreApellido),
+                    Email = nuevo.Email,
+                    EncodedPicture = Utils.EncodePicture(nuevo.ProfilePicturePath)
+                };
+                Session["UserSession"] = userSession;
+
                 // Agregamos el usuario nuevo al contexto
                 db.Usuarios.Add(nuevo);
                 // Hacemos un commit de los cambios
                 db.SaveChanges();
             }
 
-            return View();
+            return RedirectToAction("Index", "Browse");
         }
     }
 }
