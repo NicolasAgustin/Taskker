@@ -1,15 +1,132 @@
 ﻿@using Taskker.Models.DAL
 @model Tarea
 
-<!-- Modal Structure -->
-<div class="modal-content">
-    <h4 id="modal-title">@Model.Titulo</h4>
-    <p id="modal-text">@Model.Descripcion</p>
-    @foreach (var asignee in Model.Usuarios)
-    {
-        <p>@asignee.NombreApellido</p>
+<style>
+    [contenteditable] {
+        outline: 0px solid transparent;
     }
+
+    #modal-title :hover {
+        background-color: rgba(0, 0, 0, 0.45);
+    }
+</style>
+<!--
+    TODO:
+    agregar cards para textarea de descripcion
+    agregar hover para titulo
+    obtener todo desde javascript y hacer la consulta al endpoint con ajax
+    conseguir que la tarea se actualice en el momento que se cierra el modal
+    queda hacer que cuando se cierre el modal se mande la info al backend
+-->
+<!-- Modal Structure -->
+<div class="modal-content red lighten-4" id="details-task" data-id="@Model.ID">
+    <h4 id="modal-title"
+        class="highlight"
+        contenteditable="true">
+        @Model.Titulo
+    </h4>
+    <div class="row">
+        <div class="col s12 m5">
+            <div class="card-panel teal">
+                <span class="white-text">
+                    @Model.Descripcion
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s6">
+            <input type="hidden" id="chips-values" name="asignees" />
+            <div id="asignees-chips" class="chips-autocomplete">
+            </div>
+        </div>
+    </div>
 </div>
 <div class="modal-footer">
     <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
 </div>
+
+<script>
+
+    var taskid = null
+
+    $(document).ready(function () {
+        taskid = $('#details-task')[0].getAttribute('data-id')
+        console.log(taskid)
+
+
+
+        //var elems = document.querySelectorAll('select');
+        //var instances = M.FormSelect.init(elems);
+
+        var usuarios = {}
+        var chipsUsers = []
+
+        var asignees = {}
+        var chipsAsignees = []
+
+        $.ajax({
+            type: 'GET',
+            url: "/Browse/GetUsers",
+            success: function (data) {
+                for (const [key, value] of Object.entries(data)) {
+                    usuarios[key] = value;
+                    chipsUsers.push({
+                        tag: key,
+                        image: value
+                    })
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'GET',
+            url: `/Browse/GetUsersInTask/${taskid}`,
+            success: function (data) {
+                console.log(data)
+                for (const [key, value] of Object.entries(data)) {
+                    asignees[key] = value;
+                    chipsAsignees.push({
+                        tag: key,
+                        image: value
+                    })
+                }
+
+                console.log(chipsAsignees)
+
+                var elems = document.querySelectorAll('.chips-autocomplete');
+                var chipInstance = M.Chips.init(
+                    elems,
+                    {
+                        data: chipsAsignees,
+                        onChipAdd: function (chip) {
+                            var instance = M.Chips.getInstance($('#asignees-chips'))
+                            var selected = []
+                            selected = instance.chipsData.map(
+                                function (value, index) {
+                                    return value['tag']
+                                }
+                            )
+                            document.getElementById("chips-values")
+                                .setAttribute('value', selected.join(','))
+                        },
+                        onChipDelete: function () {
+                            var instance = M.Chips.getInstance($('#asignees-chips'))
+                            var data = instance.chipsData
+                            selected = data.map(
+                                function (value, index) {
+                                    return value['tag']
+                                }
+                            )
+                            document.getElementById("chips-values")
+                                .setAttribute('value', selected.join(','))
+                        },
+                        autocompleteOptions: {
+                            data: usuarios
+                        },
+                        placeholder: 'Asignar'
+                    });
+            }
+        })
+    })
+</script>

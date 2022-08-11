@@ -17,6 +17,12 @@ namespace Taskker.Models.DAL
         public byte[] EncptPassword { get; set; }
 
         public virtual ICollection<Grupo> Grupos { get; set; }
+        public virtual ICollection<Grupo> CreatedGroups { get; set; }
         public virtual ICollection<Tarea> Tareas { get; set; }
+    }
+
+    public class UsuarioData : Usuario
+    {
+        public string EncodedProfilePicture { get; set; }
     }
 }

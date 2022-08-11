@@ -28,8 +28,15 @@ namespace Taskker.Models.DAL
                      .MapRightKey("UsuarioID")
                      .ToTable("UsuarioGrupo"));
 
+            modelBuilder.Entity<Grupo>()
+                .HasRequired(g => g.Usuario)
+                .WithMany(ug => ug.CreatedGroups)
+                .HasForeignKey(g => g.UsuarioID)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<Tarea>()
-                .HasMany(t => t.Usuarios).WithMany(u => u.Tareas)
+                .HasMany(t => t.Usuarios)
+                .WithMany(u => u.Tareas)
                 .Map(tb => tb.MapLeftKey("TareaID")
                      .MapRightKey("UsuarioID")
                      .ToTable("UsuarioTarea"));

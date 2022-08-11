@@ -12,6 +12,9 @@ namespace Taskker.Models.DAL
         [Key]
         public int ID { get; set; }
         public string Nombre { get; set; }
+        public int UsuarioID { get; set; }
+        [ForeignKey("UsuarioID")]
+        public virtual Usuario Usuario { get; set; }
         public virtual ICollection<Usuario> Usuarios { get; set; }
         public virtual ICollection<Tarea> Tareas { get; set; }
     }

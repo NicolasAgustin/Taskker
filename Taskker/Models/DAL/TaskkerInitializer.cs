@@ -37,16 +37,31 @@ namespace Taskker.Models.DAL
 
             context.SaveChanges();
 
+            
+
             List<Grupo> grupos = new List<Grupo>
             {
-                new Grupo{ Nombre = "RPA" },
-                new Grupo{ Nombre = "ODOO" },
-                new Grupo{ Nombre = "Angular" }
+                new Grupo{ 
+                    Nombre = "RPA",
+                    UsuarioID = usuarios.Single(u => u.Email == "nicolas.a.sandez@gmail.com").ID
+                },
+                new Grupo{
+                    Nombre = "ODOO",
+                    UsuarioID = usuarios.Single(u => u.Email == "nicolas.a.sandez@gmail.com").ID
+                },
+                new Grupo{
+                    Nombre = "Angular",
+                    UsuarioID = usuarios.Single(u => u.Email == "nicolas.a.sandez@gmail.com").ID
+                }
             };
 
             grupos.ForEach(group => context.Grupos.Add(group));
 
             context.SaveChanges();
+            //Usuario owner = context.Usuarios.Single(u => u.Email == "nicolas.a.sandez@gmail.com");
+            //context.Grupos.Single(g => g.Nombre == "RPA").UsuarioID = owner.ID;
+            //owner.CreatedGroups.Add(grupos.Single(g => g.Nombre == "RPA"));
+
 
             List<Tarea> tareas = new List<Tarea>
             {

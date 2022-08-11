@@ -10,8 +10,8 @@ namespace Taskker.Controllers
 {
     public class BrowseController : Controller
     {
-        // GET: Browse
-        public ActionResult Index()
+        [HttpGet]
+        public ActionResult Index(string grupo)
         {
             UserSession userSession = Session["UserSession"] as UserSession;
 
@@ -21,34 +21,47 @@ namespace Taskker.Controllers
             // Si no tiene grupos redireccionar a Groups
             TaskkerContext db = new TaskkerContext();
             Usuario loggedUser = null;
+            List<Grupo> grupos = null;
             try 
             {
                 var usuario = from user in db.Usuarios
                               where user.Email == userSession.Email
                               select user;
+
                 loggedUser = usuario.Single();
-                if (loggedUser.Grupos.Count == 0)
-                {
+
+                grupos = loggedUser.Grupos.Concat(loggedUser.CreatedGroups).ToList();
+
+                if (grupos.Count == 0)
                     return RedirectToAction("Index", "Groups");
+
+                List<string> nombresGrupos = new List<string>();
+                grupos.ForEach(g => nombresGrupos.Add(g.Nombre));
+
+                ViewData["Grupos"] = nombresGrupos;
+                List<Tarea> tareasList;
+                if (grupo == null || !grupos.Exists(g => g.Nombre == grupo))
+                {
+                    var tareas = from tarea in grupos[0].Tareas
+                                 select tarea;
+                    tareasList = tareas.ToList();
+                } else
+                {
+                    var grupoSelected = from _grupo in grupos
+                                        where _grupo.Nombre == grupo
+                                        select _grupo;
+                    
+                    tareasList = grupoSelected.Single()
+                                              .Tareas
+                                              .ToList();
                 }
 
-            } catch (InvalidOperationException)
+                return View(tareasList);
+            }
+            catch (InvalidOperationException)
             {
                 return RedirectToAction("Login", "Auth");
             }
-
-            List<Grupo> grupos = loggedUser.Grupos.ToList();
-            List<string> nombresGrupos = new List<string>();
-            grupos.ForEach(g => nombresGrupos.Add(g.Nombre));
-
-            ViewData["Grupos"] = nombresGrupos;
-
-            var tareas = from tarea in grupos[0].Tareas
-                         select tarea;
-
-            List<Tarea> tareasList = tareas.ToList();
-
-            return View(tareasList);
         }
 
         [HttpGet]
@@ -100,36 +113,65 @@ namespace Taskker.Controllers
         {
             TaskkerContext db = new TaskkerContext();
 
-            Dictionary<string, string> UserNamePhoto = new Dictionary<string, string>();
-
-            List<string> nombres = new List<string>();
-
-            db.Usuarios.ToList()
-                       .ForEach(u => {
-                           string encodedPhoto = null;
-                           try
-                           {
-                               byte[] obtainedPicture = System.IO.File.ReadAllBytes(
-                                    u.ProfilePicturePath
-                               );
-
-                               encodedPhoto = Convert.ToBase64String(
-                                    obtainedPicture,
-                                    0,
-                                    obtainedPicture.Length
-                               );
-
-                               encodedPhoto = $"data:image/jpg;base64,{encodedPhoto}";
-                           }
-                           catch (Exception)
-                           {
-                               encodedPhoto = string.Empty;
-                           }
-                           
-                           UserNamePhoto.Add(u.NombreApellido, encodedPhoto);
-                       });
+            Dictionary<string, string> UserNamePhoto = this.CreateUsersDict(db.Usuarios.ToList());
 
             return Json(UserNamePhoto, JsonRequestBehavior.AllowGet);
+        }
+
+        private Dictionary<string, string> CreateUsersDict(List<Usuario> usuarios)
+        {
+            TaskkerContext db = new TaskkerContext();
+            Dictionary<string, string> UserNamePhoto = new Dictionary<string, string>();
+            usuarios.ForEach(u => {
+                string encodedPhoto = null;
+                try
+                {
+                    byte[] obtainedPicture = System.IO.File.ReadAllBytes(
+                        u.ProfilePicturePath
+                    );
+
+                    encodedPhoto = Convert.ToBase64String(
+                        obtainedPicture,
+                        0,
+                        obtainedPicture.Length
+                    );
+
+                    encodedPhoto = $"data:image/jpg;base64,{encodedPhoto}";
+                } catch (Exception)
+                {
+                    encodedPhoto = string.Empty;
+                }
+
+                UserNamePhoto.Add(u.NombreApellido, encodedPhoto);
+            });
+
+            return UserNamePhoto;
+        }
+
+        [HttpGet]
+        [Route("GetUsersInTask/{id:int}")]
+        public ActionResult GetUsersInTask(int id)
+        {
+            TaskkerContext db = new TaskkerContext();
+
+            var tarea = from t in db.Tareas
+                        where t.ID == id
+                        select t;
+
+            try
+            {
+                Tarea foundTarea = tarea.Single();
+                Dictionary<string, string> UserNamePhoto = this.CreateUsersDict(
+                    foundTarea.Usuarios.ToList()
+                );
+                return Json(UserNamePhoto, JsonRequestBehavior.AllowGet);
+            }
+            catch (InvalidOperationException)
+            {
+                return Json(null, JsonRequestBehavior.AllowGet); ;
+            }
+
+            
         }
 
         [HttpGet]
@@ -144,6 +186,18 @@ namespace Taskker.Controllers
             try
             {
                 Tarea display = tarea.Single();
+                var users = from user in display.Usuarios
+                            select user;
+                List<Usuario> usuariosAsignados = users.ToList();
+                List<(string, Usuario)> photoUsuario = new List<(string, Usuario)>();
+                usuariosAsignados.ForEach(user =>
+                {
+                    photoUsuario.Add(
+                        (Utils.EncodePicture(user.ProfilePicturePath), user)
+                    );
+                });
+
+                ViewData["TupleData"] = photoUsuario;
                 return PartialView("TaskDetails", display);
             }
             catch (InvalidOperationException)
