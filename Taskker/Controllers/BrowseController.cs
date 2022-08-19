@@ -10,6 +10,9 @@ namespace Taskker.Controllers
 {
     public class BrowseController : Controller
     {
+
+        TaskkerContext db = new TaskkerContext();
+
         [HttpGet]
         public ActionResult Index(string grupo)
         {
@@ -106,6 +109,29 @@ namespace Taskker.Controllers
             db.SaveChanges();
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult UpdateTask(TareaModel tm)
+        {
+
+            try
+            {
+                var tFound = from tarea in db.Tareas
+                             where tm.Id == tarea.ID
+                             select tarea;
+
+                Tarea tareaFound = tFound.Single();
+
+                tareaFound.Descripcion = tm.Descripcion;
+                tareaFound.Titulo = tm.Titulo;
+
+                db.SaveChanges();
+            } catch (InvalidOperationException)
+            {
+                
+            }
+            return View("Index");
         }
 
         [HttpGet]

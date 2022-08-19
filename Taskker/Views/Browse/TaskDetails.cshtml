@@ -19,28 +19,54 @@
     queda hacer que cuando se cierre el modal se mande la info al backend
 -->
 <!-- Modal Structure -->
-<div class="modal-content red lighten-4" id="details-task" data-id="@Model.ID">
-    <h4 id="modal-title"
-        class="highlight"
-        contenteditable="true">
-        @Model.Titulo
-    </h4>
-    <div class="row">
-        <div class="col s12 m5">
-            <div class="card-panel teal">
-                <span class="white-text">
-                    @Model.Descripcion
-                </span>
+<div class="modal-content red lighten-4"
+     id="details-task"
+     data-id="@Model.ID">
+    @using (Html.BeginForm("UpdateTask", "Browse", FormMethod.Post, new { @class = "col s6", @id = "update-form" }))
+    {
+        <h4 id="modal-title"
+            class="highlight"
+            contenteditable="true">
+            @Model.Titulo
+        </h4>
+        <input type="hidden" name="id" value="@Model.ID" />
+        <input type="hidden" id="task-title" name="titulo" />
+        <div class="row">
+            <div class="input-field col s12">
+                <div class="card-panel teal">
+                    <textarea id="textarea1"
+                              class="materialize-textarea"
+                              style="color:aliceblue"
+                              name="descripcion">@Model.Descripcion</textarea>
+                    <label for="textarea1" style="color:aliceblue">Descripcion</label>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col s6">
-            <input type="hidden" id="chips-values" name="asignees" />
-            <div id="asignees-chips" class="chips-autocomplete">
+        <div class="row">
+            <div class="input-field col s6">
+                <div class="card-panel teal">
+                    <select name="tipo">
+                        <option value="" disabled selected>Seleccionar tipo</option>
+                        <option value="1">Desarrollo</option>
+                        <option value="2">Tarea</option>
+                        <option value="3">Ticket comercial</option>
+                    </select>
+                    <label>Tipo de tarea</label>
+                </div>
             </div>
         </div>
-    </div>
+        <div class="row">
+            <div class="col s6">
+                <div class="card-panel teal">
+                    <input type="hidden"
+                           id="chips-values"
+                           name="asignees" />
+                    <div id="asignees-chips" class="chips-autocomplete">
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 <div class="modal-footer">
     <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
@@ -51,13 +77,17 @@
     var taskid = null
 
     $(document).ready(function () {
+
+        var elems = document.querySelectorAll('select');
+        var instances = M.FormSelect.init(elems);
+
+        // Funcion para actualizar el input oculto cada vez que se modifique el h4
+        // que posee el contenteditable
+        document.getElementById('modal-title').addEventListener('input', function (elem) {
+            document.getElementById('task-title').value = elem.target.innerText
+        })
+
         taskid = $('#details-task')[0].getAttribute('data-id')
-        console.log(taskid)
-
-
-
-        //var elems = document.querySelectorAll('select');
-        //var instances = M.FormSelect.init(elems);
 
         var usuarios = {}
         var chipsUsers = []
@@ -83,16 +113,23 @@
             type: 'GET',
             url: `/Browse/GetUsersInTask/${taskid}`,
             success: function (data) {
-                console.log(data)
+
+                var usersString = []
+
                 for (const [key, value] of Object.entries(data)) {
                     asignees[key] = value;
+                    usersString.push(key)
                     chipsAsignees.push({
                         tag: key,
                         image: value
                     })
                 }
 
-                console.log(chipsAsignees)
+                document.getElementById('chips-values')
+                    .setAttribute(
+                        'value',
+                        usersString.join(',')
+                    )
 
                 var elems = document.querySelectorAll('.chips-autocomplete');
                 var chipInstance = M.Chips.init(
@@ -100,18 +137,28 @@
                     {
                         data: chipsAsignees,
                         onChipAdd: function (chip) {
-                            var instance = M.Chips.getInstance($('#asignees-chips'))
+                            var instance = M.Chips.getInstance(
+                                $('#asignees-chips')
+                            )
+
                             var selected = []
+
                             selected = instance.chipsData.map(
                                 function (value, index) {
                                     return value['tag']
                                 }
                             )
+
                             document.getElementById("chips-values")
-                                .setAttribute('value', selected.join(','))
+                                .setAttribute(
+                                    'value',
+                                    selected.join(',')
+                                )
                         },
                         onChipDelete: function () {
-                            var instance = M.Chips.getInstance($('#asignees-chips'))
+                            var instance = M.Chips.getInstance(
+                                $('#asignees-chips')
+                            )
                             var data = instance.chipsData
                             selected = data.map(
                                 function (value, index) {
@@ -119,13 +166,17 @@
                                 }
                             )
                             document.getElementById("chips-values")
-                                .setAttribute('value', selected.join(','))
+                                .setAttribute(
+                                    'value',
+                                    selected.join(',')
+                                )
                         },
                         autocompleteOptions: {
                             data: usuarios
                         },
                         placeholder: 'Asignar'
-                    });
+                    }
+                );
             }
         })
     })
