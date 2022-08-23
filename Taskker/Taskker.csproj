@@ -176,6 +176,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\DAL\Grupo.cs" />
+    <Compile Include="Models\DAL\Rol.cs" />
     <Compile Include="Models\DAL\Tarea.cs" />
     <Compile Include="Models\DAL\TaskkerContext.cs" />
     <Compile Include="Models\DAL\TaskkerInitializer.cs" />

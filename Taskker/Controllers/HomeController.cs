@@ -1,9 +1,5 @@
-﻿using System;
-using System.Web;
-using System.Linq;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Taskker.Models;
-using System.Collections.Generic;
 
 namespace Taskker.Controllers
 {

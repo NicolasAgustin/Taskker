@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Text;
 using System.Linq;
+using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Text;
-using System.Web;
 
 namespace Taskker.Models.DAL
 {
@@ -17,7 +15,7 @@ namespace Taskker.Models.DAL
                     NombreApellido = "nicolas sandez",
                     Email = "nicolas.a.sandez@gmail.com",
                     ProfilePicturePath = "C:\\Users\\Nico\\Desktop\\Server\\nico.jpg",
-                    EncptPassword = new SHA512Managed().ComputeHash(UTF8Encoding.UTF8.GetBytes("pass123")) 
+                    EncptPassword = new SHA512Managed().ComputeHash(UTF8Encoding.UTF8.GetBytes("pass123"))
                 },
                 new Usuario{
                     NombreApellido = "milagros insaurralde",
@@ -37,7 +35,16 @@ namespace Taskker.Models.DAL
 
             context.SaveChanges();
 
-            
+            List<Rol> roles = new List<Rol>
+            {
+                new Rol{ Nombre = "Project Manager" },
+                new Rol{ Nombre = "Analista Funcional" },
+                new Rol{ Nombre = "Desarrollador" }
+            };
+
+            roles.ForEach(rol => context.Roles.Add(rol));
+
+            context.SaveChanges();
 
             List<Grupo> grupos = new List<Grupo>
             {
@@ -58,10 +65,6 @@ namespace Taskker.Models.DAL
             grupos.ForEach(group => context.Grupos.Add(group));
 
             context.SaveChanges();
-            //Usuario owner = context.Usuarios.Single(u => u.Email == "nicolas.a.sandez@gmail.com");
-            //context.Grupos.Single(g => g.Nombre == "RPA").UsuarioID = owner.ID;
-            //owner.CreatedGroups.Add(grupos.Single(g => g.Nombre == "RPA"));
-
 
             List<Tarea> tareas = new List<Tarea>
             {

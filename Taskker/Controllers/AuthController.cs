@@ -1,18 +1,18 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using System.Web.Mvc;
 using Taskker.Models;
 using Taskker.Models.DAL;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Security.Cryptography;
-using System.Text;
 using System.Configuration;
-using System.IO;
+
 namespace Taskker.Controllers
 {
     public class AuthController : Controller
     {
+
+        TaskkerContext db = new TaskkerContext();
+
         // GET: Auth
         [HttpGet]
         public ActionResult Login()
@@ -95,6 +95,7 @@ namespace Taskker.Controllers
                 nuevo.Email = _user.Email;
                 // Hasheamos la password para guardarla en la base de datos
                 nuevo.EncptPassword = Utils.HashPassword(_user.Password);
+
                 nuevo.NombreApellido = _user.Nombre + " " + _user.Apellido;
                 // Si el usuario no subio una foto entonces se asigna la foto por defecto
                 if (_user.Photo == null)
@@ -132,11 +133,42 @@ namespace Taskker.Controllers
 
                 // Agregamos el usuario nuevo al contexto
                 db.Usuarios.Add(nuevo);
+
+                AddDefaultRole(nuevo.Email);
+
                 // Hacemos un commit de los cambios
                 db.SaveChanges();
             }
 
             return RedirectToAction("Index", "Browse");
+        }
+
+        /// <summary>
+        /// Funcion para agregar el rol por defecto para el nuevo usuario
+        /// </summary>
+        /// <param name="email"></param>
+        private void AddDefaultRole(string email)
+        {
+            var user = from u in db.Usuarios
+                       where u.Email == email
+                       select u;
+
+            try
+            {
+                Usuario userFound = user.Single();
+
+                Rol rol = (
+                    from r in db.Roles
+                    where r.Nombre == "Desarrollador"
+                    select r
+                ).Single();
+
+                userFound.Roles.Add(rol);
+                
+                db.SaveChanges();
+            }
+            catch (InvalidOperationException){}
+
         }
     }
 }

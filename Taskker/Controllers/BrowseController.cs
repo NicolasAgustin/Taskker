@@ -1,10 +1,9 @@
 ﻿using System;
+using System.Linq;
 using Taskker.Models;
+using System.Web.Mvc;
 using Taskker.Models.DAL;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 
 namespace Taskker.Controllers
 {
@@ -117,20 +116,32 @@ namespace Taskker.Controllers
 
             try
             {
+                // Obtenemos la tarea que se debe actualizar
                 var tFound = from tarea in db.Tareas
                              where tm.Id == tarea.ID
                              select tarea;
+
+                List<string> usuarios = new List<string>(tm.Asignees.Split(','));
+                List<Usuario> filteredUsuarios = new List<Usuario>();
+                foreach (var username in usuarios)
+                {
+                    try
+                    {
+                        var userfound = db.Usuarios.Where(u => u.NombreApellido == username).Single();
+                        filteredUsuarios.Add(userfound);
+                    }
+                    catch (InvalidOperationException){}
+                }
 
                 Tarea tareaFound = tFound.Single();
 
                 tareaFound.Descripcion = tm.Descripcion;
                 tareaFound.Titulo = tm.Titulo;
+                tareaFound.Usuarios = filteredUsuarios;
 
                 db.SaveChanges();
-            } catch (InvalidOperationException)
-            {
-                
-            }
+            } catch (InvalidOperationException){}
+
             return View("Index");
         }
 
