@@ -16,6 +16,7 @@
         @Html.ValidationSummary(false, "", new { @style="color:red;font-weight:bold"})
         @using (Html.BeginForm("Login", "Auth", FormMethod.Post))
         {
+        @Html.AntiForgeryToken()
         <!-- Columna -->
         <div class="col s6 offset-s3">
             <div class="card blue-grey darken-1">

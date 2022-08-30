@@ -71,6 +71,7 @@ namespace Taskker.Models.DAL
                 new Tarea{
                     Titulo = "tarea1",
                     Descripcion = "descripcion para tarea 1",
+                    Tipo = TareaTipo.SinTipo,
                     GrupoID = grupos.Single(g => g.Nombre == "RPA").ID
                 }
             };

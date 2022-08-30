@@ -5,6 +5,8 @@ using System.Web.Mvc;
 using Taskker.Models;
 using Taskker.Models.DAL;
 using System.Configuration;
+using System.Web.Security;
+using System.Web;
 
 namespace Taskker.Controllers
 {
@@ -21,10 +23,10 @@ namespace Taskker.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel _user)
         {
             // Mockear para testear vista con usuarios de la base de datos
-            // Falta implementar
             if (!ModelState.IsValid)
                 return View(_user);
 
@@ -42,12 +44,38 @@ namespace Taskker.Controllers
             {
                 // Single arroja una excepcion
                 Usuario user_logged = user_found.Single();
+
+                FormsAuthentication.SetAuthCookie(user_logged.Email, false);
+
+                FormsAuthentication.SetAuthCookie(
+                    Convert.ToString(user_logged.ID),
+                    false
+                );
+
+                var authTicket = new FormsAuthenticationTicket(
+                    1,
+                    user_logged.Email,
+                    DateTime.Now,
+                    DateTime.Now.AddMinutes(30),
+                    false,
+                    String.Join(",", user_logged.Roles.ToList())
+                );
+
+                string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+                var authCookie = new HttpCookie(
+                    FormsAuthentication.FormsCookieName,
+                    encryptedTicket
+                );
+
+                HttpContext.Response.Cookies.Add(authCookie);
+
                 UserSession userSession = new UserSession()
                 {
                     NombreApellido = Utils.Capitalize(user_logged.NombreApellido),
                     Email = user_logged.Email,
                     EncodedPicture = Utils.EncodePicture(user_logged.ProfilePicturePath)
                 };
+
                 Session["UserSession"] = userSession;
                 // Hay que redirigir al controlador de grupos o Home
                 return RedirectToAction("Index", "Browse");
@@ -66,6 +94,7 @@ namespace Taskker.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Register(RegistroModel _user)
         {
             

@@ -7,6 +7,20 @@ using System.Collections.Generic;
 
 namespace Taskker.Controllers
 {
+
+    /*
+     * Orden de ejecucion de los filtros
+     1. Authentication filter
+     2. Authorization filter
+     3. Action filter (se ejecuta antes antes del metodo de la accion)
+     4. Result filter (se ejecuta antes de generar el resultado de la accion)
+
+     -- Exception filter (se ejecuta cuando se produce una excepcion)
+
+     */
+
+    [Authorize]
+    [CustomAuthenticationFilter]
     public class BrowseController : Controller
     {
 
@@ -15,6 +29,7 @@ namespace Taskker.Controllers
         [HttpGet]
         public ActionResult Index(string grupo)
         {
+            // Revisar que valor tiene grupo
             UserSession userSession = Session["UserSession"] as UserSession;
 
             if (userSession is null)
@@ -40,7 +55,7 @@ namespace Taskker.Controllers
                 List<string> nombresGrupos = new List<string>();
                 grupos.ForEach(g => nombresGrupos.Add(g.Nombre));
 
-                ViewData["Grupos"] = nombresGrupos;
+                Session["Grupos"] = nombresGrupos;
                 List<Tarea> tareasList;
                 if (grupo == null || !grupos.Exists(g => g.Nombre == grupo))
                 {
@@ -121,9 +136,15 @@ namespace Taskker.Controllers
                              where tm.Id == tarea.ID
                              select tarea;
 
-                List<string> usuarios = new List<string>(tm.Asignees.Split(','));
+                List<string> usuarios = null;
+
+                if (tm.Asignees != null)
+                {
+                    usuarios = new List<string>(tm.Asignees.Split(','));
+                }
+
                 List<Usuario> filteredUsuarios = new List<Usuario>();
-                foreach (var username in usuarios)
+                foreach (var username in usuarios ?? Enumerable.Empty<string>())
                 {
                     try
                     {
@@ -135,14 +156,24 @@ namespace Taskker.Controllers
 
                 Tarea tareaFound = tFound.Single();
 
-                tareaFound.Descripcion = tm.Descripcion;
-                tareaFound.Titulo = tm.Titulo;
-                tareaFound.Usuarios = filteredUsuarios;
+                bool filter_flag = filteredUsuarios.All(tareaFound.Usuarios.Contains);
+                filter_flag = filter_flag && (tareaFound.Descripcion == tm.Descripcion);
+                filter_flag = filter_flag && (tareaFound.Titulo == tm.Titulo);
+                filter_flag = filter_flag && (tareaFound.Tipo == (TareaTipo) Enum.Parse(typeof(TareaTipo), tm.Tipo));
+                // Hay que obtener el tipo como numero
 
-                db.SaveChanges();
+                if (!filter_flag)
+                {
+                    tareaFound.Descripcion = tm.Descripcion;
+                    tareaFound.Titulo = tm.Titulo;
+                    tareaFound.Usuarios = filteredUsuarios;
+                    tareaFound.Tipo = (TareaTipo) Enum.Parse(typeof(TareaTipo), tm.Tipo);
+
+                    db.SaveChanges();
+                }
             } catch (InvalidOperationException){}
 
-            return View("Index");
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
@@ -155,6 +186,12 @@ namespace Taskker.Controllers
             return Json(UserNamePhoto, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Funcion para construir un diccionario con el nombre del usuario y su foto de perfil
+        /// codificada en base 64
+        /// </summary>
+        /// <param name="usuarios"></param>
+        /// <returns></returns>
         private Dictionary<string, string> CreateUsersDict(List<Usuario> usuarios)
         {
             TaskkerContext db = new TaskkerContext();

@@ -6,7 +6,7 @@
     var email = session.Email;
     var picture = session.EncodedPicture;
     var nombre = session.NombreApellido;
-    var gruposNombres = (List<string>)ViewData["Grupos"];
+    var gruposNombres = (List<string>)Session["Grupos"];
 }
 
 @section scripts{
@@ -46,21 +46,6 @@
 
 <script>
     $(document).ready(function () {
-        //(function () {
-        //    if (typeof window.CustomEvent === "function") return false;
-
-        //    function CustomEvent(event, params) {
-        //        params = params || { bubbles: true, cancelable: true, detail: undefined };
-        //        var evt = document.createEvent('submit');
-        //        evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-        //        return evt;
-        //    }
-
-        //    CustomEvent.prototype = window.Event.prototype;
-
-        //    window.CustomEvent = CustomEvent;
-
-        //})();
 
         $('#details').modal({
             onOpenStart: function (modal, trigger) {
@@ -75,26 +60,10 @@
                     }
                 });
             },
-            //onOpenEnd: function () {
-            //    document.getElementById('update-form').addEventListener('submit', function (event) {
-            //        event.preventDefault();
-            //        alert('submit');
-            //    })
-            //},
+
             onCloseStart: function (modal, trigger) {
                 console.log('Se cierra el modal')
                 document.getElementById('update-form').submit()
-                //$('#update-form')[0].trigger('submit')
-                //var evt = new CustomEvent("submit", { "bubbles": true, "cancelable": true });
-                //var doc = document.getElementById('update-form')
-                //doc.dispatchEvent(evt)
-                //console.log(doc)
-                    //.dispatchEvent(
-                    //    new CustomEvent(
-                    //        'submit',
-                    //        { cancelable: true }
-                    //    )
-                    //);
             }
         });
     })
@@ -157,10 +126,17 @@
 
 </ul>
 
-<a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-<a class="btn-floating btn-large waves-effect waves-light red modal-trigger" data-target="create" id="add-task">
-    <i class="material-icons">add</i>
-</a>
+<div class="row">
+    <a href="#" data-target="slide-out" class="sidenav-trigger">
+        <i class="small material-icons">menu</i>
+    </a>
+</div>
+
+<div class="row">
+    <a class="waves-effect waves-light btn modal-trigger" data-target="create" id="add-task">
+        <i class="small material-icons left">add</i>Crear tarea
+    </a>
+</div>
 
 <!-- Modal Trigger -->
 <div id="details" class="modal">

@@ -1,9 +1,10 @@
-﻿@using Taskker.Models.DAL
+﻿@using Taskker.Models
+@using Taskker.Models.DAL
 @model Tarea
 
 <style>
     .dropdown-content {
-        width:200px !important;
+        width: 200px !important;
     }
 </style>
 
@@ -23,16 +24,15 @@
             <div class="input-field col s6">
                 <select name="tipo">
                     <option value="" disabled selected>Seleccionar tipo</option>
-                    <option value="1">Desarrollo</option>
-                    <option value="2">Tarea</option>
-                    <option value="3">Ticket comercial</option>
+                    <option value="@TareaTipo.Desarrollo">Desarrollo</option>
+                    <option value="@TareaTipo.Tarea">Tarea</option>
                 </select>
                 <label>Tipo de tarea</label>
             </div>
         </div>
         <div class="row">
             <div class="col s6">
-                <input type="hidden" id="chips-values" name="asignees"/>
+                <input type="hidden" id="chips-values" name="asignees" />
                 <div id="asignees-chips" class="chips-autocomplete"></div>
             </div>
         </div>
@@ -91,7 +91,7 @@
                         }
                     )
                     document.getElementById("chips-values")
-                            .setAttribute('value', selected.join(','))
+                        .setAttribute('value', selected.join(','))
                 },
                 onChipDelete: function () {
                     var instance = M.Chips.getInstance($('#asignees-chips'))
@@ -102,7 +102,7 @@
                         }
                     )
                     document.getElementById("chips-values")
-                            .setAttribute('value', selected.join(','))
+                        .setAttribute('value', selected.join(','))
                 },
                 autocompleteOptions: {
                     data: usuarios
