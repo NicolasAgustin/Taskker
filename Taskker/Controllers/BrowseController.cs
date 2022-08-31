@@ -59,6 +59,7 @@ namespace Taskker.Controllers
                 List<Tarea> tareasList;
                 if (grupo == null || !grupos.Exists(g => g.Nombre == grupo))
                 {
+                    Session["CurrentGroup"] = grupos[0];
                     var tareas = from tarea in grupos[0].Tareas
                                  select tarea;
                     tareasList = tareas.ToList();
@@ -67,10 +68,12 @@ namespace Taskker.Controllers
                     var grupoSelected = from _grupo in grupos
                                         where _grupo.Nombre == grupo
                                         select _grupo;
-                    
-                    tareasList = grupoSelected.Single()
-                                              .Tareas
-                                              .ToList();
+
+                    var currentGroup = grupoSelected.Single();
+
+                    Session["CurrentGroup"] = currentGroup;
+
+                    tareasList = currentGroup.Tareas.ToList();
                 }
 
                 return View(tareasList);
@@ -103,19 +106,16 @@ namespace Taskker.Controllers
                 {
                     Usuario asigneeFound = found.Single();
                     asigneesToAdd.Add(asigneeFound);
-                } catch (InvalidOperationException)
-                {
-
-                }
-
+                } catch (InvalidOperationException){}
             });
 
             Tarea newTarea = new Tarea()
             {
                 Titulo = t.Titulo,
                 Descripcion = t.Descripcion,
+                Tipo = (TareaTipo)Enum.Parse(typeof(TareaTipo), t.Tipo),
                 Usuarios = asigneesToAdd,
-                GrupoID = 1
+                GrupoID = ((Grupo)Session["CurrentGroup"]).ID
             };
 
             db.Tareas.Add(newTarea);
@@ -159,7 +159,14 @@ namespace Taskker.Controllers
                 bool filter_flag = filteredUsuarios.All(tareaFound.Usuarios.Contains);
                 filter_flag = filter_flag && (tareaFound.Descripcion == tm.Descripcion);
                 filter_flag = filter_flag && (tareaFound.Titulo == tm.Titulo);
-                filter_flag = filter_flag && (tareaFound.Tipo == (TareaTipo) Enum.Parse(typeof(TareaTipo), tm.Tipo));
+                if (tm.Tipo == null && tareaFound.Tipo == TareaTipo.SinTipo)
+                {
+                    filter_flag = filter_flag && true;
+                }
+                else
+                {
+                    filter_flag = filter_flag && (tareaFound.Tipo == (TareaTipo) Enum.Parse(typeof(TareaTipo), tm.Tipo));
+                }
                 // Hay que obtener el tipo como numero
 
                 if (!filter_flag)
@@ -167,7 +174,10 @@ namespace Taskker.Controllers
                     tareaFound.Descripcion = tm.Descripcion;
                     tareaFound.Titulo = tm.Titulo;
                     tareaFound.Usuarios = filteredUsuarios;
-                    tareaFound.Tipo = (TareaTipo) Enum.Parse(typeof(TareaTipo), tm.Tipo);
+                    if (tm.Tipo == null)
+                        tareaFound.Tipo = TareaTipo.SinTipo;
+                    else
+                        tareaFound.Tipo = (TareaTipo) Enum.Parse(typeof(TareaTipo), tm.Tipo);
 
                     db.SaveChanges();
                 }

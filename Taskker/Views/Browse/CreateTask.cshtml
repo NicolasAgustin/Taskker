@@ -14,34 +14,49 @@
     @Html.ValidationSummary(false, "", new { @style = "color:red;font-weight:bold" })
     @using (Html.BeginForm("CreateTask", "Browse", FormMethod.Post, new { @class = "col s6" }))
     {
+        <!-- Titulo -->
         <div class="row">
             <div class="input-field col s6">
                 <input id="modal-task-titulo" type="text" class="validate" name="titulo">
                 <label for="modal-task-titulo">Titulo</label>
             </div>
         </div>
+        <!-- Selector de tipo de tarea -->
         <div class="row">
             <div class="input-field col s6">
                 <select name="tipo">
-                    <option value="" disabled selected>Seleccionar tipo</option>
+                    <option value="@TareaTipo.SinTipo" disabled selected>Seleccionar tipo</option>
                     <option value="@TareaTipo.Desarrollo">Desarrollo</option>
                     <option value="@TareaTipo.Tarea">Tarea</option>
                 </select>
                 <label>Tipo de tarea</label>
             </div>
         </div>
+        <!-- Chips para asignees -->
         <div class="row">
             <div class="col s6">
                 <input type="hidden" id="chips-values" name="asignees" />
                 <div id="asignees-chips" class="chips-autocomplete"></div>
             </div>
         </div>
+        <!-- Descripcion -->
         <div class="row">
             <div class="input-field col s6">
                 <textarea id="textarea1" class="materialize-textarea" name="descripcion"></textarea>
                 <label for="textarea1">Descripcion</label>
             </div>
         </div>
+        <div class="row">
+            <div class="col s12">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input type="text" id="autocomplete-estimated" class="autocomplete" name="estimated">
+                        <label for="autocomplete-input">Autocomplete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Submit -->
         <div class="row">
             <div class="col s6">
                 <button class="btn waves-effect waves-light" type="submit" name="action">
@@ -62,6 +77,35 @@
     $(document).ready(function () {
         var elems = document.querySelectorAll('select');
         var instances = M.FormSelect.init(elems);
+
+        var elems = document.querySelectorAll('#autocomplete-estimated');
+        var instances = M.Autocomplete.init(
+            elems,
+            {
+                minLength: 1,
+                onAutocomplete: function (elem, data) {
+                    console.log(elem);
+                    console.log(data);
+                }
+            }
+        );
+
+        document.getElementById('autocomplete-estimated').addEventListener('input', function (elem, elem2) {
+            console.log(elem.srcElement.value)
+            // Hay que iterar por los matches y chequear si coincide con 
+            // [hora, horas, h, ho, hor, minuto, mi, min, minu, minut ... ]
+            var estimated = ''
+            var time = elem.srcElement.value
+            var matches = time.match(/\d+\s*[a-zA-Z]+/gu)
+            matches.forEach(function (value) {
+                var number = value.replace(/[a-zA-Z]+/, '')
+                //var 
+                estimated = `${estimated}`
+            })
+            elem.srcElement.updateData({
+
+            });
+        });
 
         var usuarios = {}
         var chipsUsers = []

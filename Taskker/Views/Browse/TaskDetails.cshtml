@@ -52,9 +52,26 @@
                         // que se esta visualizando
                     }
                     <select name="tipo">
-                        <option value="" disabled selected>Seleccionar tipo</option>
-                        <option value="@TareaTipo.Desarrollo">Desarrollo</option>
-                        <option value="@TareaTipo.Tarea">Tarea</option>
+                        @{
+                            if (Model.Tipo == TareaTipo.SinTipo)
+                            {
+                                <option value="@TareaTipo.SinTipo" disabled selected>Seleccionar tipo</option>
+                                <option value="@TareaTipo.Desarrollo">Desarrollo</option>
+                                <option value="@TareaTipo.Tarea">Tarea</option>
+                            }
+                            else if (Model.Tipo == TareaTipo.Desarrollo)
+                            {
+                                <option value="@TareaTipo.SinTipo" disabled>Seleccionar tipo</option>
+                                <option value="@TareaTipo.Desarrollo" selected>Desarrollo</option>
+                                <option value="@TareaTipo.Tarea">Tarea</option>
+                            }
+                            else if (Model.Tipo == TareaTipo.Tarea)
+                            {
+                                <option value="@TareaTipo.SinTipo" disabled>Seleccionar tipo</option>
+                                <option value="@TareaTipo.Desarrollo">Desarrollo</option>
+                                <option value="@TareaTipo.Tarea" selected>Tarea</option>
+                            }
+                        }
                     </select>
                     <label>Tipo de tarea</label>
                 </div>
@@ -92,6 +109,8 @@
         document.getElementById('modal-title').addEventListener('input', function (elem) {
             document.getElementById('task-title').value = elem.target.innerText
         })
+
+        M.textareaAutoResize($('#textarea1'));
 
         taskid = $('#details-task')[0].getAttribute('data-id')
 

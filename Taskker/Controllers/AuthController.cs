@@ -88,6 +88,16 @@ namespace Taskker.Controllers
         }
 
         [HttpGet]
+        public ActionResult Logout()
+        {
+            Session.Clear();
+            Roles.DeleteCookie();
+            FormsAuthentication.SignOut();
+            // Response.Redirect(FormsAuthentication.LoginUrl);
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
         public ActionResult Register()
         {
             return View();
