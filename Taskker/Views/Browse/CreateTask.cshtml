@@ -78,12 +78,13 @@
         var elems = document.querySelectorAll('select');
         var instances = M.FormSelect.init(elems);
 
-        var elems = document.querySelectorAll('#autocomplete-estimated');
+        var elems = document.querySelectorAll('.autocomplete');
         var instances = M.Autocomplete.init(
             elems,
             {
                 minLength: 1,
                 onAutocomplete: function (elem, data) {
+                    console.log('onAutocomplete')
                     console.log(elem);
                     console.log(data);
                 }
@@ -91,20 +92,47 @@
         );
 
         document.getElementById('autocomplete-estimated').addEventListener('input', function (elem, elem2) {
-            console.log(elem.srcElement.value)
+            //console.log(elem)
+            //console.log('value src', elem.srcElement.value)
             // Hay que iterar por los matches y chequear si coincide con 
             // [hora, horas, h, ho, hor, minuto, mi, min, minu, minut ... ]
-            var estimated = ''
+            var estimated = { H: 0, M: 0, S: 0 }
             var time = elem.srcElement.value
             var matches = time.match(/\d+\s*[a-zA-Z]+/gu)
-            matches.forEach(function (value) {
-                var number = value.replace(/[a-zA-Z]+/, '')
-                //var 
-                estimated = `${estimated}`
-            })
-            elem.srcElement.updateData({
+            //console.log('matches', matches)
 
-            });
+            if (matches == null) {
+                return;
+            }
+
+            matches.forEach(function (value) {
+                var number = value.replace(/[a-zA-Z\s]+/, '')
+                //console.log('number', number)
+                var unit = value.replace(/[\d\s]+/, '')
+                //console.log('unit', unit)
+                if ('horas'.includes(unit.toLowerCase())) {
+                    estimated['H'] = estimated['H'] + Number(number)
+                } else if ('minutos'.includes(unit.toLowerCase())) {
+                    estimated['M'] = estimated['M'] + Number(number)
+                } else if ('segundos'.includes(unit.toLowerCase())) {
+                    estimated['S'] = estimated['S'] + Number(number)
+                }
+
+                //console.log('estimated', estimated)
+
+                time = `${estimated['H']}:${estimated['M']}:${estimated['S']}`
+                //console.log('time', time)
+            })
+
+            console.log('funcion afuera', time)
+
+            var instance = M.Autocomplete.getInstance($('#autocomplete-estimated'))
+            console.log(instance)
+            newData = {}
+            newData[time] = null
+            instance.updateData(newData)
+            // No se abre el autocomplete
+            instance.open()
         });
 
         var usuarios = {}
