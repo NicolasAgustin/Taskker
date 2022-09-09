@@ -182,6 +182,7 @@
     <Compile Include="Models\DAL\Tarea.cs" />
     <Compile Include="Models\DAL\TaskkerContext.cs" />
     <Compile Include="Models\DAL\TaskkerInitializer.cs" />
+    <Compile Include="Models\DAL\TimeTracked.cs" />
     <Compile Include="Models\DAL\Usuario.cs" />
     <Compile Include="Models\Modelos.cs" />
     <Compile Include="Models\TareaTipo.cs" />

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,6 +12,7 @@ namespace Taskker.Models.DAL
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
         public TareaTipo Tipo { get; set; }
+        public DateTime Estimado { get; set; }
         public int GrupoID { get; set; }
         [ForeignKey("GrupoID")]
         public virtual Grupo Grupo { get; set; }

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -72,6 +73,7 @@ namespace Taskker.Models.DAL
                     Titulo = "tarea1",
                     Descripcion = "descripcion para tarea 1",
                     Tipo = TareaTipo.SinTipo,
+                    Estimado = new DateTime(2022, 1, 1, 1, 0, 0),
                     GrupoID = grupos.Single(g => g.Nombre == "RPA").ID
                 }
             };

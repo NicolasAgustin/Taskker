@@ -10,86 +10,93 @@
     #modal-title :hover {
         background-color: rgba(0, 0, 0, 0.45);
     }
+
+    .modal {
+        width: 85% !important;
+        height: 85% !important;
+    }
 </style>
-<!--
-    TODO:
-    agregar cards para textarea de descripcion
-    agregar hover para titulo
-    obtener todo desde javascript y hacer la consulta al endpoint con ajax
-    conseguir que la tarea se actualice en el momento que se cierra el modal
-    queda hacer que cuando se cierre el modal se mande la info al backend
--->
+
 <!-- Modal Structure -->
 <div class="modal-content red lighten-4"
      id="details-task"
      data-id="@Model.ID">
-    @using (Html.BeginForm("UpdateTask", "Browse", FormMethod.Post, new { @class = "col s6", @id = "update-form" }))
-    {
-        <h4 id="modal-title"
-            class="highlight"
-            contenteditable="true">
-            @Model.Titulo
-        </h4>
-        <input type="hidden" name="id" value="@Model.ID" />
-        <input type="hidden" id="task-title" name="titulo" value="@Model.Titulo" />
+    <div class="container">
         <div class="row">
-            <div class="input-field col s12">
-                <div class="card-panel teal">
-                    <textarea id="textarea1"
-                              class="materialize-textarea"
-                              style="color:aliceblue"
-                              name="descripcion">@Model.Descripcion</textarea>
-                    <label for="textarea1" style="color:aliceblue">Descripcion</label>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="input-field col s6">
-                <div class="card-panel teal">
-                    @{ 
-                        // Hace falta que cuando se vean los detalles de la tarea
-                        // se auto seleccione el tipo de tarea que esta en la tarea
-                        // que se esta visualizando
-                    }
-                    <select name="tipo">
-                        @{
-                            if (Model.Tipo == TareaTipo.SinTipo)
-                            {
-                                <option value="@TareaTipo.SinTipo" disabled selected>Seleccionar tipo</option>
-                                <option value="@TareaTipo.Desarrollo">Desarrollo</option>
-                                <option value="@TareaTipo.Tarea">Tarea</option>
-                            }
-                            else if (Model.Tipo == TareaTipo.Desarrollo)
-                            {
-                                <option value="@TareaTipo.SinTipo" disabled>Seleccionar tipo</option>
-                                <option value="@TareaTipo.Desarrollo" selected>Desarrollo</option>
-                                <option value="@TareaTipo.Tarea">Tarea</option>
-                            }
-                            else if (Model.Tipo == TareaTipo.Tarea)
-                            {
-                                <option value="@TareaTipo.SinTipo" disabled>Seleccionar tipo</option>
-                                <option value="@TareaTipo.Desarrollo">Desarrollo</option>
-                                <option value="@TareaTipo.Tarea" selected>Tarea</option>
-                            }
-                        }
-                    </select>
-                    <label>Tipo de tarea</label>
-                </div>
-            </div>
-        </div>
+            @using (Html.BeginForm("UpdateTask", "Browse", FormMethod.Post, new { @class = "col s12", @id = "update-form" }))
+            {
+                <h4 id="modal-title"
+                    class="highlight"
+                    contenteditable="true">
+                    @Model.Titulo
+                </h4>
+                <input type="hidden" name="id" value="@Model.ID" />
+                <input type="hidden" id="task-title" name="titulo" value="@Model.Titulo" />
 
-        <div class="row">
-            <div class="col s6">
-                <div class="card-panel teal">
-                    <input type="hidden"
-                           id="chips-values"
-                           name="asignees" />
-                    <div id="asignees-chips" class="chips-autocomplete">
+                <div class="row">
+                    <div class="col s6">
+                        <div class="input-field">
+                            <textarea id="textarea1"
+                                      class="materialize-textarea"
+                                      placeholder="Descripcion"
+                                      style="color:black"
+                                      name="descripcion">@Model.Descripcion</textarea>
+                        </div>
                     </div>
                 </div>
-            </div>
+                <div class="row">
+                    <div class="col s3" style="padding-top: 15px">
+                        <select name="tipo">
+                            @{
+                                if (Model.Tipo == TareaTipo.SinTipo)
+                                {
+                                    <option value="@TareaTipo.SinTipo" disabled selected>Seleccionar tipo</option>
+                                    <option value="@TareaTipo.Desarrollo">Desarrollo</option>
+                                    <option value="@TareaTipo.Tarea">Tarea</option>
+                                }
+                                else if (Model.Tipo == TareaTipo.Desarrollo)
+                                {
+                                    <option value="@TareaTipo.SinTipo" disabled>Seleccionar tipo</option>
+                                    <option value="@TareaTipo.Desarrollo" selected>Desarrollo</option>
+                                    <option value="@TareaTipo.Tarea">Tarea</option>
+                                }
+                                else if (Model.Tipo == TareaTipo.Tarea)
+                                {
+                                    <option value="@TareaTipo.SinTipo" disabled>Seleccionar tipo</option>
+                                    <option value="@TareaTipo.Desarrollo">Desarrollo</option>
+                                    <option value="@TareaTipo.Tarea" selected>Tarea</option>
+                                }
+                            }
+                        </select>
+                        <label>Tipo de tarea</label>
+                    </div>
+
+                    <div class="col s9">
+                        <input type="hidden" id="chips-values" name="asignees" />
+                        <div id="asignees-chips" class="chips-autocomplete" style="color: black"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s6">
+                        <div class="input-field dropdown-trigger" data-target="dropdown-hours" id="input-hours">
+                            <input id="hours"
+                                   type="text"
+                                   placeholder="Tiempo estimado"
+                                   class="validate"
+                                   name="estimado"
+                                   value="@ViewBag.Time">
+                        </div>
+
+                    </div>
+
+                    <ul id="dropdown-hours" class="dropdown-content">
+                    </ul>
+
+                </div>
+            }
         </div>
-    }
+    </div>
+    
 </div>
 <div class="modal-footer">
     <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
@@ -102,7 +109,94 @@
     $(document).ready(function () {
 
         var elems = document.querySelectorAll('select');
-        var instances = M.FormSelect.init(elems);
+        M.FormSelect.init(
+            elems,
+            {
+                coverTrigger: false
+            }
+        );
+
+        M.Dropdown.init(
+            document.querySelectorAll('#input-hours'),
+            {
+                coverTrigger: false,
+                autoTrigger: false,
+                onCloseEnd: function () {
+                    // Una vez que se seleccione la opcion del dropdown
+                    // Se cierra, por lo que obtenemos la primer opcion que aparezca
+                    var textinput = document.getElementById('hours')
+                    var elemText = this.dropdownEl.firstChild.innerText
+
+                    if (elemText != undefined)
+                        textinput.value = this.dropdownEl.firstChild.innerText
+                }
+            }
+        )
+
+        document.getElementById('hours').addEventListener('input', function (elem) {
+
+            var estimated = {}
+            // Obtenemos el valor del input
+            var time = elem.srcElement.value
+            var matches = time.match(/\d+\s*[a-zA-Z]+/gu)
+            var hour = ''
+            var minute = ''
+            var second = ''
+
+            if (matches == null) {
+                return;
+            }
+
+            matches.forEach(function (value) {
+                var number = value.replace(/[a-zA-Z\s]+/, '')
+                var unit = value.replace(/[\d\s]+/, '')
+
+                if ('horas'.includes(unit.toLowerCase())) {
+                    estimated['H'] = (estimated['H'] ?? 0) + Number(number)
+                } else if ('minutos'.includes(unit.toLowerCase())) {
+                    estimated['M'] = (estimated['M'] ?? 0) + Number(number)
+                } else if ('segundos'.includes(unit.toLowerCase())) {
+                    estimated['S'] = (estimated['S'] ?? 0) + Number(number)
+                }
+
+            })
+
+            Object.keys(estimated).reduce(function (acum, key) {
+                var value = estimated[key]
+                switch (key) {
+                    case 'H':
+                        hour = `${value} ${value == 1 ? "Hora" : "Horas"}`
+                        break
+                    case 'M':
+                        minute = `${value} ${value == 1 ? "Minuto" : "Minutos"}`
+                        break
+                    case 'S':
+                        second = `${value} ${value == 1 ? "Segundo" : "Segundos"}`
+                }
+
+                return acum
+            }, {})
+
+            time = `${hour} ${minute} ${second}`
+
+            // Obtenemos la instancia del dropdown
+            var instance = M.Dropdown.getInstance($('#input-hours'));
+
+            // Creamos un elemento para el dropdown
+            var complete = document.createElement('li')
+            complete.innerText = time
+
+            // Eliminamos todos los elementos hijos que pueda tener el dropdown
+            while (instance.dropdownEl.firstChild) {
+                instance.dropdownEl.removeChild(instance.dropdownEl.lastChild);
+            }
+
+            // Appendeamos el nuevo elemento creado
+            instance.dropdownEl.appendChild(complete)
+
+            // Abrimos el dropdown
+            instance.open()
+        });
 
         // Funcion para actualizar el input oculto cada vez que se modifique el h4
         // que posee el contenteditable

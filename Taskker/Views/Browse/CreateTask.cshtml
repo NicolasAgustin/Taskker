@@ -47,13 +47,15 @@
             </div>
         </div>
         <div class="row">
-            <div class="col s12">
-                <div class="row">
-                    <div class="input-field col s12">
-                        <input type="text" id="autocomplete-estimated" class="autocomplete" name="estimated">
-                        <label for="autocomplete-input">Autocomplete</label>
-                    </div>
+            <div class="col s6">
+                <div class="input-field dropdown-trigger" data-target="dropdown-hours" id="input-hours">
+                    <input id="hours" placeholder="Tiempo estimado" type="text" class="validate" name="estimado">
                 </div>
+            </div>
+
+            <div class="col s6">
+                <ul id="dropdown-hours" class="dropdown-content">
+                </ul>
             </div>
         </div>
         <!-- Submit -->
@@ -91,15 +93,32 @@
             }
         );
 
-        document.getElementById('autocomplete-estimated').addEventListener('input', function (elem, elem2) {
-            //console.log(elem)
-            //console.log('value src', elem.srcElement.value)
-            // Hay que iterar por los matches y chequear si coincide con 
-            // [hora, horas, h, ho, hor, minuto, mi, min, minu, minut ... ]
-            var estimated = { H: 0, M: 0, S: 0 }
+        M.Dropdown.init(
+            document.querySelectorAll('#input-hours'),
+            {
+                coverTrigger: false,
+                autoTrigger: false,
+                onCloseEnd: function () {
+                    debugger;
+                    // Una vez que se seleccione la opcion del dropdown
+                    // Se cierra, por lo que obtenemos la primer opcion que aparezca
+                    var textinput = document.getElementById('hours')
+                    var elemText = this.dropdownEl.firstChild.innerText
+                    if (elemText != undefined)
+                        textinput.value = this.dropdownEl.firstChild.innerText
+                }
+            }
+        )
+
+        document.getElementById('hours').addEventListener('input', function (elem) {
+            debugger;
+            var estimated = {}
+            // Obtenemos el valor del input
             var time = elem.srcElement.value
             var matches = time.match(/\d+\s*[a-zA-Z]+/gu)
-            //console.log('matches', matches)
+            var hour = ''
+            var minute = ''
+            var second = ''
 
             if (matches == null) {
                 return;
@@ -107,31 +126,52 @@
 
             matches.forEach(function (value) {
                 var number = value.replace(/[a-zA-Z\s]+/, '')
-                //console.log('number', number)
                 var unit = value.replace(/[\d\s]+/, '')
-                //console.log('unit', unit)
+
                 if ('horas'.includes(unit.toLowerCase())) {
-                    estimated['H'] = estimated['H'] + Number(number)
+                    estimated['H'] = (estimated['H'] ?? 0) + Number(number)
                 } else if ('minutos'.includes(unit.toLowerCase())) {
-                    estimated['M'] = estimated['M'] + Number(number)
+                    estimated['M'] = (estimated['M'] ?? 0) + Number(number)
                 } else if ('segundos'.includes(unit.toLowerCase())) {
-                    estimated['S'] = estimated['S'] + Number(number)
+                    estimated['S'] = (estimated['S'] ?? 0) + Number(number)
                 }
 
-                //console.log('estimated', estimated)
-
-                time = `${estimated['H']}:${estimated['M']}:${estimated['S']}`
-                //console.log('time', time)
             })
 
-            console.log('funcion afuera', time)
+            Object.keys(estimated).reduce(function (acum, key) {
+                var value = estimated[key]
+                switch (key) {
+                    case 'H':
+                        hour = `${value} ${value == 1 ? "Hora" : "Horas"}`
+                        break
+                    case 'M':
+                        minute = `${value} ${value == 1 ? "Minuto" : "Minutos"}`
+                        break
+                    case 'S':
+                        second = `${value} ${value == 1 ? "Segundo" : "Segundos"}`
+                }
 
-            var instance = M.Autocomplete.getInstance($('#autocomplete-estimated'))
-            console.log(instance)
-            newData = {}
-            newData[time] = null
-            instance.updateData(newData)
-            // No se abre el autocomplete
+                return acum
+            }, {})
+
+            time = `${hour} ${minute} ${second}`
+
+            // Obtenemos la instancia del dropdown
+            var instance = M.Dropdown.getInstance($('#input-hours'));
+
+            // Creamos un elemento para el dropdown
+            var complete = document.createElement('li')
+            complete.innerText = time
+
+            // Eliminamos todos los elementos hijos que pueda tener el dropdown
+            while (instance.dropdownEl.firstChild) {
+                instance.dropdownEl.removeChild(instance.dropdownEl.lastChild);
+            }
+
+            // Appendeamos el nuevo elemento creado
+            instance.dropdownEl.appendChild(complete)
+
+            // Abrimos el dropdown
             instance.open()
         });
 

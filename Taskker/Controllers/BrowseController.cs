@@ -94,6 +94,7 @@ namespace Taskker.Controllers
         public ActionResult CreateTask(TareaModel t)
         {
             TaskkerContext db = new TaskkerContext();
+            DateTime timeEstimated = Utils.parseTime(t.Estimado);
             List<string> asignees = new List<string>(t.Asignees.Split(','));
             List<Usuario> asigneesToAdd = new List<Usuario>();
             asignees.ForEach(nombre =>
@@ -114,6 +115,7 @@ namespace Taskker.Controllers
                 Titulo = t.Titulo,
                 Descripcion = t.Descripcion,
                 Tipo = (TareaTipo)Enum.Parse(typeof(TareaTipo), t.Tipo),
+                Estimado = timeEstimated,
                 Usuarios = asigneesToAdd,
                 GrupoID = ((Grupo)Session["CurrentGroup"]).ID
             };
@@ -148,7 +150,10 @@ namespace Taskker.Controllers
                 {
                     try
                     {
-                        var userfound = db.Usuarios.Where(u => u.NombreApellido == username).Single();
+                        var userfound = db.Usuarios.Where(
+                            u => u.NombreApellido == username
+                        ).Single();
+                        
                         filteredUsuarios.Add(userfound);
                     }
                     catch (InvalidOperationException){}
@@ -156,28 +161,50 @@ namespace Taskker.Controllers
 
                 Tarea tareaFound = tFound.Single();
 
-                bool filter_flag = filteredUsuarios.All(tareaFound.Usuarios.Contains);
-                filter_flag = filter_flag && (tareaFound.Descripcion == tm.Descripcion);
-                filter_flag = filter_flag && (tareaFound.Titulo == tm.Titulo);
+                bool filter_flag = filteredUsuarios.All(
+                    tareaFound.Usuarios.Contains
+                );
+
+                filter_flag = filter_flag && (
+                    tareaFound.Descripcion == tm.Descripcion
+                );
+                
+                filter_flag = filter_flag && (
+                    Utils.parseTime(tm.Estimado) == tareaFound.Estimado
+                );
+                
+                filter_flag = filter_flag && (
+                    tareaFound.Titulo == tm.Titulo
+                );
+
                 if (tm.Tipo == null && tareaFound.Tipo == TareaTipo.SinTipo)
                 {
                     filter_flag = filter_flag && true;
                 }
                 else
                 {
-                    filter_flag = filter_flag && (tareaFound.Tipo == (TareaTipo) Enum.Parse(typeof(TareaTipo), tm.Tipo));
+                    filter_flag = filter_flag && (
+                        tareaFound.Tipo == (TareaTipo) Enum.Parse(
+                            typeof(TareaTipo),
+                            tm.Tipo
+                        )
+                    );
                 }
-                // Hay que obtener el tipo como numero
+
 
                 if (!filter_flag)
                 {
                     tareaFound.Descripcion = tm.Descripcion;
                     tareaFound.Titulo = tm.Titulo;
                     tareaFound.Usuarios = filteredUsuarios;
+                    tareaFound.Estimado = Utils.parseTime(tm.Estimado);
                     if (tm.Tipo == null)
                         tareaFound.Tipo = TareaTipo.SinTipo;
                     else
-                        tareaFound.Tipo = (TareaTipo) Enum.Parse(typeof(TareaTipo), tm.Tipo);
+                        tareaFound.Tipo = (TareaTipo) Enum.Parse(
+                            typeof(TareaTipo),
+                            tm.Tipo
+                        );
 
                     db.SaveChanges();
                 }
@@ -282,6 +309,7 @@ namespace Taskker.Controllers
                 });
 
                 ViewData["TupleData"] = photoUsuario;
+                ViewBag.Time = Utils.generateStringEstimatedTime(display.Estimado);
                 return PartialView("TaskDetails", display);
             }
             catch (InvalidOperationException)
