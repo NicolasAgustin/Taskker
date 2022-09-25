@@ -15,6 +15,7 @@ namespace Taskker.Models.DAL
         public virtual ICollection<Grupo> CreatedGroups { get; set; }
         public virtual ICollection<Tarea> Tareas { get; set; }
         public virtual ICollection<Rol> Roles { get; set; }
+        public virtual ICollection<TimeTracked> TiempoRegistrado { get; set; }
     }
 
     public class UsuarioData : Usuario

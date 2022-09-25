@@ -11,6 +11,7 @@
 
 @section scripts{
     @Scripts.Render("~/Scripts/jquery-3.4.1.min.js")
+    @Scripts.Render("~/Scripts/download_report.js")
 }
 
 <style>
@@ -114,8 +115,8 @@
             <a href="@Url.Action("Logout", "Auth")">Salir</a> | <a href="#">Perfil</a>
         </div>
     </li>
-    <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
-    <li><a href="#!">Second Link</a></li>
+    <li><a href="@Url.Action("Create", "Groups")"><i class="material-icons">group</i>Crear grupo</a></li>
+    <li><a href="@Url.Action("Join", "Groups")"><i class="material-icons">group_add</i>Unirse</a></li>
     <li><div class="divider"></div></li>
     <li><a class="subheader">Grupos</a></li>
     @{
@@ -136,6 +137,14 @@
 <div class="row">
     <a class="waves-effect waves-light btn modal-trigger" data-target="create" id="add-task">
         <i class="small material-icons left">add</i>Crear tarea
+    </a>
+</div>
+
+<div class="row">
+    @{// la funcion download no se encuentra
+     }
+    <a class="waves-effect waves-light btn" id="download-report" href="@Url.Action("DownloadReport", "Report")">
+        <i class="small material-icons left">add</i>Descargar reporte de horas
     </a>
 </div>
 

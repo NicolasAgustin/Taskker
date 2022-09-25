@@ -4,6 +4,7 @@ using Taskker.Models;
 using System.Web.Mvc;
 using Taskker.Models.DAL;
 using System.Collections.Generic;
+using System.Web.Security;
 
 namespace Taskker.Controllers
 {
@@ -140,6 +141,14 @@ namespace Taskker.Controllers
 
                 List<string> usuarios = null;
 
+                UserSession us = (UserSession) Session["UserSession"];
+
+                var user = from u in db.Usuarios
+                           where us.Email == u.Email
+                           select u;
+
+                Usuario found_user = user.Single();
+
                 if (tm.Asignees != null)
                 {
                     usuarios = new List<string>(tm.Asignees.Split(','));
@@ -161,6 +170,11 @@ namespace Taskker.Controllers
 
                 Tarea tareaFound = tFound.Single();
 
+                TimeTracked tiempo = tareaFound.TiempoRegistrado.Single(
+                    tr => tr.TareaID == tareaFound.ID &&
+                          tr.UsuarioID == found_user.ID
+                );
+
                 bool filter_flag = filteredUsuarios.All(
                     tareaFound.Usuarios.Contains
                 );
@@ -177,6 +191,13 @@ namespace Taskker.Controllers
                     tareaFound.Titulo == tm.Titulo
                 );
 
+                if (tm.TiempoRegistrado != null)
+                {
+                    filter_flag = filter_flag && (
+                        tiempo.Time == Utils.parseTime(tm.TiempoRegistrado)
+                    );
+                }
+
                 if (tm.Tipo == null && tareaFound.Tipo == TareaTipo.SinTipo)
                 {
                     filter_flag = filter_flag && true;
@@ -191,13 +212,23 @@ namespace Taskker.Controllers
                     );
                 }
 
-
                 if (!filter_flag)
                 {
                     tareaFound.Descripcion = tm.Descripcion;
                     tareaFound.Titulo = tm.Titulo;
                     tareaFound.Usuarios = filteredUsuarios;
                     tareaFound.Estimado = Utils.parseTime(tm.Estimado);
+
+                    if (tm.TiempoRegistrado != null)
+                    {
+                        DateTime parsedTime = Utils.parseTime(tm.TiempoRegistrado);
+
+                        tiempo.Time = tiempo.Time
+                            .AddHours(parsedTime.Hour)
+                            .AddMinutes(parsedTime.Minute)
+                            .AddSeconds(parsedTime.Second);
+                    }
+
                     if (tm.Tipo == null)
                         tareaFound.Tipo = TareaTipo.SinTipo;
                     else
@@ -297,19 +328,33 @@ namespace Taskker.Controllers
             try
             {
                 Tarea display = tarea.Single();
+
                 var users = from user in display.Usuarios
                             select user;
+                
                 List<Usuario> usuariosAsignados = users.ToList();
                 List<(string, Usuario)> photoUsuario = new List<(string, Usuario)>();
-                usuariosAsignados.ForEach(user =>
-                {
-                    photoUsuario.Add(
-                        (Utils.EncodePicture(user.ProfilePicturePath), user)
-                    );
-                });
+                
+                usuariosAsignados.ForEach(user => {
+                        photoUsuario.Add(
+                            (Utils.EncodePicture(user.ProfilePicturePath), user)
+                        );
+                    }
+                );
 
                 ViewData["TupleData"] = photoUsuario;
+
+                List<(DateTime, Usuario, int)> displayTimes = 
+                    new List<(DateTime, Usuario, int)>();
+
+                display.TiempoRegistrado.ToList().ForEach(t =>
+                {
+                    displayTimes.Add((t.Time, t.Usuario, t.ID));
+                });
+
+                ViewData["Times"] = displayTimes;
                 ViewBag.Time = Utils.generateStringEstimatedTime(display.Estimado);
+
                 return PartialView("TaskDetails", display);
             }
             catch (InvalidOperationException)

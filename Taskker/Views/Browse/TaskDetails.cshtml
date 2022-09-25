@@ -91,7 +91,31 @@
 
                     <ul id="dropdown-hours" class="dropdown-content">
                     </ul>
+                </div>
+                // Input para trackeo de horas
+                // cada vez que actualicemos la tarea hay que sumar las horas 
+                <div class="row">
+                    <div class="col s6">
+                        <div class="input-field dropdown-trigger" data-target="dropdown-hours2" id="input-hours2">
+                            <input id="hours2" placeholder="Registrar horas" type="text" class="validate" name="tiemporegistrado">
+                        </div>
+                    </div>
 
+                    <div class="col s6">
+                        <ul id="dropdown-hours2" class="dropdown-content">
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <ul class="collection">
+                        @foreach(var tiempo in (List<(DateTime, Usuario, int)>)ViewData["Times"])
+                        {
+                            <li class="collection-item" style="display: inline" data-index="@tiempo.Item3">
+                            @tiempo.Item1.ToString("HH:mm") @tiempo.Item2.NombreApellido
+                                <button type="button">Borrar</button>
+                            </li>
+                        }
+                    </ul>
                 </div>
             }
         </div>
@@ -117,14 +141,14 @@
         );
 
         M.Dropdown.init(
-            document.querySelectorAll('#input-hours'),
+            document.querySelectorAll('#input-hours2'),
             {
                 coverTrigger: false,
                 autoTrigger: false,
                 onCloseEnd: function () {
                     // Una vez que se seleccione la opcion del dropdown
                     // Se cierra, por lo que obtenemos la primer opcion que aparezca
-                    var textinput = document.getElementById('hours')
+                    var textinput = document.getElementById('hours2')
                     var elemText = this.dropdownEl.firstChild.innerText
 
                     if (elemText != undefined)
@@ -133,7 +157,7 @@
             }
         )
 
-        document.getElementById('hours').addEventListener('input', function (elem) {
+        document.getElementById('hours2').addEventListener('input', function (elem) {
 
             var estimated = {}
             // Obtenemos el valor del input
@@ -180,7 +204,7 @@
             time = `${hour} ${minute} ${second}`
 
             // Obtenemos la instancia del dropdown
-            var instance = M.Dropdown.getInstance($('#input-hours'));
+            var instance = M.Dropdown.getInstance($('#input-hours2'));
 
             // Creamos un elemento para el dropdown
             var complete = document.createElement('li')

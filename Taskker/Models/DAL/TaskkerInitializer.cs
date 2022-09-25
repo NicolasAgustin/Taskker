@@ -81,6 +81,24 @@ namespace Taskker.Models.DAL
             tareas.ForEach(task => context.Tareas.Add(task));
             context.SaveChanges();
 
+            Tarea t = tareas.Single(tarea => tarea.ID == 1);
+
+            List<TimeTracked> tiempos = new List<TimeTracked>()
+            {
+                new TimeTracked
+                {
+                    Time = new DateTime(
+                        2022, 11, 5, 1, 0, 0
+                    ),
+                    UsuarioID = 1,
+                    TareaID = 1
+                }
+            };
+
+            t.TiempoRegistrado = tiempos;
+
+            context.SaveChanges();
+
             base.Seed(context);
         }
     }

@@ -53,12 +53,22 @@ namespace Taskker.Models.DAL
                      .MapRightKey("UsuarioID")
                      .ToTable("UsuarioTarea"));
 
+
             // Cada Tarea esta en un Grupo
             modelBuilder.Entity<Tarea>()
                 .HasRequired(g => g.Grupo)
                 .WithMany(gr => gr.Tareas)
                 .HasForeignKey(s => s.GrupoID);
 
+            modelBuilder.Entity<Tarea>()
+                .HasMany(tr => tr.TiempoRegistrado)
+                .WithRequired(tt => tt.Tarea)
+                .HasForeignKey(tr => tr.TareaID);
+
+            modelBuilder.Entity<TimeTracked>()
+                .HasRequired(time => time.Usuario)
+                .WithMany(u => u.TiempoRegistrado)
+                .HasForeignKey(tr => tr.UsuarioID);
         }
     }
 }

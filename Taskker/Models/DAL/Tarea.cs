@@ -17,5 +17,6 @@ namespace Taskker.Models.DAL
         [ForeignKey("GrupoID")]
         public virtual Grupo Grupo { get; set; }
         public virtual ICollection<Usuario> Usuarios { get; set; }
+        public virtual ICollection<TimeTracked> TiempoRegistrado { get; set; }
     }
 }

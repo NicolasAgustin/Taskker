@@ -16,43 +16,43 @@
         @Html.ValidationSummary(false, "", new { @style="color:red;font-weight:bold"})
         @using (Html.BeginForm("Login", "Auth", FormMethod.Post))
         {
-        @Html.AntiForgeryToken()
-        <!-- Columna -->
-        <div class="col s6 offset-s3">
-            <div class="card blue-grey darken-1">
-                <div class="card-content white-text">
-                    <span class="card-title">Ingresar</span>
-                    <!--Fila para email-->
-                    <div class="row">
-                        <div class="input-field col s12">
-                            @Html.EditorFor(model => model.Email)
-                            <!--<input id="email" type="email" class="validate">-->
-                            <label for="email">Correo electronico</label>
+            @Html.AntiForgeryToken()
+            <!-- Columna -->
+            <div class="col s6 offset-s3">
+                <div class="card blue-grey darken-1">
+                    <div class="card-content white-text">
+                        <span class="card-title">Ingresar</span>
+                        <!--Fila para email-->
+                        <div class="row">
+                            <div class="input-field col s12">
+                                @Html.EditorFor(model => model.Email)
+                                <!--<input id="email" type="email" class="validate">-->
+                                <label for="email">Correo electronico</label>
+                            </div>
+                        </div>
+                        <!--Fila para password-->
+                        <div class="row">
+                            <div class="input-field col s12">
+                                @Html.EditorFor(model => model.Password)
+                                <!--<input id="password" type="password" class="validate">-->
+                                <label for="password">Contraseña</label>
+                            </div>
                         </div>
                     </div>
-                    <!--Fila para password-->
-                    <div class="row">
-                        <div class="input-field col s12">
-                            @Html.EditorFor(model => model.Password)
-                            <!--<input id="password" type="password" class="validate">-->
-                            <label for="password">Contraseña</label>
+                    <!--Action-->
+                    <div class="card-action">
+                        <div class="row">
+                            <label></label>
+                            <blockquote style="color:aliceblue">
+                                ¿No posee una cuenta? Registrese <a href="@Url.Action("Register", "Auth")">aqui</a>
+                            </blockquote>
                         </div>
+                        <button class="btn waves-effect waves-light" type="submit" name="action">
+                            Ingresar
+                        </button>
                     </div>
-                </div>
-                <!--Action-->
-                <div class="card-action">
-                    <div class="row">
-                        <label></label>
-                        <blockquote style="color:aliceblue">
-                            ¿No posee una cuenta? Registrese <a href="@Url.Action("Register", "Auth")">aqui</a>
-                        </blockquote>
-                    </div>
-                    <button class="btn waves-effect waves-light" type="submit" name="action">
-                        Ingresar
-                    </button>
                 </div>
             </div>
-        </div>
         }
 
     </div>

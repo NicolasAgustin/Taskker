@@ -78,10 +78,10 @@
 <script>
     $(document).ready(function () {
         var elems = document.querySelectorAll('select');
-        var instances = M.FormSelect.init(elems);
+        M.FormSelect.init(elems);
 
         var elems = document.querySelectorAll('.autocomplete');
-        var instances = M.Autocomplete.init(
+        M.Autocomplete.init(
             elems,
             {
                 minLength: 1,
@@ -98,20 +98,22 @@
             {
                 coverTrigger: false,
                 autoTrigger: false,
-                onCloseEnd: function () {
-                    debugger;
+                onCloseStart: function () {
                     // Una vez que se seleccione la opcion del dropdown
                     // Se cierra, por lo que obtenemos la primer opcion que aparezca
                     var textinput = document.getElementById('hours')
                     var elemText = this.dropdownEl.firstChild.innerText
-                    if (elemText != undefined)
+                    if (elemText != undefined) {
                         textinput.value = this.dropdownEl.firstChild.innerText
+                        console.log('correcto')
+                    } else {
+                        console.log('no habia elementos')
+                    }
                 }
             }
         )
 
         document.getElementById('hours').addEventListener('input', function (elem) {
-            debugger;
             var estimated = {}
             // Obtenemos el valor del input
             var time = elem.srcElement.value
@@ -121,6 +123,7 @@
             var second = ''
 
             if (matches == null) {
+                console.log('Matches null')
                 return;
             }
 
@@ -190,7 +193,7 @@
         });
 
         var elems = document.querySelectorAll('.chips-autocomplete');
-        var chipInstance = M.Chips.init(
+        M.Chips.init(
             elems,
             {
                 data: chipsUsers,

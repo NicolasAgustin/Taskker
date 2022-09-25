@@ -16,5 +16,15 @@ namespace Taskker.Controllers
         {
             return View();
         }
+        [HttpGet]
+        public ActionResult Join()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Create()
+        {
+            return View();
+        }
     }
 }

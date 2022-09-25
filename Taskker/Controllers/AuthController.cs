@@ -46,7 +46,6 @@ namespace Taskker.Controllers
                 Usuario user_logged = user_found.Single();
 
                 FormsAuthentication.SetAuthCookie(user_logged.Email, false);
-
                 FormsAuthentication.SetAuthCookie(
                     Convert.ToString(user_logged.ID),
                     false

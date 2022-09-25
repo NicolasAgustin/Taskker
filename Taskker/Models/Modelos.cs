@@ -37,6 +37,18 @@ namespace Taskker.Models
         public string Password { get; set; }
     }
 
+    public class JoinGroupModel
+    {
+        [Required(ErrorMessage = "El campo nombre es obligatorio.")]
+        public string Nombre { get; set; }
+    }
+
+    public class CreateGroupModel
+    {
+        [Required(ErrorMessage = "El campo nombre es obligatorio.")]
+        public string Nombre { get; set; }
+    }
+
     public class TareaModel
     {
         [Required(ErrorMessage = "El campo Titulo es obligatorio.")]
@@ -46,5 +58,6 @@ namespace Taskker.Models
         public string Estimado { get; set; }
         public string Tipo { get; set; }
         public int Id { get; set; }
+        public string TiempoRegistrado { get; set; }
     }
 }

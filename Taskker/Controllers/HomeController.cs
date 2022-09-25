@@ -8,19 +8,10 @@ namespace Taskker.Controllers
     {
         public ActionResult Index()
         {
-            return View();
-        }
+            UserSession userSession = Session["UserSession"] as UserSession;
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
+            if (userSession != null)
+                return RedirectToAction("Index", "Browse");
 
             return View();
         }

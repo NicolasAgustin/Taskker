@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -111,6 +112,45 @@ namespace Taskker.Models
             }
 
             return time;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public static Stream GenerateStreamFromString(string content)
+        {
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+
+            writer.Write(content);
+            writer.Flush();
+            stream.Position = 0;
+
+            return stream;
+        }
+
+        public static string CreateCSVDataTable(DataTable table)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string[] columnNames = table.Columns.Cast<DataColumn>()
+                .Select(column => column.ColumnName)
+                .ToArray();
+
+            sb.AppendLine(string.Join(",", columnNames));
+
+            foreach(DataRow row in table.Rows)
+            {
+                string[] fields = row.ItemArray.Select(
+                    field => field.ToString()
+                ).ToArray();
+
+                sb.AppendLine(string.Join(",", fields));
+            }
+
+            return sb.ToString();
         }
     }
 }
