@@ -6,7 +6,59 @@
     ViewBag.Title = "Join";
 }
 
-<h2>Join</h2>
+<script>
+    $(document).ready(function () {
+        var selected = ""
+        var elems = document.querySelectorAll('.modal');
+        var instances = M.Modal.init(
+            elems,
+            {
+                onOpenStart: function (modal, trigger) {
+                    console.log('Se abre el modal de detalles')
+                    $.ajax({
+                        type: 'GET',
+                        url: "/Groups/GroupDetails",
+                        data: { gname: selected },
+                        success: function (data) {
+                            $("#group-details").html(data);
+                        }
+                    });
+                },
+                onOpenEnd: function (modal, trigger) {
+                    console.log('Termino de abrirse el modal create')
+                }
+            }
+        );
+
+        $.ajax({
+            url: "/Groups/GetGroups",
+            type: 'GET',
+            success: function (data) {
+                var data_dict = {}
+
+                JSON.parse(data).forEach(function (nombre) {
+                    data_dict[nombre] = null
+                })
+
+                console.log(data_dict)
+
+                var elems = document.querySelectorAll('.autocomplete');
+                M.Autocomplete.init(
+                    elems,
+                    {
+                        data: data_dict,
+                        onAutocomplete: function (elem) {
+                            selected = elem
+                            var modal = M.Modal.getInstance($("#group-details"));
+                            modal.open()
+                        }
+                    }
+                );
+            }
+        });
+    })
+</script>
+
 
 <nav>
     <div class="nav-wrapper">
@@ -29,8 +81,15 @@
                         <!--Fila para email-->
                         <div class="row">
                             <div class="input-field col s12">
-                                @Html.EditorFor(model => model.Nombre)
-                                <!--<input id="email" type="email" class="validate">-->
+                                @Html.EditorFor(
+                                   model => model.Nombre,
+                                   new { 
+                                       htmlAttributes = new {
+                                           @class = "autocomplete",
+                                           @id = "autocomplete-input" 
+                                        } 
+                                   }
+                                )
                                 <label for="nombre">Nombre del grupo</label>
                             </div>
                         </div>
@@ -49,4 +108,7 @@
         }
 
     </div>
+</div>
+
+<div id="group-details" class="modal">
 </div>

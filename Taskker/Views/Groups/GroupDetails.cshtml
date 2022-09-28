@@ -1,0 +1,18 @@
+﻿@using Taskker.Models.DAL
+@model Grupo
+@{
+    ViewBag.Title = "GroupDetails";
+}
+
+<h2>GroupDetails</h2>
+@*El modal no muestra el nombre del grupo ni los demas elementos solamente se visualiza el titulo*@
+<div id="modal-group-details" class="modal">
+    <div class="modal-content">
+        <h4>@Model.Nombre</h4>
+        <p>Descripcion</p>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+    </div>
+</div>
+
