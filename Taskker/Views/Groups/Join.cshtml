@@ -69,44 +69,30 @@
 <div class="container">
     <!-- Fila -->
     <div class="row">
-        @Html.ValidationSummary(false, "", new { @style = "color:red;font-weight:bold" })
-        @using (Html.BeginForm("Join", "Groups", FormMethod.Post))
-        {
-            @Html.AntiForgeryToken()
-            <!-- Columna -->
-            <div class="col s6 offset-s3">
-                <div class="card blue-grey darken-1">
-                    <div class="card-content white-text">
-                        <span class="card-title">Unirse a un grupo</span>
-                        <!--Fila para email-->
-                        <div class="row">
-                            <div class="input-field col s12">
-                                @Html.EditorFor(
-                                   model => model.Nombre,
-                                   new { 
-                                       htmlAttributes = new {
-                                           @class = "autocomplete",
-                                           @id = "autocomplete-input" 
-                                        } 
-                                   }
-                                )
-                                <label for="nombre">Nombre del grupo</label>
-                            </div>
+        <!-- Columna -->
+        <div class="col s6 offset-s3">
+            <div class="card blue-grey darken-1">
+                <div class="card-content white-text">
+                    <span class="card-title">Unirse a un grupo</span>
+                    <!--Fila para email-->
+                    <div class="row">
+                        <div class="input-field col s12">
+                            @Html.EditorFor(
+                               model => model.Nombre,
+                               new { htmlAttributes = new {
+                                       @class = "autocomplete",
+                                       @id = "autocomplete-input"
+                                    }
+                               })
+                            <label for="nombre">Nombre del grupo</label>
                         </div>
                     </div>
-                    <!--Action-->
-                    @* Hay que agregar un dropdown con autocomplete para buscar
-                        los grupos que estan disponibles y un modal para mostrar los detalles del
-                        grupo y un boton para unirse o cancelar*@
-                    <div class="card-action">
-                        <button class="btn waves-effect waves-light" type="submit" name="action">
-                            Ingresar
-                        </button>
-                    </div>
+                </div>
+                <!--Action-->
+                <div class="card-action">
                 </div>
             </div>
-        }
-
+        </div>
     </div>
 </div>
 

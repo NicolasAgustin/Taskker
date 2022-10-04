@@ -13,7 +13,11 @@ namespace Taskker.Controllers
     public class AuthController : Controller
     {
 
-        TaskkerContext db = new TaskkerContext();
+        private UnitOfWork unitOfWork;
+        public AuthController()
+        {
+            this.unitOfWork = new UnitOfWork();
+        }
 
         // GET: Auth
         [HttpGet]
@@ -26,20 +30,21 @@ namespace Taskker.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel _user)
         {
+            _user.Email = "nicolas.a.sandez@gmail.com";
+            _user.Password = "pass123";
             // Mockear para testear vista con usuarios de la base de datos
             if (!ModelState.IsValid)
                 return View(_user);
 
-            // Obtenemos el contexto
-            TaskkerContext db = new TaskkerContext();
-
             byte[] hashed_password = Utils.HashPassword(_user.Password);
 
             // Buscamos el usuario en la base de datos
-            var user_found = from user in db.Usuarios
-                             where _user.Email == user.Email &
-                                   hashed_password == user.EncptPassword
+            var user_found = from user in unitOfWork.UsuarioRepository.Get(
+                                    u => u.Email == _user.Email &&
+                                        hashed_password == u.EncptPassword
+                                )
                              select user;
+
             try
             {
                 // Single arroja una excepcion
@@ -72,7 +77,8 @@ namespace Taskker.Controllers
                 {
                     NombreApellido = Utils.Capitalize(user_logged.NombreApellido),
                     Email = user_logged.Email,
-                    EncodedPicture = Utils.EncodePicture(user_logged.ProfilePicturePath)
+                    EncodedPicture = Utils.EncodePicture(user_logged.ProfilePicturePath),
+                    ID = user_logged.ID
                 };
 
                 Session["UserSession"] = userSession;
@@ -111,12 +117,8 @@ namespace Taskker.Controllers
             if (!ModelState.IsValid)
                 return View(_user);
 
-            // Contexto de la base de datos
-            TaskkerContext db = new TaskkerContext();
-
             // Buscamos si el email ya esta registrado
-            var found = from user in db.Usuarios
-                        where _user.Email == user.Email
+            var found = from user in unitOfWork.UsuarioRepository.Get(u => u.Email == _user.Email)
                         select user;
 
             try
@@ -161,21 +163,25 @@ namespace Taskker.Controllers
                     nuevo.ProfilePicturePath = new_filepath;
                 }
 
-                UserSession userSession = new UserSession()
-                {
-                    NombreApellido = Utils.Capitalize(nuevo.NombreApellido),
-                    Email = nuevo.Email,
-                    EncodedPicture = Utils.EncodePicture(nuevo.ProfilePicturePath)
-                };
-                Session["UserSession"] = userSession;
+                
 
                 // Agregamos el usuario nuevo al contexto
-                db.Usuarios.Add(nuevo);
+                unitOfWork.UsuarioRepository.Insert(nuevo);
 
                 AddDefaultRole(nuevo.Email);
 
                 // Hacemos un commit de los cambios
-                db.SaveChanges();
+                unitOfWork.Save();
+
+                UserSession userSession = new UserSession()
+                {
+                    NombreApellido = Utils.Capitalize(nuevo.NombreApellido),
+                    Email = nuevo.Email,
+                    EncodedPicture = Utils.EncodePicture(nuevo.ProfilePicturePath),
+                    ID = nuevo.ID
+                };
+
+                Session["UserSession"] = userSession;
             }
 
             return RedirectToAction("Index", "Browse");
@@ -187,8 +193,7 @@ namespace Taskker.Controllers
         /// <param name="email"></param>
         private void AddDefaultRole(string email)
         {
-            var user = from u in db.Usuarios
-                       where u.Email == email
+            var user = from u in unitOfWork.UsuarioRepository.Get(u => u.Email == email)
                        select u;
 
             try
@@ -196,14 +201,13 @@ namespace Taskker.Controllers
                 Usuario userFound = user.Single();
 
                 Rol rol = (
-                    from r in db.Roles
-                    where r.Nombre == "Desarrollador"
+                    from r in unitOfWork.RolRepository.Get(_rol => _rol.Nombre == "Desarrollador")
                     select r
                 ).Single();
 
                 userFound.Roles.Add(rol);
                 
-                db.SaveChanges();
+                unitOfWork.Save();
             }
             catch (InvalidOperationException){}
 

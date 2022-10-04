@@ -4,15 +4,57 @@
     ViewBag.Title = "GroupDetails";
 }
 
-<h2>GroupDetails</h2>
 @*El modal no muestra el nombre del grupo ni los demas elementos solamente se visualiza el titulo*@
-<div id="modal-group-details" class="modal">
-    <div class="modal-content">
-        <h4>@Model.Nombre</h4>
-        <p>Descripcion</p>
+
+<script>
+    $(document).ready(function () {
+        $('#a-submit').on('click', function () {
+            $('#form-join').submit()
+        })
+    })
+</script>
+
+<div id="modal-group-details" class="modal-content red lighten-4">
+    
+    <div class="container">
+        <div class="row">
+            <h4>@Model.Nombre</h4>
+        </div>
+
+        <div class="row">
+            <p>
+                Creado por @Model.Usuario.NombreApellido
+            </p>
+        </div>
+
+        @using (Html.BeginForm("Join", "Groups", FormMethod.Post, new { id = "form-join" }))
+        {
+            <input type="hidden" name="nombre" value="@Model.Nombre" />
+        }
+
+        <div class="row">
+            <ul class="collection">
+                <li class="collection-header"><h2>Tareas en el grupo</h2></li>
+                @foreach (var task in Model.Tareas.ToList())
+                {
+                    <li class="collection-item">@task.Titulo</li>
+                }
+            </ul>
+        </div>
+
+        <div class="row">
+            <ul class="collection">
+                <li class="collection-header"><h2>Usuarios en el grupo</h2></li>
+                @foreach (var user in Model.Usuarios)
+                {
+                    <li class="collection-item">@user.NombreApellido</li>
+                }
+            </ul>
+        </div>
     </div>
-    <div class="modal-footer">
-        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
-    </div>
+</div>
+
+<div class="modal-footer">
+    <a href="#" id="a-submit" class="modal-close waves-effect waves-green btn-flat">Unirse</a>
 </div>
 

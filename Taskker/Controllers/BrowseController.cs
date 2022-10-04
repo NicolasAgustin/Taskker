@@ -18,14 +18,29 @@ namespace Taskker.Controllers
 
      -- Exception filter (se ejecuta cuando se produce una excepcion)
 
+
+        Cuando usamos context.Tareas estamos usando un tipo IQueryable que no es enviado
+        a la db hasta que se convierte en una coleccion usando un metodo como ToList,
+        lo que no ocurre hasta que utilizamos el modelo.
+        
+        La diferencia de usar context.Tareas y tareaRepository.GetTareas()
+        reside en que si luego realizamos un filtrado con Where()
+        en la primer opcion el where se convierte en un WHERE directamente en la query SQL
+        mientras que con la segunda opcion obtenemos los valores en memoria y cada filtrado que
+        realicemos se hara en memoria.
+
      */
 
     [Authorize]
     [CustomAuthenticationFilter]
     public class BrowseController : Controller
     {
+        private UnitOfWork unitOfWork;
 
-        TaskkerContext db = new TaskkerContext();
+        public BrowseController()
+        {
+            this.unitOfWork = new UnitOfWork();
+        }
 
         [HttpGet]
         public ActionResult Index(string grupo)
@@ -37,13 +52,13 @@ namespace Taskker.Controllers
                 return RedirectToAction("Login", "Auth");
             // Buscar todos los grupos a los que pertenece el usuario para mostrarlos en el navbar
             // Si no tiene grupos redireccionar a Groups
-            TaskkerContext db = new TaskkerContext();
             Usuario loggedUser = null;
             List<Grupo> grupos = null;
             try 
             {
-                var usuario = from user in db.Usuarios
-                              where user.Email == userSession.Email
+                var usuario = from user in unitOfWork
+                                           .UsuarioRepository
+                                           .Get(u => u.Email == userSession.Email)
                               select user;
 
                 loggedUser = usuario.Single();
@@ -58,9 +73,13 @@ namespace Taskker.Controllers
 
                 Session["Grupos"] = nombresGrupos;
                 List<Tarea> tareasList;
+
+                Grupo currentGroup;
+
                 if (grupo == null || !grupos.Exists(g => g.Nombre == grupo))
                 {
                     Session["CurrentGroup"] = grupos[0];
+                    currentGroup = grupos[0];
                     var tareas = from tarea in grupos[0].Tareas
                                  select tarea;
                     tareasList = tareas.ToList();
@@ -70,14 +89,12 @@ namespace Taskker.Controllers
                                         where _grupo.Nombre == grupo
                                         select _grupo;
 
-                    var currentGroup = grupoSelected.Single();
+                    currentGroup = grupoSelected.Single();
 
                     Session["CurrentGroup"] = currentGroup;
-
-                    tareasList = currentGroup.Tareas.ToList();
                 }
 
-                return View(tareasList);
+                return View(currentGroup);
             }
             catch (InvalidOperationException)
             {
@@ -94,14 +111,14 @@ namespace Taskker.Controllers
         [HttpPost]
         public ActionResult CreateTask(TareaModel t)
         {
-            TaskkerContext db = new TaskkerContext();
             DateTime timeEstimated = Utils.parseTime(t.Estimado);
             List<string> asignees = new List<string>(t.Asignees.Split(','));
             List<Usuario> asigneesToAdd = new List<Usuario>();
             asignees.ForEach(nombre =>
             {
-                var found = from user in db.Usuarios
-                            where nombre == user.NombreApellido
+                var found = from user in unitOfWork
+                                         .UsuarioRepository
+                                         .Get(u => nombre == u.NombreApellido)
                             select user;
 
                 try
@@ -121,9 +138,8 @@ namespace Taskker.Controllers
                 GrupoID = ((Grupo)Session["CurrentGroup"]).ID
             };
 
-            db.Tareas.Add(newTarea);
-
-            db.SaveChanges();
+            unitOfWork.TareaRepository.Insert(newTarea);
+            unitOfWork.Save();
 
             return RedirectToAction("Index");
         }
@@ -135,16 +151,15 @@ namespace Taskker.Controllers
             try
             {
                 // Obtenemos la tarea que se debe actualizar
-                var tFound = from tarea in db.Tareas
-                             where tm.Id == tarea.ID
-                             select tarea;
+                var tareaFound = unitOfWork.TareaRepository.GetByID(tm.Id);
 
                 List<string> usuarios = null;
 
                 UserSession us = (UserSession) Session["UserSession"];
 
-                var user = from u in db.Usuarios
-                           where us.Email == u.Email
+                var user = from u in unitOfWork
+                                     .UsuarioRepository
+                                     .Get(u => u.Email == us.Email)
                            select u;
 
                 Usuario found_user = user.Single();
@@ -159,21 +174,37 @@ namespace Taskker.Controllers
                 {
                     try
                     {
-                        var userfound = db.Usuarios.Where(
-                            u => u.NombreApellido == username
-                        ).Single();
+                        var userfound = from u in unitOfWork.UsuarioRepository
+                                            .Get(_us => _us.NombreApellido == username)
+                                        select u;
                         
-                        filteredUsuarios.Add(userfound);
+                        filteredUsuarios.Add(userfound.Single());
                     }
                     catch (InvalidOperationException){}
                 }
 
-                Tarea tareaFound = tFound.Single();
+                TimeTracked tiempo = null;
+                bool newTrackedTime = false;
+                try
+                {
+                    tiempo = tareaFound.TiempoRegistrado.Single(
+                        tr => tr.TareaID == tareaFound.ID &&
+                              tr.UsuarioID == found_user.ID
+                    );
+                } catch (InvalidOperationException)
+                {
+                    if (tm.TiempoRegistrado != null)
+                    {
+                        tiempo = new TimeTracked
+                        {
+                            UsuarioID = found_user.ID,
+                            TareaID = tareaFound.ID,
+                            Time = Utils.parseTime(tm.TiempoRegistrado)
+                        };
 
-                TimeTracked tiempo = tareaFound.TiempoRegistrado.Single(
-                    tr => tr.TareaID == tareaFound.ID &&
-                          tr.UsuarioID == found_user.ID
-                );
+                        newTrackedTime = true;
+                    }
+                }
 
                 bool filter_flag = filteredUsuarios.All(
                     tareaFound.Usuarios.Contains
@@ -191,7 +222,7 @@ namespace Taskker.Controllers
                     tareaFound.Titulo == tm.Titulo
                 );
 
-                if (tm.TiempoRegistrado != null)
+                if (tm.TiempoRegistrado != null && !newTrackedTime)
                 {
                     filter_flag = filter_flag && (
                         tiempo.Time == Utils.parseTime(tm.TiempoRegistrado)
@@ -236,8 +267,8 @@ namespace Taskker.Controllers
                             typeof(TareaTipo),
                             tm.Tipo
                         );
-
-                    db.SaveChanges();
+                    unitOfWork.TareaRepository.Update(tareaFound);
+                    unitOfWork.Save();
                 }
             } catch (InvalidOperationException){}
 

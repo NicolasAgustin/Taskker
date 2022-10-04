@@ -267,8 +267,12 @@
     <Compile Include="Models\DAL\TaskkerInitializer.cs" />
     <Compile Include="Models\DAL\TimeTracked.cs" />
     <Compile Include="Models\DAL\Usuario.cs" />
+    <Compile Include="Models\GenericRepository.cs" />
+    <Compile Include="Models\ITareaRepository.cs" />
     <Compile Include="Models\Modelos.cs" />
+    <Compile Include="Models\TareaRepository.cs" />
     <Compile Include="Models\TareaTipo.cs" />
+    <Compile Include="Models\UnitOfWork.cs" />
     <Compile Include="Models\UserSession.cs" />
     <Compile Include="Models\UsersRoleProvider.cs" />
     <Compile Include="Models\Utils.cs" />
@@ -330,6 +334,7 @@
     <Content Include="Views\Groups\Index.cshtml" />
     <Content Include="Views\Groups\Join.cshtml" />
     <Content Include="Views\Groups\GroupDetails.cshtml" />
+    <Content Include="Views\Groups\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,14 +1,10 @@
-﻿using System;
+﻿using System.IO;
 using System.Data;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Taskker.Models;
 using Taskker.Models.DAL;
-using System.Net.Http;
-using System.IO;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Taskker.Controllers
 {
@@ -16,7 +12,12 @@ namespace Taskker.Controllers
     [CustomAuthenticationFilter]
     public class ReportController : Controller
     {
-        TaskkerContext db = new TaskkerContext();
+        private UnitOfWork unitOfWork;
+
+        public ReportController()
+        {
+            unitOfWork = new UnitOfWork();
+        }
 
         // GET: Report
         public ActionResult Index()
@@ -28,15 +29,14 @@ namespace Taskker.Controllers
         {
             UserSession us = (UserSession)Session["UserSession"];
 
-            var user = from u in db.Usuarios
-                       where u.Email == us.Email
+            var user = from u in unitOfWork.UsuarioRepository.Get(_user => _user.Email == us.Email)
                        select u;
 
             Usuario userFound = user.Single();
 
-            List<Tarea> tareas = db.Tareas.Where(
-                tarea => tarea.Usuarios.Any(u => u.ID == userFound.ID)
-            ).ToList();
+            List<Tarea> tareas = unitOfWork.TareaRepository.Get(
+                    tarea => tarea.Usuarios.Any(u => u.ID == userFound.ID)
+                ).ToList();
 
             DataTable report = new DataTable();
 
@@ -51,7 +51,7 @@ namespace Taskker.Controllers
                 .GroupBy(t => t.GrupoID)
                 .Select(g => g.ToList())
                 .ToList();
-
+            
             groupedTasks.ForEach(group => group.ForEach(
                 task => report.Rows.Add(
                     task.Grupo.Nombre,

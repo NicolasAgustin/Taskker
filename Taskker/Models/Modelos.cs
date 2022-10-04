@@ -5,6 +5,7 @@ namespace Taskker.Models
 {
     public class GrupoModel
     {
+        [Required(ErrorMessage = "El campo Nombre es obligatorio.")]
         public string nombre { get; set; }
     }
 

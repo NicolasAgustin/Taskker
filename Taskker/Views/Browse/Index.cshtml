@@ -1,6 +1,8 @@
 ﻿@using Taskker.Models
 @using Taskker.Models.DAL
-@model List<Tarea>
+@* cambiar modelo por Grupo *@
+@model Grupo
+@*List<Tarea>*@
 @{
     var session = Session["UserSession"] as UserSession;
     var email = session.Email;
@@ -135,14 +137,16 @@
 </div>
 
 <div class="row">
+    <h2>@Model.Nombre</h2>
+</div>
+
+<div class="row">
     <a class="waves-effect waves-light btn modal-trigger" data-target="create" id="add-task">
         <i class="small material-icons left">add</i>Crear tarea
     </a>
 </div>
 
 <div class="row">
-    @{// la funcion download no se encuentra
-     }
     <a class="waves-effect waves-light btn" id="download-report" href="@Url.Action("DownloadReport", "Report")">
         <i class="small material-icons left">add</i>Descargar reporte de horas
     </a>
@@ -165,7 +169,7 @@
 
         <tbody>
             @{
-                foreach (var tarea in Model)
+                foreach (var tarea in Model.Tareas)
                 {
                     <tr data-target="details" class="modal-trigger">
                         <td>@tarea.Titulo</td>

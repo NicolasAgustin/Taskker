@@ -10,5 +10,6 @@ namespace Taskker.Models
         public string NombreApellido { get; set; }
         public string Email { get; set; }
         public string EncodedPicture { get; set; }
+        public int ID { get; set; }
     }
 }

@@ -60,6 +60,10 @@ namespace Taskker.Models.DAL
                 new Grupo{
                     Nombre = "Angular",
                     UsuarioID = usuarios.Single(u => u.Email == "nicolas.a.sandez@gmail.com").ID
+                },
+                new Grupo{
+                    Nombre = "TEST",
+                    UsuarioID = usuarios.Single(u => u.Email == "agustin@gmail.com").ID
                 }
             };
 

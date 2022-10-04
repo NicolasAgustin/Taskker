@@ -14,7 +14,13 @@ namespace Taskker.Controllers
     [CustomAuthenticationFilter]
     public class GroupsController : Controller
     {
-        TaskkerContext db = new TaskkerContext();
+        private UnitOfWork unitOfWork;
+
+        public GroupsController()
+        {
+            unitOfWork = new UnitOfWork();
+        }
+
         // GET: Groups
         public ActionResult Index()
         {
@@ -25,17 +31,81 @@ namespace Taskker.Controllers
         {
             return View();
         }
+
         [HttpPost]
+        public ActionResult Join(string nombre)
+        {
+            UserSession us = (UserSession)Session["UserSession"];
+
+            var user = from u in unitOfWork
+                       .UsuarioRepository
+                       .Get(_user => _user.Email == us.Email)
+                       select u;
+            try
+            {
+                Usuario found = user.Single();
+
+                var group = from g in unitOfWork
+                                .GrupoRepository
+                                .Get(_grp => _grp.Nombre == nombre)
+                            select g;
+
+                Grupo gFound = group.Single();
+                
+                gFound.Usuarios.Add(found);
+
+                unitOfWork.Save();
+            } catch (InvalidOperationException) {}
+
+            return RedirectToAction("Index", "Browse");
+        }
+
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Create(GrupoModel gm)
+        {
+            var grp = from g in unitOfWork.GrupoRepository.Get(gr => gr.Nombre == gm.nombre)
+                      select g;
+
+            try
+            {
+                grp.Single();
+                // Ya existe el grupo
+                ModelState.AddModelError("Error", "El grupo ya existe.");
+                return View();
+            }
+            catch (InvalidOperationException)
+            {
+                UserSession us = (UserSession)Session["UserSession"];
+                Grupo nuevo = new Grupo
+                {
+                    Nombre = gm.nombre,
+                    UsuarioID = us.ID
+                };
+
+                unitOfWork.GrupoRepository.Insert(nuevo);
+
+                unitOfWork.Save();
+            }
+
+            return RedirectToAction("Index", "Browse");
         }
 
         [HttpGet]
         public ActionResult GetGroups()
         {
             List<string> nombresGrupos = new List<string>();
-            db.Grupos.ToList().ForEach(g => nombresGrupos.Add(g.Nombre));
+
+            unitOfWork
+                .GrupoRepository
+                .Get()
+                .ToList()
+                .ForEach(g => nombresGrupos.Add(g.Nombre));
             
             var json = JsonSerializer.Serialize<List<string>>(nombresGrupos);
             return Json(json, JsonRequestBehavior.AllowGet);
@@ -45,8 +115,7 @@ namespace Taskker.Controllers
         [Route("GroupDetails/{gname:string}")]
         public ActionResult GroupDetails(string gname)
         {
-            var group = from g in db.Grupos
-                        where g.Nombre == gname
+            var group = from g in unitOfWork.GrupoRepository.Get(_grp => _grp.Nombre == gname)
                         select g;
 
             Grupo groupFound = group.Single();
