@@ -103,12 +103,15 @@ namespace Taskker.Controllers
         }
 
         [HttpGet]
+        [AuthorizeRoleAttribute("Project Manager")]
+        //[AuthorizeRoleAttribute("Project Manager")]
         public ActionResult CreateTask()
         {
             return PartialView();
         }
 
         [HttpPost]
+        [AuthorizeRoleAttribute("Project Manager")]
         public ActionResult CreateTask(TareaModel t)
         {
             DateTime timeEstimated = Utils.parseTime(t.Estimado);

@@ -36,6 +36,12 @@ namespace Taskker.Models.DAL
 
             context.SaveChanges();
 
+            context.Usuarios.SingleOrDefault(
+                u => u.Email == "nicolas.a.sandez@gmail.com"
+            ).Roles = new List<Rol>() { new Rol { Nombre = "Project Manager" } };
+
+            context.SaveChanges();
+
             List<Rol> roles = new List<Rol>
             {
                 new Rol{ Nombre = "Project Manager" },

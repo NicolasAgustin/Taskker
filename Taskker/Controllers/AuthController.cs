@@ -58,7 +58,7 @@ namespace Taskker.Controllers
 
                 var authTicket = new FormsAuthenticationTicket(
                     1,
-                    user_logged.Email,
+                    user_logged.ID.ToString(),
                     DateTime.Now,
                     DateTime.Now.AddMinutes(30),
                     false,

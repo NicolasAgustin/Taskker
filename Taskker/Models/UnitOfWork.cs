@@ -18,6 +18,14 @@ namespace Taskker.Models
         private GenericRepository<Grupo> grupoRepository;
         private GenericRepository<Rol> rolRepository;
 
+        public UsersRoleProvider roleProvider;
+
+        public UnitOfWork()
+        {
+            this.context = new TaskkerContext();
+            this.roleProvider = new UsersRoleProvider();
+        }
+
         public GenericRepository<Tarea> TareaRepository
         {
             get

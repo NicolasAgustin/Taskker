@@ -21,7 +21,19 @@ namespace Taskker.Models
 
         public override void CreateRole(string roleName)
         {
-            throw new NotImplementedException();
+            if (this.RoleExists(roleName))
+                return;
+            
+            Rol newRol = new Rol {
+                Nombre = roleName 
+            };
+
+            using(var context = new TaskkerContext())
+            {
+                context.Roles.Add(newRol);
+                context.SaveChanges();
+            }
+
         }
 
         public override bool DeleteRole(string roleName, bool throwOnPopulatedRole)
@@ -36,7 +48,10 @@ namespace Taskker.Models
 
         public override string[] GetAllRoles()
         {
-            throw new NotImplementedException();
+            using (var context = new TaskkerContext())
+            {
+                return context.Roles.Select(r => r.Nombre).ToArray();
+            }
         }
 
         public override string[] GetRolesForUser(string email)
@@ -62,9 +77,19 @@ namespace Taskker.Models
             throw new NotImplementedException();
         }
 
-        public override bool IsUserInRole(string username, string roleName)
+        public override bool IsUserInRole(string email, string roleName)
         {
-            throw new NotImplementedException();
+            using (var context = new TaskkerContext())
+            {
+                var user = context.Usuarios.SingleOrDefault(u => u.Email == email);
+                var userRoles = context.Roles.Select(r => r.Nombre);
+
+                if (user == null)
+                    return false;
+
+                return user.Roles != null &&
+                    userRoles.Any(r => r == roleName);
+            }
         }
 
         public override void RemoveUsersFromRoles(string[] usernames, string[] roleNames)
@@ -74,7 +99,12 @@ namespace Taskker.Models
 
         public override bool RoleExists(string roleName)
         {
-            throw new NotImplementedException();
+            
+            using(var context = new TaskkerContext())
+            {
+                var rol = context.Roles.SingleOrDefault(r => r.Nombre == roleName);
+                return rol != null;
+            }
         }
     }
 }
