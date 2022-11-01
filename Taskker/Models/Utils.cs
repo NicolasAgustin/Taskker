@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Data;
 using System.IO;
+using System.Data;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
@@ -151,6 +152,14 @@ namespace Taskker.Models
             }
 
             return sb.ToString();
+        }
+    
+    
+        public static string GenerateUUID()
+        {
+            Guid guid = Guid.NewGuid();
+            string uuid = guid.ToString();
+            return uuid;
         }
     }
 }

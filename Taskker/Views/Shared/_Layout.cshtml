@@ -13,14 +13,37 @@
     @RenderSection("scripts", required: false)
 </head>
 <body>
+    <main>
+        @Scripts.Render("~/lib/materialize/js/materialize.min.js")
+        @Styles.Render("~/lib/materialize/css/materialize.min.css")
+        @RenderBody()
 
-    @Scripts.Render("~/lib/materialize/js/materialize.min.js")
-    @Styles.Render("~/lib/materialize/css/materialize.min.css")
-    @RenderBody()
+        <hr />
+    </main>
 
-    <hr />
-    <footer>
-        <p>&copy; @DateTime.Now.Year - Mi aplicación ASP.NET</p>
+    <footer class="page-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col l6 s12">
+                    <h5 class="white-text">Contact</h5>
+                    <p class="grey-text text-lighten-4">nicolas.a.sandez@gmail.com</p>
+                </div>
+                <div class="col l4 offset-l2 s12">
+                    <h5 class="white-text">Enlaces</h5>
+                    <ul>
+                        <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
+                        <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
+                        <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
+                        <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <div class="container">
+                © 2022 Copyright
+            </div>
+        </div>
     </footer>
 
 </body>

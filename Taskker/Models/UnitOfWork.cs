@@ -17,6 +17,7 @@ namespace Taskker.Models
         private GenericRepository<Usuario> usuarioRepository;
         private GenericRepository<Grupo> grupoRepository;
         private GenericRepository<Rol> rolRepository;
+        private GenericRepository<TimeTracked> ttrackedRepository;
 
         public UsersRoleProvider roleProvider;
 
@@ -24,6 +25,18 @@ namespace Taskker.Models
         {
             this.context = new TaskkerContext();
             this.roleProvider = new UsersRoleProvider();
+        }
+
+        public GenericRepository<TimeTracked> TtrackedRepository
+        {
+            get
+            {
+                if (this.ttrackedRepository == null)
+                {
+                    this.ttrackedRepository = new GenericRepository<TimeTracked>(context);
+                }
+                return this.ttrackedRepository;
+            }
         }
 
         public GenericRepository<Tarea> TareaRepository

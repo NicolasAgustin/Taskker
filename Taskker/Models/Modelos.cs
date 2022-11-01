@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace Taskker.Models
 {
@@ -26,6 +27,11 @@ namespace Taskker.Models
         public string Password { get; set; }
         
         public HttpPostedFileBase Photo { set; get; }
+    }
+
+    public class UsuarioModel : RegistroModel
+    {
+        
     }
 
     public class LoginModel
@@ -60,5 +66,14 @@ namespace Taskker.Models
         public string Tipo { get; set; }
         public int Id { get; set; }
         public string TiempoRegistrado { get; set; }
+        public ICollection<TimeTrackedModel> Tiempos { get; set; }
+    }
+
+    public class TimeTrackedModel
+    {
+        public string Tiempo { get; set; }
+        public int UsuarioID { get; set; }
+        public int TareaID { get; set; }
+        public string Delete { get; set; }
     }
 }

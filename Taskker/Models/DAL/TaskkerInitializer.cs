@@ -91,8 +91,6 @@ namespace Taskker.Models.DAL
             tareas.ForEach(task => context.Tareas.Add(task));
             context.SaveChanges();
 
-            Tarea t = tareas.Single(tarea => tarea.ID == 1);
-
             List<TimeTracked> tiempos = new List<TimeTracked>()
             {
                 new TimeTracked
@@ -105,7 +103,7 @@ namespace Taskker.Models.DAL
                 }
             };
 
-            t.TiempoRegistrado = tiempos;
+            tiempos.ForEach(tt => context.TiemposTrackeados.Add(tt));
 
             context.SaveChanges();
 

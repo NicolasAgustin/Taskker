@@ -63,6 +63,14 @@ namespace Taskker.Controllers
 
                 loggedUser = usuario.Single();
 
+                List<string> roles = new List<string>();
+
+                loggedUser.Roles.ToList().ForEach(
+                        rol => roles.Add(rol.Nombre)
+                );
+
+                ViewData["Roles"] = roles;
+
                 grupos = loggedUser.Grupos.Concat(loggedUser.CreatedGroups).ToList();
 
                 if (grupos.Count == 0)
@@ -103,8 +111,16 @@ namespace Taskker.Controllers
         }
 
         [HttpGet]
+        [Route("DeleteTimeTracked/{id:int}")]
+        public ActionResult DeleteTimeTracked(int id)
+        {
+            unitOfWork.TtrackedRepository.Delete(id);
+            unitOfWork.Save();
+            return null;
+        }
+
+        [HttpGet]
         [AuthorizeRoleAttribute("Project Manager")]
-        //[AuthorizeRoleAttribute("Project Manager")]
         public ActionResult CreateTask()
         {
             return PartialView();
@@ -205,6 +221,8 @@ namespace Taskker.Controllers
                             Time = Utils.parseTime(tm.TiempoRegistrado)
                         };
 
+                        unitOfWork.TtrackedRepository.Insert(tiempo);
+
                         newTrackedTime = true;
                     }
                 }
@@ -253,7 +271,10 @@ namespace Taskker.Controllers
                     tareaFound.Usuarios = filteredUsuarios;
                     tareaFound.Estimado = Utils.parseTime(tm.Estimado);
 
-                    if (tm.TiempoRegistrado != null)
+                    // Hay que hacer una distincion entre TiempoRegistrado, que es el tiempo total de la tarea
+                    // y el tiempo que cargan los usuarios
+
+                    if (tm.TiempoRegistrado != null && !newTrackedTime)
                     {
                         DateTime parsedTime = Utils.parseTime(tm.TiempoRegistrado);
 
@@ -378,12 +399,14 @@ namespace Taskker.Controllers
 
                 ViewData["TupleData"] = photoUsuario;
 
-                List<(DateTime, Usuario, int)> displayTimes = 
-                    new List<(DateTime, Usuario, int)>();
+                List<(DateTime, int, int, int)> displayTimes = 
+                    new List<(DateTime, int, int, int)>();
 
-                display.TiempoRegistrado.ToList().ForEach(t =>
+                var tiemposTarea = unitOfWork.TtrackedRepository.Get(tt => tt.TareaID == display.ID);
+
+                tiemposTarea.ToList().ForEach(t =>
                 {
-                    displayTimes.Add((t.Time, t.Usuario, t.ID));
+                    displayTimes.Add((t.Time, t.TareaID, t.UsuarioID, t.ID));
                 });
 
                 ViewData["Times"] = displayTimes;

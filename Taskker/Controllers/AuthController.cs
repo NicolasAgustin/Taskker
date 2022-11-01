@@ -30,8 +30,8 @@ namespace Taskker.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel _user)
         {
-            _user.Email = "nicolas.a.sandez@gmail.com";
-            _user.Password = "pass123";
+            //_user.Email = "nicolas.a.sandez@gmail.com";
+            //_user.Password = "pass123";
             // Mockear para testear vista con usuarios de la base de datos
             if (!ModelState.IsValid)
                 return View(_user);

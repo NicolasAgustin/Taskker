@@ -17,12 +17,37 @@
     }
 </style>
 
+<script>
+    $(document).ready(function () {
+        var encontrados = $("a[name=borrar-tiempo]").toArray()
+        encontrados.forEach(e => e.addEventListener('click', function (elem) {
+            var target = elem.target
+            var index = target.getAttribute('data-index')
+            $.ajax({
+                url: "/Browse/DeleteTimeTracked",
+                type: 'GET',
+                data: { id: index },
+                success: function () {
+                    target.parentElement.remove()
+                }
+            })
+        }))
+    })
+</script>
+
 <!-- Modal Structure -->
 <div class="modal-content red lighten-4"
      id="details-task"
      data-id="@Model.ID">
     <div class="container">
         <div class="row">
+            @* Probar con una lista donde cada elemento li tenga un atributo name como:
+                lista[0].tiempo
+                lista2[0].nombre
+                lista[1].tiempo ...
+                lista[n].tiempo ...
+             de esta forma usamos el model binding
+                *@
             @using (Html.BeginForm("UpdateTask", "Browse", FormMethod.Post, new { @class = "col s12", @id = "update-form" }))
             {
                 <h4 id="modal-title"
@@ -92,12 +117,12 @@
                     <ul id="dropdown-hours" class="dropdown-content">
                     </ul>
                 </div>
-                // Input para trackeo de horas
-                // cada vez que actualicemos la tarea hay que sumar las horas 
+                                // Input para trackeo de horas
+                                // cada vez que actualicemos la tarea hay que sumar las horas 
                 <div class="row">
                     <div class="col s6">
                         <div class="input-field dropdown-trigger" data-target="dropdown-hours2" id="input-hours2">
-                            <input id="hours2" placeholder="Registrar horas" type="text" class="validate" name="tiemporegistrado">
+                            <input id="hours2" placeholder="Registrar horas" type="text" class="validate" name="TiempoRegistrado">
                         </div>
                     </div>
 
@@ -108,11 +133,15 @@
                 </div>
                 <div class="row">
                     <ul class="collection">
-                        @foreach(var tiempo in (List<(DateTime, Usuario, int)>)ViewData["Times"])
+                        @{var tiempos = (List<(DateTime, int, int, int)>)ViewData["Times"];}
+                        @for (int i = 0; i < tiempos.Count; i++)
                         {
-                            <li class="collection-item" style="display: inline" data-index="@tiempo.Item3">
-                            @tiempo.Item1.ToString("HH:mm") @tiempo.Item2.NombreApellido
-                                <button type="button">Borrar</button>
+                            <li class="collection-item" style="display: inline" tabindex="@i">
+                                <p>@tiempos[i].Item1.ToString()</p>
+                                <a class="btn" name="borrar-tiempo" data-index="@tiempos[i].Item4">borrar</a>
+                                <input type="hidden" name="Tiempos[@i].Tiempo" value="@tiempos[i].Item1.ToString()"/>
+                                <input type="hidden" name="Tiempos[@i].UsuarioID" value="@tiempos[i].Item2"/>
+                                <input type="hidden" name="Tiempos[@i].TareaID" value="@tiempos[i].Item3"/>
                             </li>
                         }
                     </ul>

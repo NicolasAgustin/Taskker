@@ -53,7 +53,7 @@
         $('#details').modal({
             onOpenStart: function (modal, trigger) {
                 console.log('Se abre el modal details')
-                
+
                 $.ajax({
                     url: "/Browse/TaskDetails",
                     type: 'GET',
@@ -140,11 +140,15 @@
     <h2>@Model.Nombre</h2>
 </div>
 
-<div class="row">
-    <a class="waves-effect waves-light btn modal-trigger" data-target="create" id="add-task">
-        <i class="small material-icons left">add</i>Crear tarea
-    </a>
-</div>
+
+@if (((List<string>)ViewData["Roles"]).Contains("Project Manager"))
+{
+    <div class="row">
+        <a class="waves-effect waves-light btn modal-trigger" data-target="create" id="add-task">
+            <i class="small material-icons left">add</i>Crear tarea
+        </a>
+    </div>
+}
 
 <div class="row">
     <a class="waves-effect waves-light btn" id="download-report" href="@Url.Action("DownloadReport", "Report")">

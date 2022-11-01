@@ -16,6 +16,7 @@ namespace Taskker.Models.DAL
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Grupo> Grupos { get; set; }
         public DbSet<Tarea> Tareas { get; set; }
+        public DbSet<TimeTracked> TiemposTrackeados { get; set; }
         public DbSet<Rol> Roles { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
