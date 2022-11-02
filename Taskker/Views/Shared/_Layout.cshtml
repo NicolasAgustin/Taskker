@@ -13,12 +13,12 @@
     @RenderSection("scripts", required: false)
 </head>
 <body>
+
     <main>
         @Scripts.Render("~/lib/materialize/js/materialize.min.js")
         @Styles.Render("~/lib/materialize/css/materialize.min.css")
         @RenderBody()
 
-        <hr />
     </main>
 
     <footer class="page-footer">
@@ -39,11 +39,13 @@
                 </div>
             </div>
         </div>
+
         <div class="footer-copyright">
             <div class="container">
                 © 2022 Copyright
             </div>
         </div>
+
     </footer>
 
 </body>

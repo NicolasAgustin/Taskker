@@ -1,0 +1,46 @@
+﻿@using Taskker.Models;
+
+@{
+    var session = Session["UserSession"] as UserSession;
+    var email = session.Email;
+    var picture = session.EncodedPicture;
+    var nombre = session.NombreApellido;
+    var gruposNombres = (List<string>)Session["Grupos"];
+}
+
+<script>
+    // Inicializamos el sidenav
+    document.addEventListener('DOMContentLoaded', function () {
+        var elems = document.querySelectorAll('.sidenav');
+        var instances = M.Sidenav.init(
+            elems,
+            {
+                edge: 'left',
+            });
+    });
+</script>
+
+<ul id="slide-out" class="sidenav">
+    <li>
+        <div class="user-view">
+            <div class="background">
+                <img src="@Url.Content("~/images/fondo-rosa.jpg")">
+            </div>
+            <a href="#user"><img class="circle" src="@picture"></a>
+            <a href="#name"><span class="white-text name">@nombre</span></a>
+            <a href="#email"><span class="white-text email">@email</span></a>
+            <a href="@Url.Action("Logout", "Auth")">Salir</a> | <a href="@Url.Action("Index", "Account")">Perfil</a>
+        </div>
+    </li>
+    <li><a href="@Url.Action("Create", "Groups")"><i class="material-icons">group</i>Crear grupo</a></li>
+    <li><a href="@Url.Action("Join", "Groups")"><i class="material-icons">group_add</i>Unirse</a></li>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">Grupos</a></li>
+    @{
+        foreach (var grupo in gruposNombres)
+        {
+            <li><a class="waves-effect" href="@Url.Action("Index", "Browse", new { grupo = grupo })">@grupo</a></li>
+        }
+    }
+
+</ul>

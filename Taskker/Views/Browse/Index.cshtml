@@ -1,8 +1,8 @@
 ﻿@using Taskker.Models
 @using Taskker.Models.DAL
-@* cambiar modelo por Grupo *@
+
 @model Grupo
-@*List<Tarea>*@
+
 @{
     var session = Session["UserSession"] as UserSession;
     var email = session.Email;
@@ -24,15 +24,6 @@
 </style>
 
 <script>
-    // Inicializamos el sidenav
-    document.addEventListener('DOMContentLoaded', function () {
-        var elems = document.querySelectorAll('.sidenav');
-        var instances = M.Sidenav.init(
-            elems,
-            {
-                edge: 'left',
-            });
-    });
 
     // Inicializamos el modal
     document.addEventListener('DOMContentLoaded', function () {
@@ -101,59 +92,34 @@
 
 <nav>
     <div class="nav-wrapper">
-        <a href="#" class="brand-logo">Taskker</a>
+        <a href="@Url.Action("Index", "Home")" class="brand-logo">Taskker</a>
     </div>
 </nav>
 
-<ul id="slide-out" class="sidenav">
-    <li>
-        <div class="user-view">
-            <div class="background">
-                <img src="@Url.Content("~/images/fondo-rosa.jpg")">
-            </div>
-            <a href="#user"><img class="circle" src="@picture"></a>
-            <a href="#name"><span class="white-text name">@nombre</span></a>
-            <a href="#email"><span class="white-text email">@email</span></a>
-            <a href="@Url.Action("Logout", "Auth")">Salir</a> | <a href="#">Perfil</a>
-        </div>
-    </li>
-    <li><a href="@Url.Action("Create", "Groups")"><i class="material-icons">group</i>Crear grupo</a></li>
-    <li><a href="@Url.Action("Join", "Groups")"><i class="material-icons">group_add</i>Unirse</a></li>
-    <li><div class="divider"></div></li>
-    <li><a class="subheader">Grupos</a></li>
-    @{
-        foreach (var grupo in gruposNombres)
-        {
-            <li><a class="waves-effect" href="@Url.Action("Index", "Browse", new { grupo = grupo })">@grupo</a></li>
-        }
-    }
-
-</ul>
-
-<div class="row">
-    <a href="#" data-target="slide-out" class="sidenav-trigger">
-        <i class="small material-icons">menu</i>
-    </a>
-</div>
+@Html.Partial("_Menu")
 
 <div class="row">
     <h2>@Model.Nombre</h2>
 </div>
 
+<div class="row">
 
-@if (((List<string>)ViewData["Roles"]).Contains("Project Manager"))
-{
-    <div class="row">
+    <a href="#" data-target="slide-out" class="sidenav-trigger waves-effect waves-light btn">
+        <i class="small material-icons left">menu</i>Menu
+    </a>
+
+    @if (((List<string>)ViewData["Roles"]).Contains("Project Manager"))
+    {
+
         <a class="waves-effect waves-light btn modal-trigger" data-target="create" id="add-task">
             <i class="small material-icons left">add</i>Crear tarea
         </a>
-    </div>
-}
+    }
 
-<div class="row">
     <a class="waves-effect waves-light btn" id="download-report" href="@Url.Action("DownloadReport", "Report")">
         <i class="small material-icons left">add</i>Descargar reporte de horas
     </a>
+
 </div>
 
 <!-- Modal Trigger -->

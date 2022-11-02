@@ -11,14 +11,25 @@ using System.Collections.Generic;
 namespace Taskker.Controllers
 {
     [Authorize]
+    [CustomAuthenticationFilter]
     public class AccountController : Controller
     {
         private UnitOfWork unitOfWork;
 
+        public AccountController()
+        {
+            this.unitOfWork = new UnitOfWork();
+        }
+
         // GET: Account
+        [HttpGet]
         public ActionResult Index()
         {
-            return View();
+            UserSession us = (UserSession)Session["UserSession"];
+
+            Usuario logged = unitOfWork.UsuarioRepository.GetByID(us.ID);
+
+            return View("Profile", logged);
         }
 
         [HttpPost]

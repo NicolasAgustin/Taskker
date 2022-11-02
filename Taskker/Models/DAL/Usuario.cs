@@ -7,7 +7,17 @@ namespace Taskker.Models.DAL
     {
         [Key]
         public int ID { get; set; }
-        public string NombreApellido { get; set; }
+        public string NombreApellido {
+            get {
+                return Utils.Capitalize(this.Nombre) + " " + Utils.Capitalize(this.Apellido);
+            }
+            set {
+                this.Nombre = value.Split(' ')[0];
+                this.Apellido = value.Split(' ')[1];
+            }
+        }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
         public string Email { get; set; }
         public string ProfilePicturePath { get; set; }
         public byte[] EncptPassword { get; set; }

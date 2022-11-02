@@ -47,8 +47,16 @@ namespace Taskker.Controllers
 
             try
             {
+
                 // Single arroja una excepcion
                 Usuario user_logged = user_found.Single();
+
+                DirectoryInfo info = new DirectoryInfo(user_logged.ProfilePicturePath);
+
+                if (!info.Exists)
+                {
+                    user_logged.ProfilePicturePath = ConfigurationManager.AppSettings["DefaultProfile"];
+                }
 
                 FormsAuthentication.SetAuthCookie(user_logged.Email, false);
                 FormsAuthentication.SetAuthCookie(
@@ -136,7 +144,8 @@ namespace Taskker.Controllers
                 // Hasheamos la password para guardarla en la base de datos
                 nuevo.EncptPassword = Utils.HashPassword(_user.Password);
 
-                nuevo.NombreApellido = _user.Nombre + " " + _user.Apellido;
+                nuevo.Nombre = _user.Nombre;
+                nuevo.Apellido = _user.Apellido;
                 // Si el usuario no subio una foto entonces se asigna la foto por defecto
                 if (_user.Photo == null)
                 {
@@ -163,8 +172,6 @@ namespace Taskker.Controllers
                     nuevo.ProfilePicturePath = new_filepath;
                 }
 
-                
-
                 // Agregamos el usuario nuevo al contexto
                 unitOfWork.UsuarioRepository.Insert(nuevo);
 
@@ -175,7 +182,7 @@ namespace Taskker.Controllers
 
                 UserSession userSession = new UserSession()
                 {
-                    NombreApellido = Utils.Capitalize(nuevo.NombreApellido),
+                    NombreApellido = nuevo.NombreApellido,
                     Email = nuevo.Email,
                     EncodedPicture = Utils.EncodePicture(nuevo.ProfilePicturePath),
                     ID = nuevo.ID
