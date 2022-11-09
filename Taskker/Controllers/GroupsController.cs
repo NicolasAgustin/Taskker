@@ -52,10 +52,14 @@ namespace Taskker.Controllers
 
                 Grupo gFound = group.Single();
                 
-                gFound.Usuarios.Add(found);
+                if(!gFound.Usuarios.Contains(found))
+                    gFound.Usuarios.Add(found);
 
                 unitOfWork.Save();
-            } catch (InvalidOperationException) {}
+            } catch (InvalidOperationException) {
+                ModelState.AddModelError("Error", "El grupo no existe.");
+                return View();
+            }
 
             return RedirectToAction("Index", "Browse");
         }
@@ -72,6 +76,10 @@ namespace Taskker.Controllers
             var grp = from g in unitOfWork.GrupoRepository.Get(gr => gr.Nombre == gm.nombre)
                       select g;
 
+            UserSession us = (UserSession)Session["UserSession"];
+
+            var user = unitOfWork.UsuarioRepository.GetByID(us.ID);
+
             try
             {
                 grp.Single();
@@ -81,12 +89,14 @@ namespace Taskker.Controllers
             }
             catch (InvalidOperationException)
             {
-                UserSession us = (UserSession)Session["UserSession"];
+                
                 Grupo nuevo = new Grupo
                 {
                     Nombre = gm.nombre,
                     UsuarioID = us.ID
                 };
+
+                nuevo.Usuarios.Add(user);
 
                 unitOfWork.GrupoRepository.Insert(nuevo);
 
@@ -119,7 +129,6 @@ namespace Taskker.Controllers
                         select g;
 
             Grupo groupFound = group.Single();
-
             return PartialView("GroupDetails", groupFound);
         }
     }

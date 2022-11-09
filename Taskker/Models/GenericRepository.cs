@@ -79,11 +79,7 @@ namespace Taskker.Models
             dbSet.Attach(entityToUpdate);
             
             EntityState state = context.Entry(entityToUpdate).State;
-            
-            if (state != EntityState.Unchanged)
-            {
-                context.Entry(entityToUpdate).State = EntityState.Modified;
-            }
+            context.Entry(entityToUpdate).State = EntityState.Modified;
         }
     }
 }

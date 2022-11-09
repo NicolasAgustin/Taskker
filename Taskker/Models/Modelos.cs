@@ -27,6 +27,7 @@ namespace Taskker.Models
         public string Password { get; set; }
         
         public HttpPostedFileBase Photo { set; get; }
+        public string EncodedPhoto { get; set; }
     }
 
     public class UsuarioModel : RegistroModel

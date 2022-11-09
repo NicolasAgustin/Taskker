@@ -71,7 +71,7 @@ namespace Taskker.Controllers
 
                 ViewData["Roles"] = roles;
 
-                grupos = loggedUser.Grupos.Concat(loggedUser.CreatedGroups).ToList();
+                grupos = loggedUser.Grupos.Concat(loggedUser.CreatedGroups).Distinct().ToList();
 
                 if (grupos.Count == 0)
                     return RedirectToAction("Index", "Groups");
@@ -227,44 +227,45 @@ namespace Taskker.Controllers
                     }
                 }
 
-                bool filter_flag = filteredUsuarios.All(
-                    tareaFound.Usuarios.Contains
-                );
+                //bool filter_flag = filteredUsuarios.All(
+                //    tareaFound.Usuarios.Contains
+                //);
 
-                filter_flag = filter_flag && (
-                    tareaFound.Descripcion == tm.Descripcion
-                );
-                
-                filter_flag = filter_flag && (
-                    Utils.parseTime(tm.Estimado) == tareaFound.Estimado
-                );
-                
-                filter_flag = filter_flag && (
-                    tareaFound.Titulo == tm.Titulo
-                );
+                //filter_flag = filter_flag && (
+                //    tareaFound.Descripcion == tm.Descripcion
+                //);
 
-                if (tm.TiempoRegistrado != null && !newTrackedTime)
-                {
-                    filter_flag = filter_flag && (
-                        tiempo.Time == Utils.parseTime(tm.TiempoRegistrado)
-                    );
-                }
+                //filter_flag = filter_flag && (
+                //    Utils.parseTime(tm.Estimado).ToString("HH:mm")
+                //    == tareaFound.Estimado.ToString("HH:mm")
+                //);
 
-                if (tm.Tipo == null && tareaFound.Tipo == TareaTipo.SinTipo)
-                {
-                    filter_flag = filter_flag && true;
-                }
-                else
-                {
-                    filter_flag = filter_flag && (
-                        tareaFound.Tipo == (TareaTipo) Enum.Parse(
-                            typeof(TareaTipo),
-                            tm.Tipo
-                        )
-                    );
-                }
+                //filter_flag = filter_flag && (
+                //    tareaFound.Titulo == tm.Titulo
+                //);
 
-                if (!filter_flag)
+                //if (tm.TiempoRegistrado != null && !newTrackedTime)
+                //{
+                //    filter_flag = filter_flag && (
+                //        tiempo.Time == Utils.parseTime(tm.TiempoRegistrado)
+                //    );
+                //}
+
+                //if (tm.Tipo == null && tareaFound.Tipo == TareaTipo.SinTipo)
+                //{
+                //    filter_flag = filter_flag && true;
+                //}
+                //else
+                //{
+                //    filter_flag = filter_flag && (
+                //        tareaFound.Tipo == (TareaTipo) Enum.Parse(
+                //            typeof(TareaTipo),
+                //            tm.Tipo
+                //        )
+                //    );
+                //}
+                bool filter_flag = true;
+                if (filter_flag)
                 {
                     tareaFound.Descripcion = tm.Descripcion;
                     tareaFound.Titulo = tm.Titulo;

@@ -51,9 +51,7 @@ namespace Taskker.Controllers
                 // Single arroja una excepcion
                 Usuario user_logged = user_found.Single();
 
-                DirectoryInfo info = new DirectoryInfo(user_logged.ProfilePicturePath);
-
-                if (!info.Exists)
+                if (!System.IO.File.Exists(user_logged.ProfilePicturePath))
                 {
                     user_logged.ProfilePicturePath = ConfigurationManager.AppSettings["DefaultProfile"];
                 }

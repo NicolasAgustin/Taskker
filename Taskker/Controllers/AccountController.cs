@@ -41,12 +41,14 @@ namespace Taskker.Controllers
             toModify.Email = rm.Email;
             toModify.NombreApellido = rm.Nombre + " " + rm.Apellido;
 
-            System.IO.File.Delete(toModify.ProfilePicturePath);
+            // Solamente cuando se implemente la eliminacion de foto
+            // System.IO.File.Delete(toModify.ProfilePicturePath);
 
             if (rm.Photo == null)
             {
                 // Obtenemos el path desde appsettings en web.config
-                toModify.ProfilePicturePath = ConfigurationManager.AppSettings["DefaultProfile"];
+                // toModify.ProfilePicturePath = ConfigurationManager.AppSettings["DefaultProfile"];
+                // Si la foto es null entonces no se modifico, habria que tener en cuenta el caso de si se elimina
             }
             else
             {

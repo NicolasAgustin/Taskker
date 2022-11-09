@@ -6,6 +6,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using System.Drawing;
 
 namespace Taskker.Models
 {
@@ -39,6 +40,17 @@ namespace Taskker.Models
             catch (IOException)
             {
                 return string.Empty;
+            }
+        }
+
+        public static Image ImageFromBase64(string encoded)
+        {
+            byte[] imgbytes = Convert.FromBase64String(encoded);
+
+            using(var ms = new MemoryStream(imgbytes, 0, imgbytes.Length))
+            {
+                Image img = Image.FromStream(ms, true);
+                return img;
             }
         }
 

@@ -77,6 +77,8 @@ namespace Taskker.Models.DAL
 
             context.SaveChanges();
 
+            context.Grupos.Single(g => g.ID == 1).Usuarios = usuarios;
+
             List<Tarea> tareas = new List<Tarea>
             {
                 new Tarea{
