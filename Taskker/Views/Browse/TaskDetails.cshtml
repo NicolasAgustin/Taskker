@@ -140,16 +140,22 @@
                 </div>
                 <div class="row">
                     <ul class="collection">
-                        @{var tiempos = (List<(DateTime, int, int, int)>)ViewData["Times"];}
-                        @for (int i = 0; i < tiempos.Count; i++)
+                        @{var i = 0;}
+                        @foreach (var tiempo in Model.TiempoRegistrado)
                         {
-                            <li class="collection-item" style="display: inline" tabindex="@i">
-                                <p>@tiempos[i].Item1.ToString()</p>
-                                <a class="btn" name="borrar-tiempo" data-index="@tiempos[i].Item4">borrar</a>
-                                <input type="hidden" name="Tiempos[@i].Tiempo" value="@tiempos[i].Item1.ToString()"/>
-                                <input type="hidden" name="Tiempos[@i].UsuarioID" value="@tiempos[i].Item2"/>
-                                <input type="hidden" name="Tiempos[@i].TareaID" value="@tiempos[i].Item3"/>
+                            <li class="collection-item">
+                                <div class="row">
+                                    <div class="col s3">@tiempo.Time.ToString("HH:mm")</div>
+                                    <div class="col s3">@tiempo.Usuario.NombreApellido</div>
+                                    <div class="col s3">
+                                        <a href="#!" class="secondary-content"><i class="material-icons">clear</i></a>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="Tiempos[@i].Tiempo" value="@tiempo.Time.ToString()" />
+                                <input type="hidden" name="Tiempos[@i].UsuarioID" value="@tiempo.UsuarioID" />
+                                <input type="hidden" name="Tiempos[@i].TareaID" value="@tiempo.TareaID" />
                             </li>
+                            i++;
                         }
                     </ul>
                 </div>

@@ -227,75 +227,36 @@ namespace Taskker.Controllers
                     }
                 }
 
-                //bool filter_flag = filteredUsuarios.All(
-                //    tareaFound.Usuarios.Contains
-                //);
+                tareaFound.Descripcion = tm.Descripcion;
+                tareaFound.Titulo = tm.Titulo;
+                tareaFound.Usuarios = filteredUsuarios;
+                tareaFound.Estimado = Utils.parseTime(tm.Estimado);
 
-                //filter_flag = filter_flag && (
-                //    tareaFound.Descripcion == tm.Descripcion
-                //);
+                // Hay que hacer una distincion entre TiempoRegistrado, que es el tiempo total de la tarea
+                // y el tiempo que cargan los usuarios
 
-                //filter_flag = filter_flag && (
-                //    Utils.parseTime(tm.Estimado).ToString("HH:mm")
-                //    == tareaFound.Estimado.ToString("HH:mm")
-                //);
-
-                //filter_flag = filter_flag && (
-                //    tareaFound.Titulo == tm.Titulo
-                //);
-
-                //if (tm.TiempoRegistrado != null && !newTrackedTime)
-                //{
-                //    filter_flag = filter_flag && (
-                //        tiempo.Time == Utils.parseTime(tm.TiempoRegistrado)
-                //    );
-                //}
-
-                //if (tm.Tipo == null && tareaFound.Tipo == TareaTipo.SinTipo)
-                //{
-                //    filter_flag = filter_flag && true;
-                //}
-                //else
-                //{
-                //    filter_flag = filter_flag && (
-                //        tareaFound.Tipo == (TareaTipo) Enum.Parse(
-                //            typeof(TareaTipo),
-                //            tm.Tipo
-                //        )
-                //    );
-                //}
-                bool filter_flag = true;
-                if (filter_flag)
+                if (tm.TiempoRegistrado != null && !newTrackedTime)
                 {
-                    tareaFound.Descripcion = tm.Descripcion;
-                    tareaFound.Titulo = tm.Titulo;
-                    tareaFound.Usuarios = filteredUsuarios;
-                    tareaFound.Estimado = Utils.parseTime(tm.Estimado);
+                    DateTime parsedTime = Utils.parseTime(tm.TiempoRegistrado);
 
-                    // Hay que hacer una distincion entre TiempoRegistrado, que es el tiempo total de la tarea
-                    // y el tiempo que cargan los usuarios
-
-                    if (tm.TiempoRegistrado != null && !newTrackedTime)
-                    {
-                        DateTime parsedTime = Utils.parseTime(tm.TiempoRegistrado);
-
-                        tiempo.Time = tiempo.Time
-                            .AddHours(parsedTime.Hour)
-                            .AddMinutes(parsedTime.Minute)
-                            .AddSeconds(parsedTime.Second);
-                    }
-
-                    if (tm.Tipo == null)
-                        tareaFound.Tipo = TareaTipo.SinTipo;
-                    else
-                        tareaFound.Tipo = (TareaTipo) Enum.Parse(
-                            typeof(TareaTipo),
-                            tm.Tipo
-                        );
-                    unitOfWork.TareaRepository.Update(tareaFound);
-                    unitOfWork.Save();
+                    tiempo.Time = tiempo.Time
+                        .AddHours(parsedTime.Hour)
+                        .AddMinutes(parsedTime.Minute)
+                        .AddSeconds(parsedTime.Second);
                 }
-            } catch (InvalidOperationException){}
+
+                if (tm.Tipo == null)
+                    tareaFound.Tipo = TareaTipo.SinTipo;
+                else
+                    tareaFound.Tipo = (TareaTipo)Enum.Parse(
+                        typeof(TareaTipo),
+                        tm.Tipo
+                    );
+                unitOfWork.TareaRepository.Update(tareaFound);
+                unitOfWork.Save();
+
+            }
+            catch (InvalidOperationException){}
 
             return RedirectToAction("Index");
         }
