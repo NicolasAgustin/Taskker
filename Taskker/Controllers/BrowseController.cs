@@ -232,9 +232,6 @@ namespace Taskker.Controllers
                 tareaFound.Usuarios = filteredUsuarios;
                 tareaFound.Estimado = Utils.parseTime(tm.Estimado);
 
-                // Hay que hacer una distincion entre TiempoRegistrado, que es el tiempo total de la tarea
-                // y el tiempo que cargan los usuarios
-
                 if (tm.TiempoRegistrado != null && !newTrackedTime)
                 {
                     DateTime parsedTime = Utils.parseTime(tm.TiempoRegistrado);

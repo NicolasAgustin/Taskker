@@ -32,6 +32,26 @@
                 }
             })
         }))
+
+        $('.secondary-content').on('click', function (elem) {
+            console.log(elem)
+            var index = elem.currentTarget.getAttribute('data')
+            var tiempoId = elem.currentTarget.getAttribute('data-id')
+            console.log(index)
+            var item = $(`#${index}`).toArray()[0]
+            console.log(item)
+            $.ajax({
+                url: "/Browse/DeleteTimeTracked",
+                type: 'GET',
+                data: { id: tiempoId },
+                success: function () {
+                    item.remove()
+                    alert('Se elimino una asignacion de tiempo.')
+                }
+            })
+            
+        })
+
     })
 </script>
 
@@ -143,12 +163,17 @@
                         @{var i = 0;}
                         @foreach (var tiempo in Model.TiempoRegistrado)
                         {
-                            <li class="collection-item">
+                            // vamos a agregar un index al boton, para que tenga el dato,
+                            // tambien agregamos el indice como id del item list
+                            // cuando presionemos el boton, este tomara el data-index
+                            // y buscara el li que tenga como id ese data-index y que tenga la clase
+                            // item-tiempo
+                            <li class="collection-item item-tiempo" id="@i">
                                 <div class="row">
                                     <div class="col s3">@tiempo.Time.ToString("HH:mm")</div>
                                     <div class="col s3">@tiempo.Usuario.NombreApellido</div>
                                     <div class="col s3">
-                                        <a href="#!" class="secondary-content"><i class="material-icons">clear</i></a>
+                                        <a href="#!" class="secondary-content" data="@i" data-id="@tiempo.ID"><i class="material-icons">clear</i></a>
                                     </div>
                                 </div>
                                 <input type="hidden" name="Tiempos[@i].Tiempo" value="@tiempo.Time.ToString()" />
