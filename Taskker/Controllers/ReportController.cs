@@ -34,9 +34,15 @@ namespace Taskker.Controllers
 
             Usuario userFound = user.Single();
 
-            List<Tarea> tareas = unitOfWork.TareaRepository.Get(
-                    tarea => tarea.Usuarios.Any(u => u.ID == userFound.ID)
-                ).ToList();
+            List<TimeTracked> tiemposRegistrados = unitOfWork.TtrackedRepository.Get(
+                tt => tt.Usuario.ID == userFound.ID
+            ).ToList();
+
+            List<Tarea> tareas = new List<Tarea>();
+
+            tiemposRegistrados.ForEach(
+                tr => tareas.Add(tr.Tarea)
+            );
 
             DataTable report = new DataTable();
 
@@ -45,23 +51,24 @@ namespace Taskker.Controllers
             report.Columns.Add("Descripcion", typeof(string));
             // Tiempo deberia ser float, para que el tiempo trackeado
             // aparezca como 1H 5M -> 1.5
-            report.Columns.Add("Tiempo", typeof(int));
+            report.Columns.Add("Tiempo", typeof(string));
 
             var groupedTasks = tareas
                 .GroupBy(t => t.GrupoID)
                 .Select(g => g.ToList())
                 .ToList();
-            
+
             groupedTasks.ForEach(group => group.ForEach(
-                task => report.Rows.Add(
-                    task.Grupo.Nombre,
-                    task.Titulo,
-                    task.Descripcion,
-                    task.TiempoRegistrado.Single(
-                        tr => tr.UsuarioID == userFound.ID
-                    ).Time.Hour
+                    task => report.Rows.Add(
+                        task.Grupo.Nombre,
+                        task.Titulo,
+                        task.Descripcion,
+                        task.TiempoRegistrado.Single(
+                            tr => tr.UsuarioID == userFound.ID
+                        ).Time.TimeOfDay.TotalHours.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                    )
                 )
-            ));
+            );
 
             Stream stream = Utils.GenerateStreamFromString(
                 Utils.CreateCSVDataTable(report)

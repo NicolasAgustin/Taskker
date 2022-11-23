@@ -41,6 +41,11 @@ namespace Taskker.Controllers
             toModify.Email = rm.Email;
             toModify.NombreApellido = rm.Nombre + " " + rm.Apellido;
 
+            UserSession us = (UserSession)Session["UserSession"];
+            us.Email = rm.Email;
+            us.NombreApellido = toModify.NombreApellido;
+            //us.EncodedPicture
+
             // Solamente cuando se implemente la eliminacion de foto
             // System.IO.File.Delete(toModify.ProfilePicturePath);
 
@@ -73,9 +78,12 @@ namespace Taskker.Controllers
                 // Guardamos la foto que subio el usuario
                 rm.Photo.SaveAs(new_filepath);
                 toModify.ProfilePicturePath = new_filepath;
-
             }
             
+            
+
+            unitOfWork.Save();
+
             return RedirectToAction("Index");
         }
 

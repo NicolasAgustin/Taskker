@@ -73,6 +73,12 @@ namespace Taskker.Controllers
         [HttpPost]
         public ActionResult Create(GrupoModel gm)
         {
+            if (String.IsNullOrEmpty(gm.nombre))
+            {
+                ModelState.AddModelError("Error", "El nombre del grupo no puede estar vacio.");
+                return View();
+            }
+
             var grp = from g in unitOfWork.GrupoRepository.Get(gr => gr.Nombre == gm.nombre)
                       select g;
 

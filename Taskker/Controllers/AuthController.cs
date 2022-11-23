@@ -104,7 +104,6 @@ namespace Taskker.Controllers
             Session.Clear();
             Roles.DeleteCookie();
             FormsAuthentication.SignOut();
-            // Response.Redirect(FormsAuthentication.LoginUrl);
             return RedirectToAction("Index", "Home");
         }
 
