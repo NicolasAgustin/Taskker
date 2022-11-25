@@ -36,20 +36,35 @@ namespace Taskker.Models.DAL
 
             context.SaveChanges();
 
-            context.Usuarios.SingleOrDefault(
-                u => u.Email == "nicolas.a.sandez@gmail.com"
-            ).Roles = new List<Rol>() { new Rol { Nombre = "Project Manager" } };
-
-            context.SaveChanges();
-
             List<Rol> roles = new List<Rol>
             {
-                new Rol{ Nombre = "Project Manager" },
+                new Rol { Nombre = "Project Manager" },
                 new Rol{ Nombre = "Analista Funcional" },
                 new Rol{ Nombre = "Desarrollador" }
             };
 
             roles.ForEach(rol => context.Roles.Add(rol));
+
+            context.SaveChanges();
+
+            context.Usuarios.SingleOrDefault(
+                u => u.Email == "nicolas.a.sandez@gmail.com"
+            ).Roles = new List<Rol>() {
+                context.Roles.FirstOrDefault(r => r.Nombre == "Desarrollador"),
+                context.Roles.FirstOrDefault(r => r.Nombre == "Project Manager")
+            };
+
+            context.Usuarios.SingleOrDefault(
+                u => u.Email == "milagrosinsaurralde382@gmail.com"
+            ).Roles = new List<Rol>() {
+                context.Roles.FirstOrDefault(r => r.Nombre == "Desarrollador")
+            };
+
+            context.Usuarios.SingleOrDefault(
+                u => u.Email == "agustin@gmail.com"
+            ).Roles = new List<Rol>() {
+                context.Roles.FirstOrDefault(r => r.Nombre == "Desarrollador")
+            };
 
             context.SaveChanges();
 

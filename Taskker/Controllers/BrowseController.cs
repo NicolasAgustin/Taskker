@@ -163,6 +163,37 @@ namespace Taskker.Controllers
             return RedirectToAction("Index");
         }
 
+        public List<Rol> GetAllRoles()
+        {
+            List<Rol> roles = unitOfWork.RolRepository.Get().ToList();
+            return roles;
+        } 
+
+        [HttpGet]
+        [AuthorizeRoleAttribute("Project Manager")]
+        public ActionResult ControlPanel()
+        {
+            ViewData["roles"] = this.GetAllRoles();
+            Grupo current = (Grupo)Session["CurrentGroup"];
+            return PartialView("_ControlPanel", current);
+        }
+
+        [HttpPost]
+        [AuthorizeRoleAttribute("Project Manager")]
+        public ActionResult ControlPanel(List<ControlPanelModel> usuarios)
+        {
+            foreach(var updatedUser in usuarios)
+            {
+                // TODO:
+                // Obtener cada rol
+                // Filtrar los roles que el usuario ya tiene para quedarse solamente con los nuevos
+                // Actualizar los roles
+                // Implementar eliminacion de usuario para este grupo
+
+            }
+            return RedirectToAction("Index", "Browse");
+        }
+
         [HttpPost]
         public ActionResult UpdateTask(TareaModel tm)
         {

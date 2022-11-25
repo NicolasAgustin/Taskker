@@ -6,6 +6,7 @@ using Taskker.Models;
 using Taskker.Models.DAL;
 using System.Configuration;
 using System.Web.Security;
+using System.Collections.Generic;
 using System.Web;
 
 namespace Taskker.Controllers
@@ -141,6 +142,9 @@ namespace Taskker.Controllers
                 // Hasheamos la password para guardarla en la base de datos
                 nuevo.EncptPassword = Utils.HashPassword(_user.Password);
 
+                Rol defaultRole = unitOfWork.RolRepository.Get(r => r.Nombre == "Desarrollador").FirstOrDefault();
+
+                nuevo.Roles = new List<Rol>() { defaultRole };
                 nuevo.Nombre = _user.Nombre;
                 nuevo.Apellido = _user.Apellido;
                 // Si el usuario no subio una foto entonces se asigna la foto por defecto

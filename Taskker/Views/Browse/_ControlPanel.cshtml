@@ -1,0 +1,73 @@
+﻿@using Taskker.Models
+@using Taskker.Models.DAL
+@model Grupo
+
+<style>
+    .dropdown-content {
+        width: 200px !important;
+    }
+</style>
+
+<!-- Modal Structure -->
+<div class="modal-content">
+    <h4>Panel de control para @Model.Nombre</h4>
+    @Html.ValidationSummary(false, "", new { @style = "color:red;font-weight:bold" })
+    @using (Html.BeginForm("ControlPanel", "Browse", FormMethod.Post, new { @class = "col s12", @id = "control-panel-form" }))
+    {
+        <!-- Titulo -->
+        int i = 0;
+        foreach (var user in Model.Usuarios)
+        {
+            <div class="row">
+                <!-- Nombre del usuario -->
+                <div class="col-s4">
+                    <a>@user.NombreApellido</a>
+                    <input type="hidden" value="@user.ID" name="usuarios[@i].ID" />
+                </div>
+
+                <!-- Cambiar rol del usuario -->
+                <div class="input-field col s4">
+                    <select name="usuarios[@i].Roles" multiple>
+                        @foreach (var rol in (List<Rol>)ViewData["roles"])
+                        {
+                            if (user.Roles.FirstOrDefault(r => r.ID == rol.ID) != null)
+                            {
+                                <option value="@rol.Nombre" selected>@rol.Nombre</option>
+                            }
+                            else
+                            {
+                                <option value="@rol.Nombre">@rol.Nombre</option>
+                            }
+                        }
+                    </select>
+                    <label>Seleccionar rol</label>
+                </div>
+
+                <!-- Eliminar usuario del grupo -->
+                <div class="col-s4">
+                    <a>Eliminar</a>
+                </div>
+            </div>
+            i++;
+        }
+        <!-- Submit -->
+        <div class="row">
+            <div class="col s6">
+                <button class="btn waves-effect waves-light" type="submit" name="action">
+                    Crear
+                    <i class="material-icons right">done</i>
+                </button>
+            </div>
+        </div>
+    }
+</div>
+<div class="modal-footer">
+    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var elems = document.querySelectorAll('select');
+        M.FormSelect.init(elems);
+    })
+</script>

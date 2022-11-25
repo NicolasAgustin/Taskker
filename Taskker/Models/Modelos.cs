@@ -10,6 +10,13 @@ namespace Taskker.Models
         public string nombre { get; set; }
     }
 
+    public class ControlPanelModel
+    {
+        public int ID { get; set; }
+        public List<string> Roles { get; set; }
+
+    }
+
     public class RegistroModel
     {
         [Required(ErrorMessage = "El campo Nombre es obligatorio.")]

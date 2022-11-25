@@ -12,7 +12,7 @@
 <div class="modal-content">
     <h4>Crear tarea</h4>
     @Html.ValidationSummary(false, "", new { @style = "color:red;font-weight:bold" })
-    @using (Html.BeginForm("CreateTask", "Browse", FormMethod.Post, new { @class = "col s6" }))
+    @using (Html.BeginForm("CreateTask", "Browse", FormMethod.Post, new { @class = "col s6"}))
     {
         <!-- Titulo -->
         <div class="row">

@@ -28,8 +28,16 @@
     // Inicializamos el modal
     document.addEventListener('DOMContentLoaded', function () {
         var elems = document.querySelectorAll('#details');
-        var instances = M.Modal.init(
+        M.Modal.init(
             elems,
+            {
+                preventScrolling: true
+            }
+        );
+
+        var elems2 = document.querySelectorAll('#control-panel');
+        M.Modal.init(
+            elems2,
             {
                 preventScrolling: true
             }
@@ -60,6 +68,25 @@
                 document.getElementById('update-form').submit()
             }
         });
+
+        $('#control-panel').modal({
+            onOpenStart: function (modal, trigger) {
+                console.log('Se abre el modal panel de control')
+
+                $.ajax({
+                    url: "/Browse/ControlPanel",
+                    type: 'GET',
+                    success: function (data) {
+                        $("#control-panel").html(data);
+                    }
+                });
+            },
+
+            onCloseStart: function (modal, trigger) {
+                console.log('Se cierra el modal')
+                document.getElementById('control-panel-form').submit()
+            }
+        });
     })
 </script>
 
@@ -85,6 +112,12 @@
     $(document).ready(function () {
         $('#add-task').on('click', function () {
             M.Modal.getInstance($("#create")).open()
+        });
+    });
+
+    $(document).ready(function () {
+        $('#pcontrol').on('click', function () {
+            M.Modal.getInstance($("#control-panel")).open()
         });
     });
 
@@ -114,6 +147,10 @@
         <a class="waves-effect waves-light btn modal-trigger" data-target="create" id="add-task">
             <i class="small material-icons left">add</i>Crear tarea
         </a>
+
+        <a class="waves-effect waves-light btn modal-trigger" data-target="control-panel" id="pcontrol">
+            <i class="small material-icons left">business_center</i>Panel de control
+        </a>
     }
 
     <a class="waves-effect waves-light btn" id="download-report" href="@Url.Action("DownloadReport", "Report")">
@@ -127,6 +164,9 @@
 </div>
 
 <div id="create" class="modal">
+</div>
+
+<div id="control-panel" class="modal">
 </div>
 
 <div class="row">
