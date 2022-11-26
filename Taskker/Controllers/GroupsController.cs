@@ -70,6 +70,28 @@ namespace Taskker.Controllers
             return View();
         }
 
+        [HttpGet]
+        //[Route("DeleteUserFromGroup/{groupid:int}/{userid:int}")]
+        public ActionResult DeleteUserFromGroup(int groupid, int userid)
+        {
+            Grupo groupFound = unitOfWork.GrupoRepository.GetByID(groupid);
+            var user = from u in groupFound.Usuarios
+                       where u.ID == userid
+                       select u;
+            Usuario userToDelete = user.SingleOrDefault();
+            if (userToDelete != null)
+            {
+                groupFound.Usuarios.Remove(userToDelete);
+
+                if (TryUpdateModel(groupFound, new string[] { "Usuarios" }))
+                {
+                    unitOfWork.Save();
+                }
+            }
+
+            return null;
+        }
+
         [HttpPost]
         public ActionResult Create(GrupoModel gm)
         {
