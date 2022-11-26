@@ -184,13 +184,29 @@ namespace Taskker.Controllers
         {
             foreach(var updatedUser in usuarios)
             {
-                // TODO:
-                // Obtener cada rol
-                // Filtrar los roles que el usuario ya tiene para quedarse solamente con los nuevos
-                // Actualizar los roles
-                // Implementar eliminacion de usuario para este grupo
+                List<Rol> allRoles = this.GetAllRoles();
 
+                Usuario userFound = unitOfWork.UsuarioRepository.GetByID(updatedUser.ID);
+
+                List<Rol> newRoles = new List<Rol>();
+
+                foreach(var r in updatedUser.Roles)
+                {
+                    var rFound = allRoles.FirstOrDefault(rl => rl.Nombre == r);
+                    newRoles.Add(rFound);
+                }
+
+                userFound.Roles.Clear();
+                userFound.Roles = newRoles;
+
+                if(TryUpdateModel(userFound, new string[] { "Roles" }))
+                {
+                    unitOfWork.Save();
+                }
+                // TODO:
+                // Implementar eliminacion de usuario para este grupo
             }
+
             return RedirectToAction("Index", "Browse");
         }
 

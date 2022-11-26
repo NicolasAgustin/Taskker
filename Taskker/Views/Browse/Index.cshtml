@@ -21,6 +21,10 @@
         background-color: rgba(0, 0, 0, 0.45);
         border-radius: 5px;
     }
+
+    .theme-colour {
+        background-color: #d96d6d !important;
+    }
 </style>
 
 <script>
@@ -137,24 +141,24 @@
 
 <div class="row">
 
-    <a href="#" data-target="slide-out" class="sidenav-trigger waves-effect waves-light btn">
+    <a href="#" data-target="slide-out" class="sidenav-trigger waves-effect waves-light btn theme-colour">
         <i class="small material-icons left">menu</i>Menu
     </a>
 
     @if (((List<string>)ViewData["Roles"]).Contains("Project Manager"))
     {
 
-        <a class="waves-effect waves-light btn modal-trigger" data-target="create" id="add-task">
+        <a class="waves-effect waves-light btn modal-trigger theme-colour" data-target="create" id="add-task">
             <i class="small material-icons left">add</i>Crear tarea
         </a>
 
-        <a class="waves-effect waves-light btn modal-trigger" data-target="control-panel" id="pcontrol">
+        <a class="waves-effect waves-light btn modal-trigger theme-colour" data-target="control-panel" id="pcontrol">
             <i class="small material-icons left">business_center</i>Panel de control
         </a>
     }
 
-    <a class="waves-effect waves-light btn" id="download-report" href="@Url.Action("DownloadReport", "Report")">
-        <i class="small material-icons left">add</i>Descargar reporte de horas
+    <a class="waves-effect waves-light btn theme-colour" id="download-report" href="@Url.Action("DownloadReport", "Report")">
+        <i class="small material-icons left">insert_chart</i>Descargar reporte de horas
     </a>
 
 </div>

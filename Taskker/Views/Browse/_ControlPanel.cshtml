@@ -6,6 +6,10 @@
     .dropdown-content {
         width: 200px !important;
     }
+
+    .theme-colour {
+        background-color: #d96d6d !important;
+    }
 </style>
 
 <!-- Modal Structure -->
@@ -45,24 +49,18 @@
 
                 <!-- Eliminar usuario del grupo -->
                 <div class="col-s4">
-                    <a>Eliminar</a>
+                    <a href="#" class="btn waves-effect waves-light">
+                        Eliminar
+                        <i class="material-icons right">clear</i>
+                    </a>
                 </div>
             </div>
             i++;
         }
-        <!-- Submit -->
-        <div class="row">
-            <div class="col s6">
-                <button class="btn waves-effect waves-light" type="submit" name="action">
-                    Crear
-                    <i class="material-icons right">done</i>
-                </button>
-            </div>
-        </div>
     }
 </div>
 <div class="modal-footer">
-    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+    <a href="#!" class="modal-close waves-effect waves-green btn-flat theme-colour">Close</a>
 </div>
 
 <script>

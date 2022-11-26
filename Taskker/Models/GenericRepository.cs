@@ -76,10 +76,10 @@ namespace Taskker.Models
         }
         public virtual void Update(TEntity entityToUpdate)
         {
-            dbSet.Attach(entityToUpdate);
-            
-            EntityState state = context.Entry(entityToUpdate).State;
+            //dbSet.Attach(entityToUpdate);
             context.Entry(entityToUpdate).State = EntityState.Modified;
+            context.ChangeTracker.DetectChanges();
+            context.SaveChanges();
         }
     }
 }
