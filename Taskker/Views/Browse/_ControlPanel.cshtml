@@ -13,7 +13,7 @@
 </style>
 
 <!-- Modal Structure -->
-<div class="modal-content">
+<div class="modal-content" id="panel-group">
     <h4>Panel de control para @Model.Nombre</h4>
     @Html.ValidationSummary(false, "", new { @style = "color:red;font-weight:bold" })
     @using (Html.BeginForm("ControlPanel", "Browse", FormMethod.Post, new { @class = "col s12", @id = "control-panel-form" }))
@@ -22,7 +22,7 @@
         int i = 0;
         foreach (var user in Model.Usuarios)
         {
-            <div class="row">
+            <div class="row" row-index="@user.ID">
                 <!-- Nombre del usuario -->
                 <div class="col-s4">
                     <a>@user.NombreApellido</a>
@@ -49,7 +49,10 @@
 
                 <!-- Eliminar usuario del grupo -->
                 <div class="col-s4">
-                    <a href="#" class="btn waves-effect waves-light">
+                    @*@Url.Action("DeleteUserFromGroup", "Groups", new { groupid = Model.ID, userid = user.ID})*@
+                    <a href="#"
+                       class="btn waves-effect waves-light btn-eliminar"
+                       data-index="@user.ID">
                         Eliminar
                         <i class="material-icons right">clear</i>
                     </a>
@@ -67,5 +70,27 @@
     $(document).ready(function () {
         var elems = document.querySelectorAll('select');
         M.FormSelect.init(elems);
+
+        $('.btn-eliminar').on('click', function (elem) {
+            var userId = elem.target.getAttribute("data-index");
+            var groupId = @Model.ID;
+
+            $.ajax({
+                url: "/Groups/DeleteUserFromGroup",
+                type: 'GET',
+                data: { groupid: groupId, userid: userId },
+                success: function (data) {
+                    var form = document.getElementById("control-panel-form")
+                    var children = form.children;
+                    for (var i = 0; i < children.length; i++) {
+                        var child = children[i];
+                        if (child.getAttribute("row-index") == userId) {
+                            child.remove();
+                            break;
+                        }
+                    }
+                }
+            });
+        })
     })
 </script>
