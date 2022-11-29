@@ -71,7 +71,6 @@ namespace Taskker.Controllers
         }
 
         [HttpGet]
-        //[Route("DeleteUserFromGroup/{groupid:int}/{userid:int}")]
         public ActionResult DeleteUserFromGroup(int groupid, int userid)
         {
             Grupo groupFound = unitOfWork.GrupoRepository.GetByID(groupid);

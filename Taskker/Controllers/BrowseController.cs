@@ -110,6 +110,16 @@ namespace Taskker.Controllers
             }
         }
 
+        [HttpPost]
+        [AuthorizeRoleAttribute("Project Manager")]
+        public ActionResult DeleteTask(int id)
+        {
+            unitOfWork.TareaRepository.Delete(id);
+            unitOfWork.Save();
+
+            return RedirectToAction("Index");
+        }
+
         [HttpGet]
         [Route("DeleteTimeTracked/{id:int}")]
         public ActionResult DeleteTimeTracked(int id)
@@ -417,6 +427,12 @@ namespace Taskker.Controllers
 
                 ViewData["Times"] = displayTimes;
                 ViewBag.Time = Utils.generateStringEstimatedTime(display.Estimado);
+
+                UserSession us = Session["UserSession"] as UserSession;
+                Usuario found = unitOfWork.UsuarioRepository.GetByID(us.ID);
+                List<string> viewRoles = new List<string>();
+                found.Roles.ToList().ForEach(r => viewRoles.Add(r.Nombre));
+                ViewData["Roles"] = viewRoles;
 
                 return PartialView("TaskDetails", display);
             }
