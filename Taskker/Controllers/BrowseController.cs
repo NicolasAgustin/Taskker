@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using Taskker.Models;
+using Taskker.Models.Services;
 using System.Web.Mvc;
 using Taskker.Models.DAL;
 using System.Collections.Generic;
 using System.Web.Security;
+using System.Threading.Tasks;
 
 namespace Taskker.Controllers
 {
@@ -36,20 +38,27 @@ namespace Taskker.Controllers
     public class BrowseController : Controller
     {
         private UnitOfWork unitOfWork;
+        private readonly NotesService notesService;
 
         public BrowseController()
         {
             this.unitOfWork = new UnitOfWork();
+            notesService = new NotesService();
+
         }
 
         [HttpGet]
-        public ActionResult Index(string grupo)
+        public async Task<ActionResult> Index(string grupo)
         {
-            // Revisar que valor tiene grupo
             UserSession userSession = Session["UserSession"] as UserSession;
 
             if (userSession is null)
                 return RedirectToAction("Login", "Auth");
+            
+            bool result = await notesService.Auth("nicoa", "pass123");
+            result = await notesService.Create("Creado desde aspnet!!", userSession.ID);
+            List<Note> notas = await notesService.GetNotes(userSession.ID);
+
             // Buscar todos los grupos a los que pertenece el usuario para mostrarlos en el navbar
             // Si no tiene grupos redireccionar a Groups
             Usuario loggedUser = null;
@@ -318,9 +327,9 @@ namespace Taskker.Controllers
         [HttpGet]
         public ActionResult GetUsers()
         {
-            TaskkerContext db = new TaskkerContext();
-
-            Dictionary<string, string> UserNamePhoto = this.CreateUsersDict(db.Usuarios.ToList());
+            Dictionary<string, string> UserNamePhoto = this.CreateUsersDict(
+                unitOfWork.UsuarioRepository.Get().ToList()
+            );
 
             return Json(UserNamePhoto, JsonRequestBehavior.AllowGet);
         }
