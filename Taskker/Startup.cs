@@ -1,5 +1,7 @@
-﻿using Microsoft.Owin;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Owin;
 using Owin;
+using Taskker.Models.Services;
 
 [assembly: OwinStartupAttribute(typeof(Taskker.Startup))]
 namespace Taskker
@@ -9,6 +11,11 @@ namespace Taskker
         public void Configuration(IAppBuilder app)
         {
             
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddScoped<INotesService, NotesService>();
         }
     }
 }
