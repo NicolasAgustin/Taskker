@@ -17,6 +17,9 @@
             {
                 edge: 'left',
             });
+
+        var collapsibleElems = document.querySelectorAll('.collapsible');
+        M.Collapsible.init(collapsibleElems, {});
     });
 </script>
 
@@ -42,5 +45,21 @@
             <li><a class="waves-effect" href="@Url.Action("Index", "Browse", new { grupo = grupo })">@grupo</a></li>
         }
     }
-
+    <li>
+        <!-- Notas -->
+        <ul class="collapsible">
+            <li>
+                <div class="collapsible-header"><i class="material-icons">border_color</i>Notas</div>
+                <div class="collapsible-body">
+                    <div class="collection" id="display-notes">
+                        <!--Hay que iterar por cada resultado que devuelva la api-->
+                        <a href="#" class="collection-item">Alvin</a>
+                        <a href="#" class="collection-item">Alvin</a>
+                        <a href="#" class="collection-item">Alvin</a>
+                        <a href="#" class="collection-item">Alvin</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </li>
 </ul>
