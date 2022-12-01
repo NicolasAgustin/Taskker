@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 namespace Taskker.Models
 {
+
+    public class ApiUser
+    {
+        public string user { get; set; }
+        public string password { get; set; }
+    }
     public class GrupoModel
     {
         [Required(ErrorMessage = "El campo Nombre es obligatorio.")]
