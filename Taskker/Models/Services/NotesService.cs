@@ -32,7 +32,10 @@ namespace Taskker.Models.Services
 
     public class NotesService : INotesService
     {
+        // Agregar a configuracion
         private string Baseurl = "https://komcfgkpg4.execute-api.us-east-1.amazonaws.com/dev/";
+        private string UserApi = "";
+        private string PasswordApi = "";
         private string Token { get; set; }
         private bool IsAuthenticated
         {
@@ -103,7 +106,8 @@ namespace Taskker.Models.Services
         public async Task<List<Note>> GetNotes(int userid)
         {
             if (!IsAuthenticated) {
-                throw new NotAuthenticated();
+                await Auth(UserApi, PasswordApi);
+                //throw new NotAuthenticated();
             }
 
             List<Note> notes = new List<Note>();
@@ -113,7 +117,7 @@ namespace Taskker.Models.Services
                 client.BaseAddress = new Uri(Baseurl);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Token);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
 
                 HttpResponseMessage response = await client.GetAsync("get_notes");
 

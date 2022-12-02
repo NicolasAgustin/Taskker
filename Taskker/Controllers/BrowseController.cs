@@ -54,10 +54,9 @@ namespace Taskker.Controllers
 
             if (userSession is null)
                 return RedirectToAction("Login", "Auth");
-            
-            bool result = await notesService.Auth("nicoa", "pass123");
-            result = await notesService.Create("Creado desde aspnet!!", userSession.ID);
-            List<Note> notas = await notesService.GetNotes(userSession.ID);
+
+            //result = await notesService.Create("Creado desde aspnet!!", userSession.ID);
+            ViewData["Notes"] = await notesService.GetNotes(userSession.ID);
 
             // Buscar todos los grupos a los que pertenece el usuario para mostrarlos en el navbar
             // Si no tiene grupos redireccionar a Groups

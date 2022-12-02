@@ -1,4 +1,5 @@
 ﻿@using Taskker.Models;
+@using Taskker.Models.DAL;
 
 @{
     var session = Session["UserSession"] as UserSession;
@@ -52,11 +53,15 @@
                 <div class="collapsible-header"><i class="material-icons">border_color</i>Notas</div>
                 <div class="collapsible-body">
                     <div class="collection" id="display-notes">
-                        <!--Hay que iterar por cada resultado que devuelva la api-->
-                        <a href="#" class="collection-item">Alvin</a>
-                        <a href="#" class="collection-item">Alvin</a>
-                        <a href="#" class="collection-item">Alvin</a>
-                        <a href="#" class="collection-item">Alvin</a>
+                        <!-- Lo que esta en la viewdata viene desde la vista index de browse
+                            hay que revisar si esa info llega hasta esta vista parcial
+                            -->
+                        @{
+                            foreach (var note in ViewData["Notes"] as List<Note>)
+                            {
+                                <a href="#" class="collection-item">@note.text</a>
+                            }
+                        }
                     </div>
                 </div>
             </li>
