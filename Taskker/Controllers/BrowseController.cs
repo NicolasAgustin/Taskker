@@ -44,7 +44,6 @@ namespace Taskker.Controllers
         {
             this.unitOfWork = new UnitOfWork();
             notesService = new NotesService();
-
         }
 
         [HttpGet]
@@ -142,6 +141,33 @@ namespace Taskker.Controllers
         public ActionResult CreateTask()
         {
             return PartialView();
+        }
+
+        [HttpGet]
+        [AuthorizeRoleAttribute("Project Manager")]
+        public async Task<bool> DeleteNote(string id)
+        {
+            bool result = await notesService.DeleteNote(id);
+            return result;
+        }
+
+        [HttpGet]
+        [AuthorizeRoleAttribute("Project Manager")]
+        public async Task<bool> UpdateNote(string id, string text)
+        {
+            UserSession us = Session["UserSession"] as UserSession;
+            Note updated = new Note() { closed = false, created_by = us.ID, text = text, _id = id };
+            bool result = await notesService.UpdateNote(updated);
+            return result;
+        }
+
+        [HttpPost]
+        [AuthorizeRoleAttribute("Project Manager")]
+        public async Task<ActionResult> CreateNote(string text)
+        {
+            UserSession us = Session["UserSession"] as UserSession;
+            await notesService.Create(text, us.ID);
+            return RedirectToAction("Index", "Browse");
         }
 
         [HttpPost]
