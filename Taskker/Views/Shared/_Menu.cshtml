@@ -13,18 +13,51 @@
     // Inicializamos el sidenav
     document.addEventListener('DOMContentLoaded', function () {
         var elems = document.querySelectorAll('.sidenav');
-        var instances = M.Sidenav.init(
-            elems,
-            {
-                edge: 'left',
-            });
+        M.Sidenav.init(elems, { edge: 'left' });
 
         var collapsibleElems = document.querySelectorAll('.collapsible');
         M.Collapsible.init(collapsibleElems, {});
+
+
+        var elemsDropdown = document.querySelectorAll('.dropdown-trigger');
+        M.Dropdown.init(elemsDropdown, {});
+
+        $('.btndel-note').on('click', function (element) {
+            var nid = element.target.getAttribute('data')
+            $.ajax({
+                type: "GET",
+                url: "/Browse/DeleteNote",
+                data: { id: nid },
+                success: function (data) {
+                    if (data) {
+                        $(`#${nid}`).remove()
+                    } else {
+                        alert("No se pudo eliminar la nota.")
+                    }
+                }
+            })
+        })
+
+        $('.btnedit-note').on('click', function (element) {
+            debugger;
+            var nid = element.target.getAttribute('data');
+            var note = $(`.edit-trigger[data=${nid}]`).toArray()[0];
+            var noteUpdated = note.textContent;
+            $.ajax({
+                type: "GET",
+                url: "/Browse/UpdateNote",
+                data: { id: nid, text: noteUpdated },
+                success: function (data) {
+                    if (!data) {
+                        alert("No se pudo actualizar la nota.")
+                    }
+                }
+            })
+        })
     });
 </script>
 
-<ul id="slide-out" class="sidenav">
+<ul id="slide-out" class="sidenav" style="width: 450px !important">
     <li>
         <div class="user-view">
             <div class="background">
@@ -52,14 +85,39 @@
             <li>
                 <div class="collapsible-header"><i class="material-icons">border_color</i>Notas</div>
                 <div class="collapsible-body">
+                    <div class="row">
+                        @Html.ValidationSummary(false, "", new { @style = "color:red;font-weight:bold" })
+                        @using (Html.BeginForm("CreateNote", "Browse", FormMethod.Post, new { @class = "col s12" }))
+                        {
+                            <div class="row">
+
+                                <div class="input-field col s9">
+                                    <textarea id="icon_prefix2" class="materialize-textarea" name="text"></textarea>
+                                </div>
+
+                                <div class="col s2">
+                                    <button class="btn-small waves-effect waves-light" type="submit" name="action">
+                                        <i class="material-icons right">send</i>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
                     <div class="collection" id="display-notes">
-                        <!-- Lo que esta en la viewdata viene desde la vista index de browse
-                            hay que revisar si esa info llega hasta esta vista parcial
-                            -->
                         @{
                             foreach (var note in ViewData["Notes"] as List<Note>)
                             {
-                                <a href="#" class="collection-item">@note.text</a>
+                                <div class="collection-item" id="@note._id">
+                                    <div class="row">
+                                        <a href="#" data="@note._id" class="edit-trigger" contenteditable="true">@note.text</a>
+                                    </div>
+
+                                    <div class="row">
+                                        <a href="#" data="@note._id" class="waves-effect waves-light btn-small btndel-note">Eliminar</a>
+                                        <a href="#" data="@note._id" class="waves-effect waves-light btn-small btnedit-note">Editar</a>
+                                    </div>
+                                </div>
                             }
                         }
                     </div>
