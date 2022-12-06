@@ -9,7 +9,7 @@ using Taskker.Models.Services;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
-
+using System.Configuration;
 
 namespace Taskker.Models.Services
 {
@@ -33,9 +33,10 @@ namespace Taskker.Models.Services
     public class NotesService : INotesService
     {
         // Agregar a configuracion
-        private string Baseurl = "https://komcfgkpg4.execute-api.us-east-1.amazonaws.com/dev/";
-        private string UserApi = "";
-        private string PasswordApi = "";
+        //private string Baseurl = "https://8pwqcmgedh.execute-api.us-east-1.amazonaws.com/dev/";
+        private string Baseurl = ConfigurationManager.AppSettings["FastNotesEndpoint"];
+        private string UserApi = ConfigurationManager.AppSettings["ApiUser"];
+        private string PasswordApi = ConfigurationManager.AppSettings["ApiPass"];
         private string Token { get; set; }
         private bool IsAuthenticated
         {
@@ -51,84 +52,166 @@ namespace Taskker.Models.Services
 
         public async Task<bool> Auth(string user, string password)
         {
-            using (var client = new HttpClient())
+            try
             {
-
-                ApiUser authInfo = new ApiUser() { user = user, password = password };
-
-                client.BaseAddress = new Uri(Baseurl);
-                client.DefaultRequestHeaders.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                HttpResponseMessage response = await client.PostAsJsonAsync("auth", authInfo);
-
-                if (response.IsSuccessStatusCode)
+                using (var client = new HttpClient())
                 {
-                    var notesResponse = response.Content.ReadAsStringAsync().Result;
-                    var values = JsonConvert.DeserializeObject<Dictionary<string, string>>(notesResponse);
-                    this.Token = values["data"];
-                    return true;
-                }
-            }
 
-            return false;
+                    ApiUser authInfo = new ApiUser() { user = user, password = password };
+
+                    client.BaseAddress = new Uri(Baseurl);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    HttpResponseMessage response = await client.PostAsJsonAsync("auth", authInfo);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var notesResponse = response.Content.ReadAsStringAsync().Result;
+                        var values = JsonConvert.DeserializeObject<Dictionary<string, string>>(notesResponse);
+                        this.Token = values["data"];
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> Create(string text, int userid)
         {
-            if (!IsAuthenticated)
+            try
             {
-                throw new NotAuthenticated();
-            }
-
-            Note newNote = new Note() { text = text, user = userid };
-
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(Baseurl);
-                client.DefaultRequestHeaders.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Token);
-
-                HttpResponseMessage response = await client.PostAsJsonAsync("create", newNote);
-
-                if (response.IsSuccessStatusCode)
+                if (!IsAuthenticated)
                 {
-                    var notesResponse = response.Content.ReadAsStringAsync().Result;
-                    var values = JsonConvert.DeserializeObject<Dictionary<string, string>>(notesResponse);
-                    return true;
+                    await Auth(UserApi, PasswordApi);
                 }
-            }
 
-            return false;
+                Note newNote = new Note() { text = text, created_by = userid, closed = false };
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(Baseurl);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Token);
+
+                    HttpResponseMessage response = await client.PostAsJsonAsync("create", newNote);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var notesResponse = response.Content.ReadAsStringAsync().Result;
+                        var values = JsonConvert.DeserializeObject<Dictionary<string, string>>(notesResponse);
+                        return true;
+                    }
+                }
+
+                return false;
+            } catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<List<Note>> GetNotes(int userid)
         {
             if (!IsAuthenticated) {
                 await Auth(UserApi, PasswordApi);
-                //throw new NotAuthenticated();
             }
 
             List<Note> notes = new List<Note>();
-
-            using (var client = new HttpClient())
+            try
             {
-                client.BaseAddress = new Uri(Baseurl);
-                client.DefaultRequestHeaders.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
-
-                HttpResponseMessage response = await client.GetAsync("get_notes");
-
-                if (response.IsSuccessStatusCode)
+                using (var client = new HttpClient())
                 {
-                    var notesResponse = response.Content.ReadAsStringAsync().Result;
-                    notes = JsonConvert.DeserializeObject<List<Note>>(notesResponse);
+                    client.BaseAddress = new Uri(Baseurl);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+
+                    HttpResponseMessage response = await client.GetAsync(string.Format("get_notes/{0}", userid));
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var notesResponse = response.Content.ReadAsStringAsync().Result;
+                        notes = JsonConvert.DeserializeObject<List<Note>>(notesResponse);
+                    }
                 }
-            }
+            } catch (Exception) { }
 
             return notes;
+        }
+
+        public async Task<bool> UpdateNote(Note updatedNote)
+        {
+            try
+            {
+                if (!IsAuthenticated)
+                {
+                    await Auth(UserApi, PasswordApi);
+                }
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(Baseurl);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Token);
+
+                    HttpResponseMessage response = await client.PostAsJsonAsync("update", updatedNote);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var notesResponse = response.Content.ReadAsStringAsync().Result;
+                        var values = JsonConvert.DeserializeObject<Dictionary<string, string>>(notesResponse);
+                        return true;
+                    }
+                }
+
+                return false;
+
+            } catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteNote(string noteid)
+        {
+            try
+            {
+                if (!IsAuthenticated)
+                {
+                    await Auth(UserApi, PasswordApi);
+                }
+
+                List<Note> notes = new List<Note>();
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(Baseurl);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+
+                    HttpResponseMessage response = await client.GetAsync(string.Format("delete/{0}", noteid));
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+
+            } catch (Exception)
+            {
+                return false;
+            }
+            
         }
     }
 }
