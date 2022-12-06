@@ -7,7 +7,9 @@ namespace Taskker.Models.DAL
 {
     public class Note
     {
+        public string _id { get; set; }
         public string text { get; set; }
-        public int user { get; set; }
+        public int created_by { get; set; }
+        public bool closed { get; set; }
     }
 }
