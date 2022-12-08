@@ -27,6 +27,37 @@ namespace Taskker.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Crea una cookie de autenticacion en base a un usuario
+        /// </summary>
+        /// <param name="usuario">Usuario para la cookie</param>
+        /// <returns>Cookie de autenticacion</returns>
+        private HttpCookie CreateAuthCookie(Usuario usuario)
+        {
+            FormsAuthentication.SetAuthCookie(usuario.Email, false);
+            FormsAuthentication.SetAuthCookie(
+                Convert.ToString(usuario.ID),
+                false
+            );
+
+            var authTicket = new FormsAuthenticationTicket(
+                1,
+                usuario.ID.ToString(),
+                DateTime.Now,
+                DateTime.Now.AddMinutes(30),
+                false,
+                String.Join(",", usuario.Roles.ToList())
+            );
+
+            string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+            var authCookie = new HttpCookie(
+                FormsAuthentication.FormsCookieName,
+                encryptedTicket
+            );
+
+            return authCookie;
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel _user)
@@ -57,28 +88,7 @@ namespace Taskker.Controllers
                     user_logged.ProfilePicturePath = ConfigurationManager.AppSettings["DefaultProfile"];
                 }
 
-                FormsAuthentication.SetAuthCookie(user_logged.Email, false);
-                FormsAuthentication.SetAuthCookie(
-                    Convert.ToString(user_logged.ID),
-                    false
-                );
-
-                var authTicket = new FormsAuthenticationTicket(
-                    1,
-                    user_logged.ID.ToString(),
-                    DateTime.Now,
-                    DateTime.Now.AddMinutes(30),
-                    false,
-                    String.Join(",", user_logged.Roles.ToList())
-                );
-
-                string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
-                var authCookie = new HttpCookie(
-                    FormsAuthentication.FormsCookieName,
-                    encryptedTicket
-                );
-
-                HttpContext.Response.Cookies.Add(authCookie);
+                HttpContext.Response.Cookies.Add(CreateAuthCookie(user_logged));
 
                 UserSession userSession = new UserSession()
                 {
@@ -180,6 +190,8 @@ namespace Taskker.Controllers
 
                 // Hacemos un commit de los cambios
                 unitOfWork.Save();
+
+                HttpContext.Response.Cookies.Add(CreateAuthCookie(nuevo));
 
                 UserSession userSession = new UserSession()
                 {

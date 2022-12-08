@@ -144,7 +144,6 @@ namespace Taskker.Controllers
         }
 
         [HttpGet]
-        [AuthorizeRoleAttribute("Project Manager")]
         public async Task<bool> DeleteNote(string id)
         {
             bool result = await notesService.DeleteNote(id);
@@ -152,7 +151,6 @@ namespace Taskker.Controllers
         }
 
         [HttpGet]
-        [AuthorizeRoleAttribute("Project Manager")]
         public async Task<bool> UpdateNote(string id, string text)
         {
             UserSession us = Session["UserSession"] as UserSession;
@@ -162,7 +160,6 @@ namespace Taskker.Controllers
         }
 
         [HttpPost]
-        [AuthorizeRoleAttribute("Project Manager")]
         public async Task<ActionResult> CreateNote(string text)
         {
             UserSession us = Session["UserSession"] as UserSession;
