@@ -20,6 +20,7 @@ namespace Taskker
 
         protected void Application_PostAuthenticateRequest(Object sender, EventArgs e)
         {
+            // Intentamos obtener la cookie de autenticacion
             var authCookie = HttpContext.Current.Request.Cookies[
                 FormsAuthentication.FormsCookieName
             ];
@@ -27,9 +28,11 @@ namespace Taskker
             if (authCookie == null)
                 return;
 
+            // Desencriptamos el ticket de autenticacion
             FormsAuthenticationTicket authTicket = FormsAuthentication
                 .Decrypt(authCookie.Value);
 
+            // Si es null o si el ticket expiro 
             if (authTicket == null || authTicket.Expired)
                 return;
 

@@ -25,6 +25,12 @@ namespace Taskker.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Accion para descargar el reporte de horas unicamente para el usuario
+        /// logeado
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
         public FileStreamResult DownloadReport()
         {
             UserSession us = (UserSession)Session["UserSession"];
@@ -34,6 +40,7 @@ namespace Taskker.Controllers
 
             Usuario userFound = user.Single();
 
+            // Buscamos todos los registros de tiempo para el usuario actual
             List<TimeTracked> tiemposRegistrados = unitOfWork.TtrackedRepository.Get(
                 tt => tt.Usuario.ID == userFound.ID
             ).ToList();
@@ -44,20 +51,22 @@ namespace Taskker.Controllers
                 tr => tareas.Add(tr.Tarea)
             );
 
+            // Creamos una tabla
             DataTable report = new DataTable();
 
+            // Agregamos los headers
             report.Columns.Add("Grupo", typeof(string));
             report.Columns.Add("Tarea", typeof(string));
             report.Columns.Add("Descripcion", typeof(string));
-            // Tiempo deberia ser float, para que el tiempo trackeado
-            // aparezca como 1H 5M -> 1.5
             report.Columns.Add("Tiempo", typeof(string));
 
+            // Agrupamos las tareas por grupo
             var groupedTasks = tareas
                 .GroupBy(t => t.GrupoID)
                 .Select(g => g.ToList())
                 .ToList();
 
+            // Por cada tarea agregamos una fila a la tabla
             groupedTasks.ForEach(group => group.ForEach(
                     task => report.Rows.Add(
                         task.Grupo.Nombre,
@@ -70,6 +79,7 @@ namespace Taskker.Controllers
                 )
             );
 
+            // Creamos un stream a partir de la tabla convertida a string
             Stream stream = Utils.GenerateStreamFromString(
                 Utils.CreateCSVDataTable(report)
             );

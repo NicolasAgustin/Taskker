@@ -52,6 +52,7 @@ namespace Taskker.Controllers
 
                 Grupo gFound = group.Single();
                 
+                // Chequemos si el usuario ya esta en el grupo
                 if(!gFound.Usuarios.Contains(found))
                     gFound.Usuarios.Add(found);
 
@@ -70,6 +71,12 @@ namespace Taskker.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Accion para eliminar un usuario de un grupo
+        /// </summary>
+        /// <param name="groupid">ID del grupo</param>
+        /// <param name="userid">ID del usuario a eliminar</param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult DeleteUserFromGroup(int groupid, int userid)
         {
@@ -82,6 +89,7 @@ namespace Taskker.Controllers
             {
                 groupFound.Usuarios.Remove(userToDelete);
 
+                // Intentamos actualizar el modelo
                 if (TryUpdateModel(groupFound, new string[] { "Usuarios" }))
                 {
                     unitOfWork.Save();
@@ -110,6 +118,7 @@ namespace Taskker.Controllers
             try
             {
                 grp.Single();
+
                 // Ya existe el grupo
                 ModelState.AddModelError("Error", "El grupo ya existe.");
                 return View();
@@ -123,8 +132,10 @@ namespace Taskker.Controllers
                     UsuarioID = us.ID
                 };
 
+                // Agregamos al usuario creador al grupo
                 nuevo.Usuarios.Add(user);
 
+                // Guardamos el grupo
                 unitOfWork.GrupoRepository.Insert(nuevo);
 
                 unitOfWork.Save();
@@ -133,6 +144,11 @@ namespace Taskker.Controllers
             return RedirectToAction("Index", "Browse");
         }
 
+        /// <summary>
+        /// Accion para obtener todos los grupos disponibles (solamente los nombres)
+        /// en formato json
+        /// </summary>
+        /// <returns>Json</returns>
         [HttpGet]
         public ActionResult GetGroups()
         {
@@ -144,10 +160,16 @@ namespace Taskker.Controllers
                 .ToList()
                 .ForEach(g => nombresGrupos.Add(g.Nombre));
             
+            // Serializamos la lista con los nombres de grupos
             var json = JsonSerializer.Serialize<List<string>>(nombresGrupos);
             return Json(json, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Accion para ver los detalles de un grupo
+        /// </summary>
+        /// <param name="gname"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("GroupDetails/{gname:string}")]
         public ActionResult GroupDetails(string gname)

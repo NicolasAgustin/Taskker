@@ -14,8 +14,6 @@ namespace Taskker.Models
         private TaskkerContext context;
         public AuthorizeRoleAttribute(params object[] roles)
         {
-            //if (roles.Any(r => r.GetType().BaseType != typeof(string)))
-            //    throw new ArgumentException("roles");
             this.context = new TaskkerContext();
             this.Roles = string.Join(",", roles);
         }

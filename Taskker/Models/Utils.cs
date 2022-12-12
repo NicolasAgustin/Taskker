@@ -10,8 +10,16 @@ using System.Drawing;
 
 namespace Taskker.Models
 {
+    /// <summary>
+    /// Clase para funciones varias
+    /// </summary>
     public class Utils
     {
+        /// <summary>
+        /// Funcion para convertir a camelcase una string
+        /// </summary>
+        /// <param name="src"></param>
+        /// <returns></returns>
         public static string Capitalize(string src)
         {
             return string.Join(" ", src.Split(' ').ToList()
@@ -21,6 +29,11 @@ namespace Taskker.Models
                 );
         }
 
+        /// <summary>
+        /// Funcion para hashear una password
+        /// </summary>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public static byte[] HashPassword(string password)
         {
             byte[] result = new SHA512Managed().ComputeHash(
@@ -30,6 +43,11 @@ namespace Taskker.Models
             return result;
         }
 
+        /// <summary>
+        /// Funcion para codificar una imagen
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public static string EncodePicture(string path)
         {
             try
@@ -43,6 +61,11 @@ namespace Taskker.Models
             }
         }
 
+        /// <summary>
+        /// Funcion inversa a EncodePicture
+        /// </summary>
+        /// <param name="encoded"></param>
+        /// <returns></returns>
         public static Image ImageFromBase64(string encoded)
         {
             byte[] imgbytes = Convert.FromBase64String(encoded);
@@ -128,7 +151,7 @@ namespace Taskker.Models
         }
 
         /// <summary>
-        /// 
+        /// Funcion para convertir una string en stream
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
@@ -144,16 +167,24 @@ namespace Taskker.Models
             return stream;
         }
 
+        /// <summary>
+        /// Funcion para convertir una tabla en una string csv
+        /// </summary>
+        /// <param name="table"></param>
+        /// <returns></returns>
         public static string CreateCSVDataTable(DataTable table)
         {
             StringBuilder sb = new StringBuilder();
 
+            // Casteamos los headers a string
             string[] columnNames = table.Columns.Cast<DataColumn>()
                 .Select(column => column.ColumnName)
                 .ToArray();
 
+            // Los agregamos al builder separados por ','
             sb.AppendLine(string.Join(",", columnNames));
 
+            // Realizamos el mismo proceso para cada fila
             foreach(DataRow row in table.Rows)
             {
                 string[] fields = row.ItemArray.Select(
@@ -166,7 +197,10 @@ namespace Taskker.Models
             return sb.ToString();
         }
     
-    
+        /// <summary>
+        /// Funcion para crear un UUID
+        /// </summary>
+        /// <returns></returns>
         public static string GenerateUUID()
         {
             Guid guid = Guid.NewGuid();

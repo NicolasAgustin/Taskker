@@ -40,6 +40,14 @@ namespace Taskker.Controllers
                 false
             );
 
+            /***
+             * Creamos el ticket de autenticacion
+             * el nombre sera el ID del usuario
+             * el tiempo de expiracion esta seteado a 30 minutos
+             * Ingresamos tambien los roles del usuario para que puedan ser accedidos por
+             * el filtro de autenticacion
+             */
+
             var authTicket = new FormsAuthenticationTicket(
                 1,
                 usuario.ID.ToString(),
@@ -49,6 +57,7 @@ namespace Taskker.Controllers
                 String.Join(",", usuario.Roles.ToList())
             );
 
+            // Encriptamos y creamos la cookie
             string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
             var authCookie = new HttpCookie(
                 FormsAuthentication.FormsCookieName,
@@ -64,10 +73,11 @@ namespace Taskker.Controllers
         {
             //_user.Email = "nicolas.a.sandez@gmail.com";
             //_user.Password = "pass123";
-            // Mockear para testear vista con usuarios de la base de datos
+
             if (!ModelState.IsValid)
                 return View(_user);
 
+            // Hasheamos la password para ingresarla a la db
             byte[] hashed_password = Utils.HashPassword(_user.Password);
 
             // Buscamos el usuario en la base de datos
@@ -80,7 +90,6 @@ namespace Taskker.Controllers
             try
             {
 
-                // Single arroja una excepcion
                 Usuario user_logged = user_found.Single();
 
                 if (!System.IO.File.Exists(user_logged.ProfilePicturePath))
@@ -88,6 +97,7 @@ namespace Taskker.Controllers
                     user_logged.ProfilePicturePath = ConfigurationManager.AppSettings["DefaultProfile"];
                 }
 
+                // Agregamos la cookie a la respuesta
                 HttpContext.Response.Cookies.Add(CreateAuthCookie(user_logged));
 
                 UserSession userSession = new UserSession()
@@ -99,7 +109,7 @@ namespace Taskker.Controllers
                 };
 
                 Session["UserSession"] = userSession;
-                // Hay que redirigir al controlador de grupos o Home
+
                 return RedirectToAction("Index", "Browse");
             }
             catch(InvalidOperationException)
@@ -112,8 +122,13 @@ namespace Taskker.Controllers
         [HttpGet]
         public ActionResult Logout()
         {
+            // Limpiamos los datos de sesion
             Session.Clear();
+
+            // Eliminamos la cookie
             Roles.DeleteCookie();
+            
+            // Eliminamos el ticket de autenticacion
             FormsAuthentication.SignOut();
             return RedirectToAction("Index", "Home");
         }
@@ -152,6 +167,7 @@ namespace Taskker.Controllers
                 // Hasheamos la password para guardarla en la base de datos
                 nuevo.EncptPassword = Utils.HashPassword(_user.Password);
 
+                // El rol por defecto siempre sera desarrollador
                 Rol defaultRole = unitOfWork.RolRepository.Get(r => r.Nombre == "Desarrollador").FirstOrDefault();
 
                 nuevo.Roles = new List<Rol>() { defaultRole };
@@ -173,7 +189,16 @@ namespace Taskker.Controllers
                         info.Create();
 
                     string filename = _user.Photo.FileName;
-                    string new_filepath = Path.Combine(serverPath, filename);
+
+                    string extension = Path.GetExtension(filename);
+                    string filenameOnly = Path.GetFileName(filename);
+                    filenameOnly = filenameOnly.Replace(extension, "");
+                    // Combinamos el path agregandole un UUID unico
+
+                    string uuid = Utils.GenerateUUID();
+                    string new_filepath = Path.Combine(
+                        serverPath, string.Format("{0}_{1}.{2}", filenameOnly, uuid, extension)
+                    );
 
                     if (System.IO.File.Exists(new_filepath))
                         System.IO.File.Delete(new_filepath);
@@ -186,7 +211,7 @@ namespace Taskker.Controllers
                 // Agregamos el usuario nuevo al contexto
                 unitOfWork.UsuarioRepository.Insert(nuevo);
 
-                AddDefaultRole(nuevo.Email);
+                //AddDefaultRole(nuevo.Email);
 
                 // Hacemos un commit de los cambios
                 unitOfWork.Save();
@@ -205,32 +230,6 @@ namespace Taskker.Controllers
             }
 
             return RedirectToAction("Index", "Browse");
-        }
-
-        /// <summary>
-        /// Funcion para agregar el rol por defecto para el nuevo usuario
-        /// </summary>
-        /// <param name="email"></param>
-        private void AddDefaultRole(string email)
-        {
-            var user = from u in unitOfWork.UsuarioRepository.Get(u => u.Email == email)
-                       select u;
-
-            try
-            {
-                Usuario userFound = user.Single();
-
-                Rol rol = (
-                    from r in unitOfWork.RolRepository.Get(_rol => _rol.Nombre == "Desarrollador")
-                    select r
-                ).Single();
-
-                userFound.Roles.Add(rol);
-                
-                unitOfWork.Save();
-            }
-            catch (InvalidOperationException){}
-
         }
     }
 }

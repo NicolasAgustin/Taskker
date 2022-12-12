@@ -54,7 +54,7 @@ namespace Taskker.Controllers
             if (userSession is null)
                 return RedirectToAction("Login", "Auth");
 
-            //result = await notesService.Create("Creado desde aspnet!!", userSession.ID);
+            // Obtenemos todas las notas desde la API
             ViewData["Notes"] = await notesService.GetNotes(userSession.ID);
 
             // Buscar todos los grupos a los que pertenece el usuario para mostrarlos en el navbar
@@ -72,14 +72,17 @@ namespace Taskker.Controllers
 
                 List<string> roles = new List<string>();
 
+                // Obtenemos los roles para la vista
                 loggedUser.Roles.ToList().ForEach(
                         rol => roles.Add(rol.Nombre)
                 );
 
                 ViewData["Roles"] = roles;
 
+                // Obtenemos los grupos que el usuario creo o es miembro
                 grupos = loggedUser.Grupos.Concat(loggedUser.CreatedGroups).Distinct().ToList();
 
+                // Si no esta en ningun grupo es redirigido al index para unirse o crear un grupo
                 if (grupos.Count == 0)
                     return RedirectToAction("Index", "Groups");
 
@@ -91,6 +94,7 @@ namespace Taskker.Controllers
 
                 Grupo currentGroup;
 
+                // Chequeamos cual sera el grupo activo
                 if (grupo == null || !grupos.Exists(g => g.Nombre == grupo))
                 {
                     Session["CurrentGroup"] = grupos[0];
@@ -171,11 +175,15 @@ namespace Taskker.Controllers
         [AuthorizeRoleAttribute("Project Manager")]
         public ActionResult CreateTask(TareaModel t)
         {
+            // Parseamos el tiempo
             DateTime timeEstimated = Utils.parseTime(t.Estimado);
+
+            // Obtenemos los usuarios asignados a la tarea
             List<string> asignees = new List<string>(t.Asignees.Split(','));
             List<Usuario> asigneesToAdd = new List<Usuario>();
             asignees.ForEach(nombre =>
             {
+                // Obtenemos el usuario en base al nombre
                 var found = from user in unitOfWork
                                          .UsuarioRepository
                                          .Get(u => nombre == u.NombreApellido)
@@ -183,6 +191,7 @@ namespace Taskker.Controllers
 
                 try
                 {
+                    // Si no existe el usuario no lo agregamos
                     Usuario asigneeFound = found.Single();
                     asigneesToAdd.Add(asigneeFound);
                 } catch (InvalidOperationException){}
@@ -223,8 +232,10 @@ namespace Taskker.Controllers
         [AuthorizeRoleAttribute("Project Manager")]
         public ActionResult ControlPanel(List<ControlPanelModel> usuarios)
         {
+
             foreach(var updatedUser in usuarios)
             {
+
                 List<Rol> allRoles = this.GetAllRoles();
 
                 Usuario userFound = unitOfWork.UsuarioRepository.GetByID(updatedUser.ID);
@@ -244,8 +255,6 @@ namespace Taskker.Controllers
                 {
                     unitOfWork.Save();
                 }
-                // TODO:
-                // Implementar eliminacion de usuario para este grupo
             }
 
             return RedirectToAction("Index", "Browse");

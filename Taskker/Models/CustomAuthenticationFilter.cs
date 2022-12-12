@@ -19,10 +19,8 @@ namespace Taskker.Models
         }
         public void OnAuthenticationChallenge(AuthenticationChallengeContext filterContext)
         {
-            // Este metodo es llamado cuando falla la autenticacion o autorizacion
             if (filterContext.Result == null || filterContext.Result is HttpUnauthorizedResult)
             {
-                //Redirecting the user to the Login View of Account Controller
                 filterContext.Result = new RedirectToRouteResult(
                     new RouteValueDictionary{
                         { "controller", "Auth" },

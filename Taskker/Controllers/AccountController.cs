@@ -77,16 +77,10 @@ namespace Taskker.Controllers
 
                 
                 string extension = Path.GetExtension(rm.Photo.FileName);
-                string filename = Path.GetFileName(rm.Photo.FileName);
+                string filename = Path.GetFileName(rm.Photo.FileName).Replace(extension, "");
 
-                // Combinamos el path agregandole un UUID unico
-                /***
-                 * TODO:
-                 * revisar por que no pone el uuid
-                 
-                 */
                 string new_filepath = Path.Combine(
-                    serverPath, string.Format("{0}_{0}.{0}", filename, Utils.GenerateUUID(), extension)
+                    serverPath, string.Format("{0}_{1}.{2}", filename, Utils.GenerateUUID(), extension)
                 );
 
                 if (System.IO.File.Exists(new_filepath))
@@ -95,6 +89,8 @@ namespace Taskker.Controllers
                 // Guardamos la foto que subio el usuario
                 rm.Photo.SaveAs(new_filepath);
                 toModify.ProfilePicturePath = new_filepath;
+
+                // Codificamos la foto para que se pueda mostrar desde html
                 us.EncodedPicture = Utils.EncodePicture(new_filepath);
             }
 
