@@ -179,6 +179,11 @@ namespace Taskker.Controllers
             DateTime timeEstimated = Utils.parseTime(t.Estimado);
 
             // Obtenemos los usuarios asignados a la tarea
+            if (t.Asignees == null)
+            {
+                t.Asignees = "";
+            }
+
             List<string> asignees = new List<string>(t.Asignees.Split(','));
             List<Usuario> asigneesToAdd = new List<Usuario>();
             asignees.ForEach(nombre =>
@@ -269,7 +274,7 @@ namespace Taskker.Controllers
                 // Obtenemos la tarea que se debe actualizar
                 var tareaFound = unitOfWork.TareaRepository.GetByID(tm.Id);
 
-                List<string> usuarios = null;
+                List<string> usuarios = new List<string>();
 
                 UserSession us = (UserSession) Session["UserSession"];
 
@@ -286,23 +291,50 @@ namespace Taskker.Controllers
                 }
 
                 List<Usuario> filteredUsuarios = new List<Usuario>();
-                foreach (var username in usuarios ?? Enumerable.Empty<string>())
+                List<Usuario> usersToDelete = new List<Usuario>();
+
+                // Usuarios a agregar
+                foreach (var usrStr in usuarios)
                 {
                     try
                     {
                         var userfound = from u in unitOfWork.UsuarioRepository
-                                            .Get(_us => _us.NombreApellido == username)
+                                            .Get(_us => _us.NombreApellido == usrStr)
                                         select u;
-                        
-                        filteredUsuarios.Add(userfound.Single());
+
+                        Usuario usuario = userfound.Single();
+
+                        if (!tareaFound.Usuarios.Contains(usuario))
+                        {
+                            filteredUsuarios.Add(usuario);
+                        }
+
                     }
-                    catch (InvalidOperationException){}
+                    catch (InvalidOperationException) { }
                 }
+
+                // Usuarios a eliminar
+                foreach(var usr in tareaFound.Usuarios)
+                {
+                    var result = from userName in usuarios
+                                 where usr.NombreApellido.ToLower() == userName.ToLower()
+                                 select userName;
+
+                    if (result.SingleOrDefault() == null)
+                    {
+                        usersToDelete.Add(usr);
+                    }
+                }
+
+                // Eliminamos cada usuario
+                usersToDelete.ForEach(u => tareaFound.Usuarios.Remove(u));
 
                 TimeTracked tiempo = null;
                 bool newTrackedTime = false;
+
                 try
                 {
+                    // Buscamos el time tracked
                     tiempo = tareaFound.TiempoRegistrado.Single(
                         tr => tr.TareaID == tareaFound.ID &&
                               tr.UsuarioID == found_user.ID
@@ -319,6 +351,7 @@ namespace Taskker.Controllers
                         };
 
                         unitOfWork.TtrackedRepository.Insert(tiempo);
+                        unitOfWork.Save();
 
                         newTrackedTime = true;
                     }
@@ -326,7 +359,12 @@ namespace Taskker.Controllers
 
                 tareaFound.Descripcion = tm.Descripcion;
                 tareaFound.Titulo = tm.Titulo;
-                tareaFound.Usuarios = filteredUsuarios;
+
+                foreach(var usr in filteredUsuarios)
+                {
+                    tareaFound.Usuarios.Add(usr);
+                }
+
                 tareaFound.Estimado = Utils.parseTime(tm.Estimado);
 
                 if (tm.TiempoRegistrado != null && !newTrackedTime)
@@ -337,6 +375,11 @@ namespace Taskker.Controllers
                         .AddHours(parsedTime.Hour)
                         .AddMinutes(parsedTime.Minute)
                         .AddSeconds(parsedTime.Second);
+                    
+                    if (TryUpdateModel(tiempo, new string[] { "Time" }))
+                    {
+                        unitOfWork.Save();
+                    }
                 }
 
                 if (tm.Tipo == null)
@@ -346,9 +389,8 @@ namespace Taskker.Controllers
                         typeof(TareaTipo),
                         tm.Tipo
                     );
-                unitOfWork.TareaRepository.Update(tareaFound);
-                unitOfWork.Save();
 
+                unitOfWork.Save();
             }
             catch (InvalidOperationException){}
 
