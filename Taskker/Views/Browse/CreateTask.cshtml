@@ -86,9 +86,6 @@
             {
                 minLength: 1,
                 onAutocomplete: function (elem, data) {
-                    console.log('onAutocomplete')
-                    console.log(elem);
-                    console.log(data);
                 }
             }
         );
@@ -105,9 +102,6 @@
                     var elemText = this.dropdownEl.firstChild.innerText
                     if (elemText != undefined) {
                         textinput.value = this.dropdownEl.firstChild.innerText
-                        console.log('correcto')
-                    } else {
-                        console.log('no habia elementos')
                     }
                 }
             }
@@ -123,7 +117,6 @@
             var second = ''
 
             if (matches == null) {
-                console.log('Matches null')
                 return;
             }
 

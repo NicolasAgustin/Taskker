@@ -55,8 +55,6 @@
 
         $('#details').modal({
             onOpenStart: function (modal, trigger) {
-                console.log('Se abre el modal details')
-
                 $.ajax({
                     url: "/Browse/TaskDetails",
                     type: 'GET',
@@ -68,15 +66,12 @@
             },
 
             onCloseStart: function (modal, trigger) {
-                console.log('Se cierra el modal')
                 document.getElementById('update-form').submit()
             }
         });
 
         $('#control-panel').modal({
             onOpenStart: function (modal, trigger) {
-                console.log('Se abre el modal panel de control')
-
                 $.ajax({
                     url: "/Browse/ControlPanel",
                     type: 'GET',
@@ -87,7 +82,6 @@
             },
 
             onCloseStart: function (modal, trigger) {
-                console.log('Se cierra el modal')
                 document.getElementById('control-panel-form').submit()
             }
         });
@@ -98,7 +92,6 @@
     $(document).ready(function () {
         $('#create').modal({
             onOpenStart: function (modal, trigger) {
-                console.log('Se abre el modal create')
                 $.ajax({
                     type: 'GET',
                     url: "/Browse/CreateTask",
@@ -108,7 +101,6 @@
                 });
             },
             onOpenEnd: function (modal, trigger) {
-                console.log('Termino de abrirse el modal create')
             }
         })
     })
