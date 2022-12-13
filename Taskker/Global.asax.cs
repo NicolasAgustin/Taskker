@@ -29,8 +29,15 @@ namespace Taskker
                 return;
 
             // Desencriptamos el ticket de autenticacion
-            FormsAuthenticationTicket authTicket = FormsAuthentication
-                .Decrypt(authCookie.Value);
+            FormsAuthenticationTicket authTicket = null;
+            try
+            {
+                 authTicket = FormsAuthentication
+                    .Decrypt(authCookie.Value);
+            }catch(Exception ex)
+            {
+                return;
+            }
 
             // Si es null o si el ticket expiro 
             if (authTicket == null || authTicket.Expired)

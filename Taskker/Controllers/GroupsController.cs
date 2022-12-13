@@ -133,7 +133,7 @@ namespace Taskker.Controllers
                 };
 
                 // Agregamos al usuario creador al grupo
-                nuevo.Usuarios.Add(user);
+                nuevo.Usuarios = new List<Usuario>() { user };
 
                 // Guardamos el grupo
                 unitOfWork.GrupoRepository.Insert(nuevo);
