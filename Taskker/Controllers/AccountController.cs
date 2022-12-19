@@ -7,6 +7,8 @@ using Taskker.Models;
 using Taskker.Models.DAL;
 using System.Configuration;
 using System.Collections.Generic;
+using Taskker.Models.Services;
+using System.Threading.Tasks;
 
 namespace Taskker.Controllers
 {
@@ -15,22 +17,24 @@ namespace Taskker.Controllers
     public class AccountController : Controller
     {
         private UnitOfWork unitOfWork;
+        private readonly NotesService notesService;
 
         public AccountController()
         {
             this.unitOfWork = new UnitOfWork();
+            notesService = new NotesService();
         }
 
         // GET: Account
         [HttpGet]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             // Session del usuario
             UserSession us = (UserSession)Session["UserSession"];
 
             // Obtenemos el usuario logeado
             Usuario logged = unitOfWork.UsuarioRepository.GetByID(us.ID);
-
+            ViewData["Notes"] = await notesService.GetNotes(us.ID);
             return View("Profile", logged);
         }
 
