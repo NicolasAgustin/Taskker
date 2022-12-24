@@ -70,7 +70,7 @@ namespace Taskker_Desktop
                 return;
             }
 
-
+            var details = new TaskDetails(toDisplay);
 
             Console.WriteLine("Seleccionado: " + titulo + " " + tipo + " " + estimado);
         }

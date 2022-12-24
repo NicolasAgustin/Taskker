@@ -30,7 +30,7 @@ namespace Taskker_Desktop
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.titulo = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tipo = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
@@ -46,12 +46,12 @@ namespace Taskker_Desktop
             this.label1.TabIndex = 0;
             this.label1.Text = "Titulo";
             // 
-            // textBox1
+            // titulo
             // 
-            this.textBox1.Location = new System.Drawing.Point(162, 80);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(166, 20);
-            this.textBox1.TabIndex = 1;
+            this.titulo.Location = new System.Drawing.Point(162, 80);
+            this.titulo.Name = "titulo";
+            this.titulo.Size = new System.Drawing.Size(166, 20);
+            this.titulo.TabIndex = 1;
             // 
             // label2
             // 
@@ -80,7 +80,7 @@ namespace Taskker_Desktop
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.tipo);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.titulo);
             this.Controls.Add(this.label1);
             this.Name = "TaskDetails";
             this.Text = "TaskDetails";
@@ -92,7 +92,7 @@ namespace Taskker_Desktop
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox titulo;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox tipo;
     }
