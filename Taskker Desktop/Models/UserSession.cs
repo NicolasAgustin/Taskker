@@ -7,15 +7,15 @@ using Taskker_Desktop.Models.DAL;
 
 namespace Taskker_Desktop.Models
 {
-    public class UserSession
+    public static class UserSession
     {
-        public string NombreApellido { get; set; }
-        public string Nombre { get; set; }
-        public string Apellido { get; set; }
-        public int ID { get; set; }
-        public string ProfilePicture { get; set; }
+        public static string NombreApellido { get; set; }
+        public static string Nombre { get; set; }
+        public static string Apellido { get; set; }
+        public static int ID { get; set; }
+        public static string ProfilePicture { get; set; }
 
-        public UserSession(Usuario user)
+        public static void setUserData(Usuario user)
         {
             NombreApellido = user.NombreApellido;
             Nombre = user.Nombre;

@@ -51,8 +51,8 @@ namespace Taskker_Desktop
                     emailTip.Show("El correo electronico no existe", email);
                     return;
                 }
-
-                var frm = new Home(new UserSession(loggedUser));
+                UserSession.setUserData(loggedUser);
+                var frm = new Home();
                 frm.Location = this.Location;
                 frm.StartPosition = FormStartPosition.Manual;
                 frm.FormClosing += delegate { this.Show(); };

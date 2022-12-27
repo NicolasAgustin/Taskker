@@ -15,14 +15,11 @@ namespace Taskker_Desktop
     public partial class Home : Form
     {
         private UnitOfWork unitOfWork;
-        private UserSession session;
-        public Home(UserSession us)
+        public Home()
         {
             InitializeComponent();
             unitOfWork = new UnitOfWork();
-            session = us;
             initializeTaskList();
-            load_tasks();
         }
 
         private void initializeTaskList()
@@ -32,17 +29,6 @@ namespace Taskker_Desktop
             foreach(var prop in new string[] { "Titulo", "Tipo", "Estimado" })
             {
                 tareas.Columns.Add(prop, 200, HorizontalAlignment.Center);
-            }
-        }
-
-        private void load_tasks()
-        {
-            List<Tarea> tareasFound = unitOfWork.TareaRepository.Get().ToList();
-
-            foreach(var tarea in tareasFound)
-            {
-                var item = new ListViewItem(new string[] { tarea.Titulo, tarea.Tipo.ToString(), tarea.Estimado.ToString() });
-                tareas.Items.Add(item);
             }
         }
 
@@ -70,9 +56,33 @@ namespace Taskker_Desktop
                 return;
             }
 
-            var details = new TaskDetails(toDisplay);
+            var details = new TaskDetails(toDisplay, this, unitOfWork);
+            details.Location = this.Location;
+            details.StartPosition = FormStartPosition.Manual;
+            details.FormClosing += delegate { this.Show(); };
+            details.Show();
 
             Console.WriteLine("Seleccionado: " + titulo + " " + tipo + " " + estimado);
+        }
+
+        private void Home_Load(object sender, EventArgs e)
+        {
+            Reload();
+        }
+
+        public void Reload()
+        {
+            tareas.Items.Clear();
+
+            tareas.AccessibilityObject.ToString();
+
+            List<Tarea> tareasFound = unitOfWork.TareaRepository.Get().ToList();
+
+            foreach (var tarea in tareasFound)
+            {
+                var item = new ListViewItem(new string[] { tarea.Titulo, tarea.Tipo.ToString(), tarea.Estimado.ToString() });
+                tareas.Items.Add(item);
+            }
         }
     }
 }
