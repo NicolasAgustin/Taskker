@@ -41,7 +41,37 @@ namespace Taskker_Desktop
 
             registrarTiempo.Format = DateTimePickerFormat.Time;
             registrarTiempo.ShowUpDown = true;
-            registrarTiempo.Value = new DateTime();
+            registrarTiempo.Value = new DateTime(2000, 1, 1);
+
+            // Headers de la listview para los tiempos
+            tiempos.View = View.Details;
+            tiempos.FullRowSelect = true;
+            foreach (var prop in new string[] { "Usuario", "Tiempo registrado" })
+            {
+                tiempos.Columns.Add(prop, 200, HorizontalAlignment.Center);
+            }
+
+            DisplayTimesPerUser();
+        }
+
+        private void DisplayTimesPerUser()
+        {
+            List<TimeTracked> tiemposFound = unitOfWork.TtrackedRepository.Get(
+                tt => tt.TareaID == Displayed.ID &&
+                tt.UsuarioID == UserSession.ID
+            ).ToList();
+
+            foreach(var tfound in tiemposFound)
+            {
+                var item = new ListViewItem(
+                    new string[] { 
+                        tfound.Usuario.NombreApellido, 
+                        tfound.Time.ToString("HH:mm:ss") 
+                    }
+                );
+
+                tiempos.Items.Add(item);
+            }
         }
 
         private void TaskDetails_FormClosed(object sender, FormClosedEventArgs e)
@@ -57,9 +87,19 @@ namespace Taskker_Desktop
 
             toUpdate.Titulo = titulo.Text;
             toUpdate.Tipo = (TareaTipo)Enum.Parse(typeof(TareaTipo), tipo.SelectedItem.ToString());
+
             toUpdate.Estimado = estimado.Value;
 
-            if (!toUpdate.TiempoRegistrado.Any(t => t.Time.ToString("HH:mm:ss") == registrarTiempo.Value.ToString("HH: mm:ss")))
+            TimeTracked time = toUpdate.TiempoRegistrado.SingleOrDefault(
+                t => t.UsuarioID == UserSession.ID);
+            
+            if(registrarTiempo.Value.ToString("HH:mm:ss") == "00:00:00")
+            {
+                unitOfWork.Save();
+                return;
+            }
+
+            if (time == null)
             {
                 TimeTracked tt = new TimeTracked()
                 {
@@ -68,7 +108,16 @@ namespace Taskker_Desktop
                     UsuarioID = UserSession.ID
                 };
 
+                unitOfWork.TtrackedRepository.Insert(tt);
                 toUpdate.TiempoRegistrado.Add(tt);
+
+            } else
+            {
+
+                time.Time = time.Time.AddHours(registrarTiempo.Value.Hour)
+                    .AddMinutes(registrarTiempo.Value.Minute)
+                    .AddSeconds(registrarTiempo.Value.Second);
+
             }
 
             unitOfWork.Save();
@@ -77,6 +126,10 @@ namespace Taskker_Desktop
         private void actualizar_Click(object sender, EventArgs e)
         {
             FormToModel();
+            // Revisar que se vacia la listview de los tiempos
+            tiempos.Clear();
+            tiempos.AccessibilityObject.ToString();
+            DisplayTimesPerUser();
         }
     }
 }

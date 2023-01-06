@@ -38,7 +38,7 @@ namespace Taskker_Desktop
             this.label4 = new System.Windows.Forms.Label();
             this.registrarTiempo = new System.Windows.Forms.DateTimePicker();
             this.actualizar = new System.Windows.Forms.Button();
-            this.loadBar = new System.Windows.Forms.ProgressBar();
+            this.tiempos = new System.Windows.Forms.ListView();
             this.SuspendLayout();
             // 
             // label1
@@ -116,7 +116,7 @@ namespace Taskker_Desktop
             // 
             // actualizar
             // 
-            this.actualizar.Location = new System.Drawing.Point(78, 303);
+            this.actualizar.Location = new System.Drawing.Point(78, 289);
             this.actualizar.Name = "actualizar";
             this.actualizar.Size = new System.Drawing.Size(112, 31);
             this.actualizar.TabIndex = 8;
@@ -124,12 +124,14 @@ namespace Taskker_Desktop
             this.actualizar.UseVisualStyleBackColor = true;
             this.actualizar.Click += new System.EventHandler(this.actualizar_Click);
             // 
-            // loadBar
+            // tiempos
             // 
-            this.loadBar.Location = new System.Drawing.Point(78, 379);
-            this.loadBar.Name = "loadBar";
-            this.loadBar.Size = new System.Drawing.Size(629, 23);
-            this.loadBar.TabIndex = 9;
+            this.tiempos.HideSelection = false;
+            this.tiempos.Location = new System.Drawing.Point(78, 333);
+            this.tiempos.Name = "tiempos";
+            this.tiempos.Size = new System.Drawing.Size(646, 97);
+            this.tiempos.TabIndex = 10;
+            this.tiempos.UseCompatibleStateImageBehavior = false;
             // 
             // TaskDetails
             // 
@@ -137,7 +139,7 @@ namespace Taskker_Desktop
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.loadBar);
+            this.Controls.Add(this.tiempos);
             this.Controls.Add(this.actualizar);
             this.Controls.Add(this.registrarTiempo);
             this.Controls.Add(this.label4);
@@ -166,6 +168,6 @@ namespace Taskker_Desktop
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DateTimePicker registrarTiempo;
         private System.Windows.Forms.Button actualizar;
-        private System.Windows.Forms.ProgressBar loadBar;
+        private System.Windows.Forms.ListView tiempos;
     }
 }
