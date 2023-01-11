@@ -51,6 +51,8 @@ namespace Taskker_Desktop
                 tiempos.Columns.Add(prop, 200, HorizontalAlignment.Center);
             }
 
+            // TODO:
+            // Falta agregar un control para la descripcion
             DisplayTimesPerUser();
         }
 
@@ -92,8 +94,12 @@ namespace Taskker_Desktop
 
             TimeTracked time = toUpdate.TiempoRegistrado.SingleOrDefault(
                 t => t.UsuarioID == UserSession.ID);
-            
-            if(registrarTiempo.Value.ToString("HH:mm:ss") == "00:00:00")
+
+            var regTiempoValue = registrarTiempo.Value;
+
+            registrarTiempo.Value = new DateTime(2000, 1, 1);
+
+            if (regTiempoValue.ToString("HH:mm:ss") == "00:00:00")
             {
                 unitOfWork.Save();
                 return;
@@ -103,7 +109,7 @@ namespace Taskker_Desktop
             {
                 TimeTracked tt = new TimeTracked()
                 {
-                    Time = registrarTiempo.Value,
+                    Time = regTiempoValue,
                     TareaID = Displayed.ID,
                     UsuarioID = UserSession.ID
                 };
@@ -114,9 +120,9 @@ namespace Taskker_Desktop
             } else
             {
 
-                time.Time = time.Time.AddHours(registrarTiempo.Value.Hour)
-                    .AddMinutes(registrarTiempo.Value.Minute)
-                    .AddSeconds(registrarTiempo.Value.Second);
+                time.Time = time.Time.AddHours(regTiempoValue.Hour)
+                    .AddMinutes(regTiempoValue.Minute)
+                    .AddSeconds(regTiempoValue.Second);
 
             }
 
@@ -126,10 +132,10 @@ namespace Taskker_Desktop
         private void actualizar_Click(object sender, EventArgs e)
         {
             FormToModel();
-            // Revisar que se vacia la listview de los tiempos
-            tiempos.Clear();
+            tiempos.Items.Clear();
             tiempos.AccessibilityObject.ToString();
             DisplayTimesPerUser();
+
         }
     }
 }
