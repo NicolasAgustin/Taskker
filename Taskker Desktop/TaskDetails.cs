@@ -35,6 +35,8 @@ namespace Taskker_Desktop
 
             HomeForm = homeFrm;
 
+            descripcion.Text = Displayed.Descripcion;
+
             estimado.Format = DateTimePickerFormat.Time;
             estimado.ShowUpDown = true;
             estimado.Value = Displayed.Estimado;
@@ -92,6 +94,8 @@ namespace Taskker_Desktop
 
             toUpdate.Estimado = estimado.Value;
 
+            toUpdate.Descripcion = descripcion.Text;
+
             TimeTracked time = toUpdate.TiempoRegistrado.SingleOrDefault(
                 t => t.UsuarioID == UserSession.ID);
 
@@ -137,5 +141,6 @@ namespace Taskker_Desktop
             DisplayTimesPerUser();
 
         }
+
     }
 }
