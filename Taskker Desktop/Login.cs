@@ -27,11 +27,10 @@ namespace Taskker_Desktop
             string insertedEmail = email.Text;
             string insertedPassword = password.Text;
 
-            insertedEmail = "nicolas.a.sandez@gmail.com";
-            insertedPassword = "pass123";
+            //insertedEmail = "nicolas.a.sandez@gmail.com";
+            //insertedPassword = "pass123";
 
             byte[] hashed_pass = Utils.HashPassword(insertedPassword);
-
 
             try
             {
@@ -52,6 +51,7 @@ namespace Taskker_Desktop
                     return;
                 }
                 UserSession.setUserData(loggedUser);
+                UserSession.EncodedPicture = loggedUser.EncodedProfilePicture;
                 var frm = new Home();
                 frm.Location = this.Location;
                 frm.StartPosition = FormStartPosition.Manual;
@@ -66,6 +66,16 @@ namespace Taskker_Desktop
             }
 
             Console.WriteLine(insertedEmail + insertedPassword);
+        }
+
+        private void registerLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var regFrm = new Register();
+            regFrm.Location = this.Location;
+            regFrm.StartPosition = FormStartPosition.Manual;
+            regFrm.FormClosing += delegate { this.Show(); };
+            regFrm.Show();
+            this.Hide();
         }
     }
 }
