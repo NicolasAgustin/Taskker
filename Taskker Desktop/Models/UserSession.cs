@@ -14,6 +14,7 @@ namespace Taskker_Desktop.Models
         public static string Apellido { get; set; }
         public static int ID { get; set; }
         public static string ProfilePicture { get; set; }
+        public static string EncodedPicture = null;
 
         public static void setUserData(Usuario user)
         {

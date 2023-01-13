@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
@@ -73,6 +74,23 @@ namespace Taskker_Desktop.Models
                 Image img = Image.FromStream(ms, true);
                 return img;
             }
+        }
+        public static string EncodeFromBitmap(Bitmap bitmap)
+        {
+            Stream stream = new MemoryStream();
+            MemoryStream memoryStream = new MemoryStream();
+            bitmap.Save(stream, ImageFormat.Jpeg);
+            stream.Seek(0, SeekOrigin.Begin);
+            stream.CopyTo(memoryStream);
+            byte[] content = memoryStream.ToArray();
+            return Convert.ToBase64String(content, 0, content.Length);
+        }
+        public static string EncodeFromStream(Stream file)
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            file.CopyTo(memoryStream);
+            byte[] content = memoryStream.ToArray();
+            return Convert.ToBase64String(content, 0, content.Length);
         }
 
         /// <summary>
