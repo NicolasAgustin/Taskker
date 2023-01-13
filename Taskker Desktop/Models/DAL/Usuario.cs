@@ -30,7 +30,9 @@ namespace Taskker_Desktop.Models.DAL
         public string Apellido { get; set; }
         public string Email { get; set; }
         public string ProfilePicturePath { get; set; }
+        public string Discriminator { get; set; }
         public byte[] EncptPassword { get; set; }
+        public string EncodedProfilePicture { get; set; }
         public virtual ICollection<Grupo> Grupos { get; set; }
         public virtual ICollection<Grupo> CreatedGroups { get; set; }
         public virtual ICollection<Tarea> Tareas { get; set; }
