@@ -19,6 +19,10 @@ namespace Taskker_Desktop
         {
             InitializeComponent();
             unitOfWork = new UnitOfWork();
+            // Hay que resolver primero el register
+            Image profilePicture = Utils.ImageFromBase64(UserSession.EncodedPicture);
+            fotoPerfil.SizeMode = PictureBoxSizeMode.StretchImage;
+            fotoPerfil.Image = profilePicture;
             initializeTaskList();
         }
 
@@ -58,7 +62,7 @@ namespace Taskker_Desktop
 
             var details = new TaskDetails(toDisplay, this, unitOfWork);
             details.Location = this.Location;
-            details.StartPosition = FormStartPosition.Manual;
+            details.StartPosition = FormStartPosition.CenterScreen;
             details.FormClosing += delegate { this.Show(); };
             details.Show();
 
