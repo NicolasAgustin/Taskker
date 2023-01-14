@@ -58,6 +58,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CreateTask.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateTask.Designer.cs">
+      <DependentUpon>CreateTask.cs</DependentUpon>
+    </Compile>
     <Compile Include="Home.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -97,6 +103,9 @@
     <Compile Include="TaskDetails.Designer.cs">
       <DependentUpon>TaskDetails.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="CreateTask.resx">
+      <DependentUpon>CreateTask.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Home.resx">
       <DependentUpon>Home.cs</DependentUpon>
     </EmbeddedResource>

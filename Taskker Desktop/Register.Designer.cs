@@ -96,7 +96,6 @@ namespace Taskker_Desktop
             this.label7.Size = new System.Drawing.Size(77, 14);
             this.label7.TabIndex = 14;
             this.label7.Text = "Foto de perfil";
-            this.label7.Click += new System.EventHandler(this.label7_Click);
             // 
             // fotoCargada
             // 
@@ -164,6 +163,7 @@ namespace Taskker_Desktop
             this.registerLink.TabIndex = 7;
             this.registerLink.TabStop = true;
             this.registerLink.Text = "Ya posee un usuario? Ingrese aqui";
+            this.registerLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.registerLink_LinkClicked);
             // 
             // label4
             // 

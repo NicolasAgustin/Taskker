@@ -27,8 +27,8 @@ namespace Taskker_Desktop
             string insertedEmail = email.Text;
             string insertedPassword = password.Text;
 
-            //insertedEmail = "nicolas.a.sandez@gmail.com";
-            //insertedPassword = "pass123";
+            insertedEmail = "nicolas.a.sandez@gmail.com";
+            insertedPassword = "pass123";
 
             byte[] hashed_pass = Utils.HashPassword(insertedPassword);
 
@@ -50,8 +50,21 @@ namespace Taskker_Desktop
                     emailTip.Show("El correo electronico no existe", email);
                     return;
                 }
+
                 UserSession.setUserData(loggedUser);
+
+                if (loggedUser.EncodedProfilePicture == null)
+                {
+                    loggedUser.EncodedProfilePicture =
+                        Utils.EncodeFromBitmap(
+                            Properties.Resources._default
+                        );
+
+                    unitOfWork.Save();
+                }
+
                 UserSession.EncodedPicture = loggedUser.EncodedProfilePicture;
+
                 var frm = new Home();
                 frm.Location = this.Location;
                 frm.StartPosition = FormStartPosition.Manual;

@@ -15,23 +15,12 @@ namespace Taskker_Desktop
 {
     public partial class Register : Form
     {
-        private Usuario Nuevo { get; set; }
         private UnitOfWork unitOfWork { get; set; }
         public Register()
         {
             unitOfWork = new UnitOfWork();
             InitializeComponent();
             
-        }
-
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-            
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void cargarFoto_Click(object sender, EventArgs e)
@@ -92,6 +81,16 @@ namespace Taskker_Desktop
                 errorTip.Show("Correo electronico ya se encuentra en uso.", email);
             }
             
+        }
+
+        private void registerLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var regFrm = new Login();
+            regFrm.Location = this.Location;
+            regFrm.StartPosition = FormStartPosition.Manual;
+            regFrm.FormClosing += delegate { this.Show(); };
+            regFrm.Show();
+            this.Hide();
         }
     }
 }
