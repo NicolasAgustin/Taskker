@@ -24,5 +24,15 @@ namespace Taskker_Desktop.Models
             ID = user.ID;
             ProfilePicture = user.ProfilePicturePath;
         }
+
+        public static void Clear()
+        {
+            NombreApellido = null;
+            Nombre = null;
+            Apellido = null;
+            ID = 0;
+            ProfilePicture = null;
+            EncodedPicture = null;
+        }
     }
 }
