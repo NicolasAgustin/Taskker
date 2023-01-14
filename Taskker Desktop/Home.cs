@@ -15,17 +15,36 @@ namespace Taskker_Desktop
     public partial class Home : Form
     {
         private UnitOfWork unitOfWork;
+        private Grupo GrupoActual { get; set; }
         public Home()
         {
             InitializeComponent();
             unitOfWork = new UnitOfWork();
-            // Hay que resolver primero el register
             Image profilePicture = Utils.ImageFromBase64(UserSession.EncodedPicture);
             fotoPerfil.SizeMode = PictureBoxSizeMode.StretchImage;
             fotoPerfil.Image = profilePicture;
             initializeTaskList();
+            initializeGroupList();
+
+            List<Grupo> gruposDisponibles = unitOfWork.GrupoRepository.Get(
+                g => g.Usuarios.Any(u => u.ID == UserSession.ID) || g.Usuario.ID == UserSession.ID
+            ).ToList();
+
+            if (gruposDisponibles.Count > 0)
+            {
+                GrupoActual = gruposDisponibles[0];
+            } else
+            {
+                // Redirigir a crear grupo o unirse
+            }
         }
 
+        private void initializeGroupList()
+        {
+            //gruposList.View = View.Details;
+            gruposList.Alignment = ListViewAlignment.Top;
+            tareas.FullRowSelect = true;
+        }
         private void initializeTaskList()
         {
             tareas.View = View.Details;
@@ -76,17 +95,86 @@ namespace Taskker_Desktop
 
         public void Reload()
         {
+
+            // Actualizamos la foto de perfil
+            fotoPerfil.Image = Utils.ImageFromBase64(UserSession.EncodedPicture);
+
+            // Actualizamos el nombre del usuario
+            nombreLabel.Text = UserSession.NombreApellido;
+
+            // Actualizamos las tareas
             tareas.Items.Clear();
-
             tareas.AccessibilityObject.ToString();
+            List<Tarea> tareasFound = unitOfWork.TareaRepository.Get(
+                t => t.GrupoID == GrupoActual.ID
+                ).ToList();
 
-            List<Tarea> tareasFound = unitOfWork.TareaRepository.Get().ToList();
 
             foreach (var tarea in tareasFound)
             {
-                var item = new ListViewItem(new string[] { tarea.Titulo, tarea.Tipo.ToString(), tarea.Estimado.ToString() });
+                var item = new ListViewItem(new string[] { 
+                    tarea.Titulo, tarea.Tipo.ToString(), tarea.Estimado.ToString() });
+
                 tareas.Items.Add(item);
             }
+
+            // Actualizamos los grupos
+            gruposList.Items.Clear();
+            gruposList.AccessibilityObject.ToString();
+
+            List<Grupo> grupos = unitOfWork.GrupoRepository.Get(
+                g => g.Usuarios.Any(u => u.ID == UserSession.ID) || g.Usuario.ID == UserSession.ID
+                ).ToList();
+
+            foreach (var grupo in grupos)
+            {
+                var item = new ListViewItem(new string[] {
+                    grupo.Nombre }
+                );
+
+                gruposList.Items.Add(item);
+            }
+
+        }
+
+        private void salirLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            UserSession.Clear();
+            tareas.Items.Clear();
+            var frm = new Login();
+            frm.Location = Location;
+            frm.StartPosition = FormStartPosition.Manual;
+            frm.FormClosing += delegate { Show(); };
+            frm.Show();
+            Hide();
+        }
+
+        private void crearTareaBtn_Click(object sender, EventArgs e)
+        {
+            // Le pasamos el id del grupo actual en donde tiene que agregar la tarea
+            var frm = new CreateTask(GrupoActual.ID);
+            frm.Location = Location;
+            frm.StartPosition = FormStartPosition.Manual;
+            frm.FormClosing += delegate { 
+                Show();
+                Refresh();
+                Reload();
+            };
+            frm.Show();
+        }
+
+        private void gruposList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string grupoSelected = gruposList.SelectedItems[0].Text;
+
+            var grupo = unitOfWork.GrupoRepository.Get(g => g.Nombre == grupoSelected).SingleOrDefault();
+
+            if (grupo == null)
+                return;
+
+            // Ver como hacer para cambiar de grupo
+            GrupoActual = grupo;
+            Reload();
         }
     }
 }
