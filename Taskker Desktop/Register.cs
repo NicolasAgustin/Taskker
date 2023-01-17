@@ -73,7 +73,15 @@ namespace Taskker_Desktop
                 frm.Location = Location;
                 frm.StartPosition = FormStartPosition.Manual;
                 frm.FormClosing += delegate { Show(); };
-                frm.Show();
+                try
+                {
+                    frm.Show();
+                }
+                catch (Exception)
+                {
+                    frm.Dispose();
+                }
+
                 Hide();
             } else
             {

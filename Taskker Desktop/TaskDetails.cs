@@ -15,10 +15,9 @@ namespace Taskker_Desktop
 {
     public partial class TaskDetails : Form
     {
-        private Home HomeForm;
         private Tarea Displayed;
         private UnitOfWork unitOfWork;
-        public TaskDetails(Tarea toDisplay, Home homeFrm, UnitOfWork unitOfWork)
+        public TaskDetails(Tarea toDisplay, UnitOfWork unitOfWork)
         {
             InitializeComponent();
 
@@ -32,8 +31,6 @@ namespace Taskker_Desktop
             tipo.Items.Add(TareaTipo.SinTipo);
             tipo.SelectedIndex = tipo.FindStringExact(
                 toDisplay.Tipo.ToString());
-
-            HomeForm = homeFrm;
 
             descripcion.Text = Displayed.Descripcion;
 
@@ -53,9 +50,8 @@ namespace Taskker_Desktop
                 tiempos.Columns.Add(prop, 200, HorizontalAlignment.Center);
             }
 
-            // TODO:
-            // Falta agregar un control para la descripcion
             DisplayTimesPerUser();
+            LoadAsignees();
         }
 
         private void DisplayTimesPerUser()
@@ -78,11 +74,28 @@ namespace Taskker_Desktop
             }
         }
 
-        private void TaskDetails_FormClosed(object sender, FormClosedEventArgs e)
+        public void LoadAsignees()
         {
-            Console.WriteLine("Formulario cerrado");
-            this.HomeForm.Refresh();
-            this.HomeForm.Reload();
+            // Deberia filtrarse por el grupo
+            List<Usuario> usuarios = unitOfWork.UsuarioRepository.Get(
+                u => u.Grupos.Any(gp => gp.ID == Displayed.GrupoID)
+                || u.CreatedGroups.Any(gc => gc.ID == Displayed.GrupoID)
+            ).ToList();
+
+            List<string> displayNames = new List<string>();
+
+            usuarios.ForEach(u => displayNames.Add(u.NombreApellido));
+
+            asignees.Items.AddRange(displayNames.ToArray());
+
+            Displayed.Usuarios.ToList().ForEach(ua =>
+            {
+                var name = ua.NombreApellido;
+                int index = asignees.FindStringExact(name);
+                if (index != -1)
+                    asignees.SetItemChecked(index, true);
+
+            });
         }
 
         private void FormToModel()

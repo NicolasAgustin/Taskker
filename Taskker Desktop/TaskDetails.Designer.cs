@@ -41,6 +41,8 @@ namespace Taskker_Desktop
             this.tiempos = new System.Windows.Forms.ListView();
             this.descripcion = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.asignees = new System.Windows.Forms.CheckedListBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -48,7 +50,7 @@ namespace Taskker_Desktop
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label1.Location = new System.Drawing.Point(38, 50);
+            this.label1.Location = new System.Drawing.Point(37, 22);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(74, 29);
             this.label1.TabIndex = 0;
@@ -56,7 +58,7 @@ namespace Taskker_Desktop
             // 
             // titulo
             // 
-            this.titulo.Location = new System.Drawing.Point(248, 59);
+            this.titulo.Location = new System.Drawing.Point(247, 31);
             this.titulo.Name = "titulo";
             this.titulo.Size = new System.Drawing.Size(166, 20);
             this.titulo.TabIndex = 1;
@@ -66,7 +68,7 @@ namespace Taskker_Desktop
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label2.Location = new System.Drawing.Point(38, 111);
+            this.label2.Location = new System.Drawing.Point(37, 83);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(63, 29);
             this.label2.TabIndex = 2;
@@ -75,14 +77,14 @@ namespace Taskker_Desktop
             // tipo
             // 
             this.tipo.FormattingEnabled = true;
-            this.tipo.Location = new System.Drawing.Point(248, 120);
+            this.tipo.Location = new System.Drawing.Point(247, 92);
             this.tipo.Name = "tipo";
             this.tipo.Size = new System.Drawing.Size(166, 21);
             this.tipo.TabIndex = 3;
             // 
             // estimado
             // 
-            this.estimado.Location = new System.Drawing.Point(248, 168);
+            this.estimado.Location = new System.Drawing.Point(247, 140);
             this.estimado.Name = "estimado";
             this.estimado.Size = new System.Drawing.Size(166, 20);
             this.estimado.TabIndex = 4;
@@ -92,7 +94,7 @@ namespace Taskker_Desktop
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label3.Location = new System.Drawing.Point(38, 162);
+            this.label3.Location = new System.Drawing.Point(37, 134);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(204, 29);
             this.label3.TabIndex = 5;
@@ -103,7 +105,7 @@ namespace Taskker_Desktop
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label4.Location = new System.Drawing.Point(38, 214);
+            this.label4.Location = new System.Drawing.Point(37, 186);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(191, 29);
             this.label4.TabIndex = 6;
@@ -111,14 +113,14 @@ namespace Taskker_Desktop
             // 
             // registrarTiempo
             // 
-            this.registrarTiempo.Location = new System.Drawing.Point(248, 220);
+            this.registrarTiempo.Location = new System.Drawing.Point(247, 192);
             this.registrarTiempo.Name = "registrarTiempo";
             this.registrarTiempo.Size = new System.Drawing.Size(166, 20);
             this.registrarTiempo.TabIndex = 7;
             // 
             // actualizar
             // 
-            this.actualizar.Location = new System.Drawing.Point(43, 276);
+            this.actualizar.Location = new System.Drawing.Point(336, 525);
             this.actualizar.Name = "actualizar";
             this.actualizar.Size = new System.Drawing.Size(112, 31);
             this.actualizar.TabIndex = 8;
@@ -129,18 +131,18 @@ namespace Taskker_Desktop
             // tiempos
             // 
             this.tiempos.HideSelection = false;
-            this.tiempos.Location = new System.Drawing.Point(78, 333);
+            this.tiempos.Location = new System.Drawing.Point(42, 407);
             this.tiempos.Name = "tiempos";
-            this.tiempos.Size = new System.Drawing.Size(646, 97);
+            this.tiempos.Size = new System.Drawing.Size(729, 97);
             this.tiempos.TabIndex = 10;
             this.tiempos.UseCompatibleStateImageBehavior = false;
             // 
             // descripcion
             // 
-            this.descripcion.Location = new System.Drawing.Point(450, 92);
+            this.descripcion.Location = new System.Drawing.Point(476, 83);
             this.descripcion.Multiline = true;
             this.descripcion.Name = "descripcion";
-            this.descripcion.Size = new System.Drawing.Size(295, 151);
+            this.descripcion.Size = new System.Drawing.Size(295, 293);
             this.descripcion.TabIndex = 11;
             // 
             // label5
@@ -148,18 +150,41 @@ namespace Taskker_Desktop
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label5.Location = new System.Drawing.Point(445, 50);
+            this.label5.Location = new System.Drawing.Point(471, 22);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(141, 29);
             this.label5.TabIndex = 12;
             this.label5.Text = "Descripcion";
+            // 
+            // asignees
+            // 
+            this.asignees.CheckOnClick = true;
+            this.asignees.FormattingEnabled = true;
+            this.asignees.Location = new System.Drawing.Point(247, 272);
+            this.asignees.Name = "asignees";
+            this.asignees.ScrollAlwaysVisible = true;
+            this.asignees.Size = new System.Drawing.Size(166, 94);
+            this.asignees.TabIndex = 30;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.label6.Location = new System.Drawing.Point(36, 272);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(94, 29);
+            this.label6.TabIndex = 29;
+            this.label6.Text = "Asignar";
             // 
             // TaskDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(800, 568);
+            this.Controls.Add(this.asignees);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.descripcion);
             this.Controls.Add(this.tiempos);
@@ -174,7 +199,6 @@ namespace Taskker_Desktop
             this.Controls.Add(this.label1);
             this.Name = "TaskDetails";
             this.Text = "TaskDetails";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TaskDetails_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -194,5 +218,7 @@ namespace Taskker_Desktop
         private System.Windows.Forms.ListView tiempos;
         private System.Windows.Forms.TextBox descripcion;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckedListBox asignees;
+        private System.Windows.Forms.Label label6;
     }
 }

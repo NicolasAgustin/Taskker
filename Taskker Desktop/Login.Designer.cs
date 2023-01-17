@@ -34,14 +34,14 @@ namespace Taskker_Desktop
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.registerLink = new System.Windows.Forms.LinkLabel();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.email = new System.Windows.Forms.MaskedTextBox();
             this.password = new System.Windows.Forms.MaskedTextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.emailTip = new System.Windows.Forms.ToolTip(this.components);
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.registerLink = new System.Windows.Forms.LinkLabel();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -91,12 +91,45 @@ namespace Taskker_Desktop
             this.panel3.Size = new System.Drawing.Size(422, 278);
             this.panel3.TabIndex = 0;
             // 
+            // registerLink
+            // 
+            this.registerLink.AutoSize = true;
+            this.registerLink.Location = new System.Drawing.Point(119, 196);
+            this.registerLink.Name = "registerLink";
+            this.registerLink.Size = new System.Drawing.Size(172, 13);
+            this.registerLink.TabIndex = 7;
+            this.registerLink.TabStop = true;
+            this.registerLink.Text = "No posee usuario? Registrese aqui";
+            this.registerLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.registerLink_LinkClicked);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Tai Le", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.label4.Location = new System.Drawing.Point(94, 141);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(66, 14);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "Contraseña";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Tai Le", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.label3.Location = new System.Drawing.Point(94, 89);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(102, 14);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Correo electronico";
+            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(168, 226);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 4;
+            this.button1.TabIndex = 3;
             this.button1.Text = "Ingresar";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
@@ -106,7 +139,7 @@ namespace Taskker_Desktop
             this.email.Location = new System.Drawing.Point(94, 108);
             this.email.Name = "email";
             this.email.Size = new System.Drawing.Size(221, 20);
-            this.email.TabIndex = 3;
+            this.email.TabIndex = 1;
             // 
             // password
             // 
@@ -127,39 +160,6 @@ namespace Taskker_Desktop
             this.label2.TabIndex = 0;
             this.label2.Text = "Ingresar al sistema";
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Tai Le", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label3.Location = new System.Drawing.Point(94, 89);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(102, 14);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Correo electronico";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Tai Le", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label4.Location = new System.Drawing.Point(94, 141);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(66, 14);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Contraseña";
-            // 
-            // registerLink
-            // 
-            this.registerLink.AutoSize = true;
-            this.registerLink.Location = new System.Drawing.Point(119, 196);
-            this.registerLink.Name = "registerLink";
-            this.registerLink.Size = new System.Drawing.Size(172, 13);
-            this.registerLink.TabIndex = 7;
-            this.registerLink.TabStop = true;
-            this.registerLink.Text = "No posee usuario? Registrese aqui";
-            this.registerLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.registerLink_LinkClicked);
-            // 
             // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -169,6 +169,7 @@ namespace Taskker_Desktop
             this.Controls.Add(this.panel1);
             this.Name = "Login";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Login_Load);
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);

@@ -21,7 +21,6 @@ namespace Taskker_Desktop
 
             GrupoToAdd = grupoID;
             InitializeComponent();
-            //asignees.SelectionMode = SelectionMode.MultiSimple;
             LoadAsignees();
 
             estimado.Format = DateTimePickerFormat.Time;
@@ -38,7 +37,11 @@ namespace Taskker_Desktop
         public void LoadAsignees()
         {
             // Deberia filtrarse por el grupo
-            List<Usuario> usuarios = unitOfWork.UsuarioRepository.Get().ToList();
+            List<Usuario> usuarios = unitOfWork.UsuarioRepository.Get(
+                u => u.Grupos.Any(gp => gp.ID == GrupoToAdd) 
+                || u.CreatedGroups.Any(gc => gc.ID == GrupoToAdd)
+            ).ToList();
+
             List<string> displayNames = new List<string>();
 
             usuarios.ForEach(u => displayNames.Add(u.NombreApellido));

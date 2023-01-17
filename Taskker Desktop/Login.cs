@@ -27,8 +27,8 @@ namespace Taskker_Desktop
             string insertedEmail = email.Text;
             string insertedPassword = password.Text;
 
-            insertedEmail = "nicolas.a.sandez@gmail.com";
-            insertedPassword = "pass123";
+            //insertedEmail = "nicolas.a.sandez@gmail.com";
+            //insertedPassword = "pass123";
 
             byte[] hashed_pass = Utils.HashPassword(insertedPassword);
 
@@ -69,8 +69,16 @@ namespace Taskker_Desktop
                 frm.Location = this.Location;
                 frm.StartPosition = FormStartPosition.Manual;
                 frm.FormClosing += delegate { this.Show(); };
-                frm.Show();
-                this.Hide();
+                try
+                {
+                    frm.Show();
+                }
+                catch (Exception)
+                {
+                    frm.Dispose();
+                }
+
+                Hide();
 
             } catch (FormatException)
             {
@@ -89,6 +97,11 @@ namespace Taskker_Desktop
             regFrm.FormClosing += delegate { this.Show(); };
             regFrm.Show();
             this.Hide();
+        }
+
+        private void Login_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

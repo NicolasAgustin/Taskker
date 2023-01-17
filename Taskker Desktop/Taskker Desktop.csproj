@@ -64,6 +64,12 @@
     <Compile Include="CreateTask.Designer.cs">
       <DependentUpon>CreateTask.cs</DependentUpon>
     </Compile>
+    <Compile Include="GroupSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GroupSelector.Designer.cs">
+      <DependentUpon>GroupSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="Home.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -105,6 +111,9 @@
     </Compile>
     <EmbeddedResource Include="CreateTask.resx">
       <DependentUpon>CreateTask.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GroupSelector.resx">
+      <DependentUpon>GroupSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Home.resx">
       <DependentUpon>Home.cs</DependentUpon>

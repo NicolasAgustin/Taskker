@@ -20,6 +20,20 @@ namespace Taskker_Desktop
         {
             InitializeComponent();
             unitOfWork = new UnitOfWork();
+
+            
+            if (RedirectToGroupSwitcher())
+            {
+                var frm = new GroupSelector();
+                frm.Location = Location;
+                frm.StartPosition = FormStartPosition.Manual;
+                frm.FormClosing += delegate { Show(); };
+                frm.Show();
+                Hide();
+                Close();
+                return;
+            }
+
             Image profilePicture = Utils.ImageFromBase64(UserSession.EncodedPicture);
             fotoPerfil.SizeMode = PictureBoxSizeMode.StretchImage;
             fotoPerfil.Image = profilePicture;
@@ -39,6 +53,17 @@ namespace Taskker_Desktop
             }
         }
 
+        private bool RedirectToGroupSwitcher()
+        {
+            Usuario currentUser = unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
+
+            if (currentUser.Grupos == null)
+            {
+                return true;
+            }
+
+            return ((currentUser.Grupos.Count + currentUser.CreatedGroups.Count) == 0);
+        }
         private void initializeGroupList()
         {
             //gruposList.View = View.Details;
@@ -79,10 +104,14 @@ namespace Taskker_Desktop
                 return;
             }
 
-            var details = new TaskDetails(toDisplay, this, unitOfWork);
+            var details = new TaskDetails(toDisplay, unitOfWork);
             details.Location = this.Location;
             details.StartPosition = FormStartPosition.CenterScreen;
-            details.FormClosing += delegate { this.Show(); };
+            details.FormClosing += delegate { 
+                this.Show();
+                Refresh();
+                Reload();
+            };
             details.Show();
 
             Console.WriteLine("Seleccionado: " + titulo + " " + tipo + " " + estimado);
