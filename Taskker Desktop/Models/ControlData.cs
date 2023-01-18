@@ -14,7 +14,7 @@ namespace Taskker_Desktop.Models
         /// </summary>
         public List<Rol> Roles { get; set; }
         public List<Grupo> Grupos { get; set; }
-        public string Nombre { get; set; }
+        public int IDUsuario { get; set; }
 
     }
 }
