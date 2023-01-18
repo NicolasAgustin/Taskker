@@ -39,12 +39,13 @@ namespace Taskker_Desktop
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.grupos = new System.Windows.Forms.GroupBox();
+            this.gruposList = new System.Windows.Forms.ListView();
             this.nombreLabel = new System.Windows.Forms.Label();
             this.crearTareaBtn = new System.Windows.Forms.Button();
             this.reporteBtn = new System.Windows.Forms.Button();
             this.panelBtn = new System.Windows.Forms.Button();
             this.fotoPerfil = new System.Windows.Forms.PictureBox();
-            this.gruposList = new System.Windows.Forms.ListView();
+            this.guardarReporte = new System.Windows.Forms.SaveFileDialog();
             this.panel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -151,6 +152,20 @@ namespace Taskker_Desktop
             this.grupos.TabStop = false;
             this.grupos.Text = "Grupos";
             // 
+            // gruposList
+            // 
+            this.gruposList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.gruposList.ForeColor = System.Drawing.SystemColors.Menu;
+            this.gruposList.FullRowSelect = true;
+            this.gruposList.HideSelection = false;
+            this.gruposList.Location = new System.Drawing.Point(1, 19);
+            this.gruposList.MultiSelect = false;
+            this.gruposList.Name = "gruposList";
+            this.gruposList.Size = new System.Drawing.Size(149, 132);
+            this.gruposList.TabIndex = 0;
+            this.gruposList.UseCompatibleStateImageBehavior = false;
+            this.gruposList.SelectedIndexChanged += new System.EventHandler(this.gruposList_SelectedIndexChanged);
+            // 
             // nombreLabel
             // 
             this.nombreLabel.AutoSize = true;
@@ -177,6 +192,7 @@ namespace Taskker_Desktop
             this.reporteBtn.TabIndex = 13;
             this.reporteBtn.Text = "Generar reporte";
             this.reporteBtn.UseVisualStyleBackColor = true;
+            this.reporteBtn.Click += new System.EventHandler(this.reporteBtn_Click);
             // 
             // panelBtn
             // 
@@ -194,20 +210,6 @@ namespace Taskker_Desktop
             this.fotoPerfil.Size = new System.Drawing.Size(119, 99);
             this.fotoPerfil.TabIndex = 5;
             this.fotoPerfil.TabStop = false;
-            // 
-            // gruposList
-            // 
-            this.gruposList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.gruposList.ForeColor = System.Drawing.SystemColors.Menu;
-            this.gruposList.FullRowSelect = true;
-            this.gruposList.HideSelection = false;
-            this.gruposList.Location = new System.Drawing.Point(1, 19);
-            this.gruposList.MultiSelect = false;
-            this.gruposList.Name = "gruposList";
-            this.gruposList.Size = new System.Drawing.Size(149, 132);
-            this.gruposList.TabIndex = 0;
-            this.gruposList.UseCompatibleStateImageBehavior = false;
-            this.gruposList.SelectedIndexChanged += new System.EventHandler(this.gruposList_SelectedIndexChanged);
             // 
             // Home
             // 
@@ -258,5 +260,6 @@ namespace Taskker_Desktop
         private System.Windows.Forms.Button reporteBtn;
         private System.Windows.Forms.Button panelBtn;
         private System.Windows.Forms.ListView gruposList;
+        private System.Windows.Forms.SaveFileDialog guardarReporte;
     }
 }

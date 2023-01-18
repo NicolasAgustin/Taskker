@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -21,7 +22,13 @@ namespace Taskker_Desktop
             InitializeComponent();
             unitOfWork = new UnitOfWork();
 
-            
+            //**
+            // TODO
+            // - Implementar roles
+            // - Implementar formulario para unirse o crear grupo, ver si se puede reutilizar
+            // - Implementar editar perfil
+            // - Implementar panel de control
+            /**/
             if (RedirectToGroupSwitcher())
             {
                 var frm = new GroupSelector();
@@ -34,6 +41,9 @@ namespace Taskker_Desktop
                 return;
             }
 
+            guardarReporte.RestoreDirectory = true;
+            guardarReporte.Filter = "Text files (*.txt)|*.txt|CSV (delimitado por comas) (*.csv)|*.csv";
+
             Image profilePicture = Utils.ImageFromBase64(UserSession.EncodedPicture);
             fotoPerfil.SizeMode = PictureBoxSizeMode.StretchImage;
             fotoPerfil.Image = profilePicture;
@@ -43,14 +53,10 @@ namespace Taskker_Desktop
             List<Grupo> gruposDisponibles = unitOfWork.GrupoRepository.Get(
                 g => g.Usuarios.Any(u => u.ID == UserSession.ID) || g.Usuario.ID == UserSession.ID
             ).ToList();
-
-            if (gruposDisponibles.Count > 0)
-            {
-                GrupoActual = gruposDisponibles[0];
-            } else
-            {
-                // Redirigir a crear grupo o unirse
-            }
+            
+            // Es seguro acceder a la posicion 0
+            // La validacion de si no hay grupos se hace mas arriba
+            GrupoActual = gruposDisponibles[0];
         }
 
         private bool RedirectToGroupSwitcher()
@@ -66,7 +72,6 @@ namespace Taskker_Desktop
         }
         private void initializeGroupList()
         {
-            //gruposList.View = View.Details;
             gruposList.Alignment = ListViewAlignment.Top;
             tareas.FullRowSelect = true;
         }
@@ -204,6 +209,66 @@ namespace Taskker_Desktop
             // Ver como hacer para cambiar de grupo
             GrupoActual = grupo;
             Reload();
+        }
+
+        private void reporteBtn_Click(object sender, EventArgs e)
+        {
+
+            Usuario currentUser = unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
+
+            // Buscamos todos los registros de tiempo para el usuario actual
+            List<TimeTracked> tiemposRegistrados = unitOfWork.TtrackedRepository.Get(
+                tt => tt.Usuario.ID == currentUser.ID
+            ).ToList();
+
+            List<Tarea> tareas = new List<Tarea>();
+
+            tiemposRegistrados.ForEach(
+                tr => tareas.Add(tr.Tarea)
+            );
+
+            // Creamos una tabla
+            DataTable report = new DataTable();
+
+            // Agregamos los headers
+            report.Columns.Add("Grupo", typeof(string));
+            report.Columns.Add("Tarea", typeof(string));
+            report.Columns.Add("Descripcion", typeof(string));
+            report.Columns.Add("Tiempo", typeof(string));
+
+            // Agrupamos las tareas por grupo
+            var groupedTasks = tareas
+                .GroupBy(t => t.GrupoID)
+                .Select(g => g.ToList())
+                .ToList();
+
+            // Por cada tarea agregamos una fila a la tabla
+            groupedTasks.ForEach(group => group.ForEach(
+                    task => report.Rows.Add(
+                        task.Grupo.Nombre,
+                        task.Titulo,
+                        task.Descripcion,
+                        task.TiempoRegistrado.Single(
+                            tr => tr.UsuarioID == currentUser.ID
+                        ).Time.TimeOfDay.TotalHours.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                    )
+                )
+            );
+
+            // Creamos un stream a partir de la tabla convertida a string
+            Stream stream = Utils.GenerateStreamFromString(
+                Utils.CreateCSVDataTable(report)
+            );
+
+            if (guardarReporte.ShowDialog() == DialogResult.OK)
+            {
+                string outputDirectory = guardarReporte.FileName;
+                using (var fileStream = File.Create(outputDirectory))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.CopyTo(fileStream);
+                }
+            }
         }
     }
 }
