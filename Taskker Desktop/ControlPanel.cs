@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Taskker_Desktop.Models;
@@ -33,7 +34,38 @@ namespace Taskker_Desktop
 
         private void confirmarBtn_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            foreach (var ctrl in panel.Controls)
+            {
+                try
+                {
+                    CustomControl ctrlCustom = (CustomControl)ctrl;
+                    ControlData data = ctrlCustom.ObtainCheckedData();
+                    var usr = unitOfWork.UsuarioRepository.GetByID(data.IDUsuario);
+
+                    usr.Roles = data.Roles;
+                    usr.Grupos = data.Grupos;
+                    unitOfWork.Save();
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
+
+            exitoLabel.Text = "Cambios guardados";
+            var dt = DateTime.Now.AddSeconds(6);
+            System.Threading.Timer timer = new System.Threading.Timer(
+                (obj) => {
+                    Invoke(new MethodInvoker(() =>
+                    {
+                        exitoLabel.Text = "";
+                    }));
+                },
+                null,
+                dt - DateTime.Now,
+                TimeSpan.FromHours(24)
+            );
+
         }
     }
 }

@@ -31,6 +31,7 @@ namespace Taskker_Desktop
         {
             this.panel = new System.Windows.Forms.FlowLayoutPanel();
             this.confirmarBtn = new System.Windows.Forms.Button();
+            this.exitoLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // panel
@@ -51,17 +52,29 @@ namespace Taskker_Desktop
             this.confirmarBtn.UseVisualStyleBackColor = true;
             this.confirmarBtn.Click += new System.EventHandler(this.confirmarBtn_Click);
             // 
+            // exitoLabel
+            // 
+            this.exitoLabel.AutoSize = true;
+            this.exitoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.exitoLabel.ForeColor = System.Drawing.Color.White;
+            this.exitoLabel.Location = new System.Drawing.Point(533, 451);
+            this.exitoLabel.Name = "exitoLabel";
+            this.exitoLabel.Size = new System.Drawing.Size(0, 20);
+            this.exitoLabel.TabIndex = 2;
+            // 
             // ControlPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.ClientSize = new System.Drawing.Size(810, 486);
+            this.Controls.Add(this.exitoLabel);
             this.Controls.Add(this.confirmarBtn);
             this.Controls.Add(this.panel);
             this.Name = "ControlPanel";
             this.Text = "ControlPanel";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -69,5 +82,6 @@ namespace Taskker_Desktop
 
         private System.Windows.Forms.FlowLayoutPanel panel;
         private System.Windows.Forms.Button confirmarBtn;
+        private System.Windows.Forms.Label exitoLabel;
     }
 }
