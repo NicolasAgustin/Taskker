@@ -55,7 +55,7 @@ namespace Taskker_Desktop
             return new ControlData() { 
                 Grupos = checkedGroupsResult, 
                 Roles = checkedRolesResult, 
-                Nombre = userToDisplay.Nombre 
+                IDUsuario = userToDisplay.ID
             };
         }
 
