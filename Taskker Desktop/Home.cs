@@ -135,6 +135,7 @@ namespace Taskker_Desktop
             {
                 // Aca revisamos si el usuario sigue teniendo grupos que podemos mostrar
                 // Si no tiene ningun grupo entonces hay que redirigir al formulario para unirse o crear
+                throw new NotImplementedException();
             }
 
             // Actualizamos la foto de perfil
