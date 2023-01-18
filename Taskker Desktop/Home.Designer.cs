@@ -202,6 +202,7 @@ namespace Taskker_Desktop
             this.panelBtn.TabIndex = 14;
             this.panelBtn.Text = "Panel de control";
             this.panelBtn.UseVisualStyleBackColor = true;
+            this.panelBtn.Click += new System.EventHandler(this.panelBtn_Click);
             // 
             // fotoPerfil
             // 

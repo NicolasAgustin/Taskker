@@ -130,6 +130,13 @@ namespace Taskker_Desktop
         public void Reload()
         {
 
+            // Hay que chequear si el usuario sigue estando en el grupo
+            if (!unitOfWork.UsuarioRepository.GetByID(UserSession.ID).Grupos.Any(g => g.ID == GrupoActual.ID))
+            {
+                // Aca revisamos si el usuario sigue teniendo grupos que podemos mostrar
+                // Si no tiene ningun grupo entonces hay que redirigir al formulario para unirse o crear
+            }
+
             // Actualizamos la foto de perfil
             fotoPerfil.Image = Utils.ImageFromBase64(UserSession.EncodedPicture);
 
@@ -269,6 +276,19 @@ namespace Taskker_Desktop
                     stream.CopyTo(fileStream);
                 }
             }
+        }
+
+        private void panelBtn_Click(object sender, EventArgs e)
+        {
+            var frm = new ControlPanel();
+            frm.Location = Location;
+            frm.StartPosition = FormStartPosition.Manual;
+            frm.FormClosing += delegate {
+                Show();
+                Refresh();
+                Reload();
+            };
+            frm.Show();
         }
     }
 }
