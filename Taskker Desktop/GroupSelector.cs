@@ -14,7 +14,6 @@ namespace Taskker_Desktop
 {
     public partial class GroupSelector : Form
     {
-        private UnitOfWork unitOfWork = new UnitOfWork();
         public GroupSelector()
         {
             InitializeComponent();
@@ -25,7 +24,7 @@ namespace Taskker_Desktop
         public void LoadGrupos()
         {
             // Deberia filtrarse por el grupo
-            List<Grupo> usuarios = unitOfWork.GrupoRepository.Get().ToList();
+            List<Grupo> usuarios = Context.unitOfWork.GrupoRepository.Get().ToList();
 
             List<string> displayNames = new List<string>();
 
@@ -37,7 +36,7 @@ namespace Taskker_Desktop
         public void LoadAsignees()
         {
             // Deberia filtrarse por el grupo
-            List<Usuario> usuarios = unitOfWork.UsuarioRepository.Get(
+            List<Usuario> usuarios = Context.unitOfWork.UsuarioRepository.Get(
                 grp => grp.ID != UserSession.ID
                 ).ToList();
 
@@ -55,7 +54,7 @@ namespace Taskker_Desktop
             foreach (var item in gruposDisponibles.CheckedItems)
             {
 
-                var grp = unitOfWork.GrupoRepository.Get(u => u.Nombre == item.ToString()).SingleOrDefault();
+                var grp = Context.unitOfWork.GrupoRepository.Get(u => u.Nombre == item.ToString()).SingleOrDefault();
 
                 if (grp == null)
                     continue;
@@ -63,10 +62,10 @@ namespace Taskker_Desktop
                 grupos.Add(grp);
             }
 
-            Usuario currentUser = unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
+            Usuario currentUser = Context.unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
 
             currentUser.Grupos = grupos;
-            unitOfWork.Save();
+            Context.unitOfWork.Save();
 
             RedirectToHome();
         }
@@ -89,11 +88,11 @@ namespace Taskker_Desktop
         {
             List<Usuario> usuarios = new List<Usuario>();
 
-            Usuario currentUser = unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
+            Usuario currentUser = Context.unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
 
             string grupoNuevo = nombreGrupo.Text;
 
-            if (unitOfWork.GrupoRepository.Get().ToList().Any(g => g.Nombre.ToLower() == grupoNuevo.ToLower()))
+            if (Context.unitOfWork.GrupoRepository.Get().ToList().Any(g => g.Nombre.ToLower() == grupoNuevo.ToLower()))
             {
                 grupoError.ToolTipTitle = "El nombre del grupo ya se encuentra utilizado.";
                 grupoError.Show("El nombre del grupo ya se encuentra utilizado.", nombreGrupo);
@@ -103,7 +102,7 @@ namespace Taskker_Desktop
             foreach (var item in usuariosDisponibles.CheckedItems)
             {
 
-                var usr = unitOfWork.UsuarioRepository.Get(
+                var usr = Context.unitOfWork.UsuarioRepository.Get(
                     u => u.NombreApellido == item.ToString()).SingleOrDefault();
 
                 if (usr == null)
@@ -120,8 +119,8 @@ namespace Taskker_Desktop
 
             currentUser.CreatedGroups.Add(nuevo);
 
-            unitOfWork.GrupoRepository.Insert(nuevo);
-            unitOfWork.Save();
+            Context.unitOfWork.GrupoRepository.Insert(nuevo);
+            Context.unitOfWork.Save();
 
             RedirectToHome();
         }

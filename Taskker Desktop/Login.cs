@@ -16,10 +16,8 @@ namespace Taskker_Desktop
 {
     public partial class Login : Form
     {
-        private UnitOfWork unitOfWork;
         public Login()
         {
-            unitOfWork = new UnitOfWork();
             InitializeComponent();
         }
         private void button1_Click_1(object sender, EventArgs e)
@@ -37,7 +35,7 @@ namespace Taskker_Desktop
                 
                 var address = new MailAddress(insertedEmail).Address;
 
-                var user = from u in unitOfWork.UsuarioRepository.Get(
+                var user = from u in Context.unitOfWork.UsuarioRepository.Get(
                     us => us.Email == address && hashed_pass == us.EncptPassword
                 )
                            select u;
@@ -60,7 +58,7 @@ namespace Taskker_Desktop
                             Properties.Resources._default
                         );
 
-                    unitOfWork.Save();
+                    Context.unitOfWork.Save();
                 }
 
                 UserSession.EncodedPicture = loggedUser.EncodedProfilePicture;

@@ -14,7 +14,6 @@ namespace Taskker_Desktop
 {
     public partial class CreateTask : Form
     {
-        UnitOfWork unitOfWork = new UnitOfWork();
         private int GrupoToAdd { get; set; }
         public CreateTask(int grupoID)
         {
@@ -37,7 +36,7 @@ namespace Taskker_Desktop
         public void LoadAsignees()
         {
             // Deberia filtrarse por el grupo
-            List<Usuario> usuarios = unitOfWork.UsuarioRepository.Get(
+            List<Usuario> usuarios = Context.unitOfWork.UsuarioRepository.Get(
                 u => u.Grupos.Any(gp => gp.ID == GrupoToAdd) 
                 || u.CreatedGroups.Any(gc => gc.ID == GrupoToAdd)
             ).ToList();
@@ -61,7 +60,7 @@ namespace Taskker_Desktop
             foreach(var item in asignees.CheckedItems)
             {
 
-                var usr = unitOfWork.UsuarioRepository.Get(u => u.NombreApellido == item.ToString()).SingleOrDefault();
+                var usr = Context.unitOfWork.UsuarioRepository.Get(u => u.NombreApellido == item.ToString()).SingleOrDefault();
                 
                 if (usr == null)
                     continue;
@@ -70,7 +69,7 @@ namespace Taskker_Desktop
             }
 
             // Traer toda la info de los demas controles del formulario
-            if (unitOfWork.TareaRepository.Get(t => t.Titulo == titulo.Text).SingleOrDefault() != null)
+            if (Context.unitOfWork.TareaRepository.Get(t => t.Titulo == titulo.Text).SingleOrDefault() != null)
             {
                 tituloToolTip.ToolTipTitle = "Ya se encuentra creada una tarea con el mismo titulo.";
                 tituloToolTip.Show("Ya se encuentra creada una tarea con el mismo titulo.", titulo);
@@ -85,9 +84,9 @@ namespace Taskker_Desktop
             nueva.Usuarios = asignados;
             nueva.GrupoID = GrupoToAdd;
 
-            unitOfWork.TareaRepository.Insert(nueva);
+            Context.unitOfWork.TareaRepository.Insert(nueva);
             // Falta resolver el feature de grupos
-            unitOfWork.Save();
+            Context.unitOfWork.Save();
 
         }
     }

@@ -15,18 +15,15 @@ namespace Taskker_Desktop
 {
     public partial class Home : Form
     {
-        private UnitOfWork unitOfWork;
         private Grupo GrupoActual { get; set; }
         public Home()
         {
             InitializeComponent();
-            unitOfWork = new UnitOfWork();
 
             //**
             // TODO
             // - Implementar roles
             // - Implementar formulario para unirse o crear grupo, ver si se puede reutilizar
-            // - Implementar editar perfil
             /**/
             if (RedirectToGroupSwitcher())
             {
@@ -49,7 +46,7 @@ namespace Taskker_Desktop
             initializeTaskList();
             initializeGroupList();
 
-            List<Grupo> gruposDisponibles = unitOfWork.GrupoRepository.Get(
+            List<Grupo> gruposDisponibles = Context.unitOfWork.GrupoRepository.Get(
                 g => g.Usuarios.Any(u => u.ID == UserSession.ID) || g.Usuario.ID == UserSession.ID
             ).ToList();
             
@@ -60,7 +57,7 @@ namespace Taskker_Desktop
 
         private bool RedirectToGroupSwitcher()
         {
-            Usuario currentUser = unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
+            Usuario currentUser = Context.unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
 
             if (currentUser.Grupos == null)
             {
@@ -97,7 +94,7 @@ namespace Taskker_Desktop
             string tipo = item.SubItems[1].Text;
             string estimado = item.SubItems[2].Text;
 
-            var tareaSelected = unitOfWork.TareaRepository.Get(
+            var tareaSelected = Context.unitOfWork.TareaRepository.Get(
                 t => t.Titulo == titulo
             );
 
@@ -108,7 +105,7 @@ namespace Taskker_Desktop
                 return;
             }
 
-            var details = new TaskDetails(toDisplay, unitOfWork);
+            var details = new TaskDetails(toDisplay);
             details.Location = this.Location;
             details.StartPosition = FormStartPosition.CenterScreen;
             details.FormClosing += delegate { 
@@ -131,25 +128,46 @@ namespace Taskker_Desktop
             // Hay que chequear si el usuario tiene los mismos datos
             // hace falta traerse el usuario desde el unitofwork y actualizar
             // los datos desde ahi
+            var currentUser = Context.unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
+
             // Hay que chequear si el usuario sigue estando en el grupo
-            if (!unitOfWork.UsuarioRepository.GetByID(UserSession.ID).Grupos.Any(g => g.ID == GrupoActual.ID))
+            if (!currentUser.Grupos.Any(g => g.ID == GrupoActual.ID))
             {
                 // Aca revisamos si el usuario sigue teniendo grupos que podemos mostrar
                 // Si no tiene ningun grupo entonces hay que redirigir al formulario para unirse o crear
-                throw new NotImplementedException();
+                if (RedirectToGroupSwitcher())
+                {
+                    var frm = new GroupSelector();
+                    frm.Location = Location;
+                    frm.StartPosition = FormStartPosition.Manual;
+                    frm.FormClosing += delegate { Show(); };
+                    frm.Show();
+                    Hide();
+                    Close();
+                    return;
+                } else
+                {
+                    List<Grupo> gruposRestantes = Context.unitOfWork.GrupoRepository.Get(
+                        g => g.Usuarios.Any(u => u.ID == UserSession.ID) || g.Usuario.ID == UserSession.ID
+                    ).ToList();
+
+                    GrupoActual = gruposRestantes[0];
+                }
             }
 
             // Actualizamos la foto de perfil
             // Asegurar que usersession tenga info actualizada
-            fotoPerfil.Image = Utils.ImageFromBase64(UserSession.EncodedPicture);
+            Image profilePicture = Utils.ImageFromBase64(currentUser.EncodedProfilePicture);
+            fotoPerfil.SizeMode = PictureBoxSizeMode.StretchImage;
+            fotoPerfil.Image = profilePicture;
 
             // Actualizamos el nombre del usuario
-            nombreLabel.Text = UserSession.NombreApellido;
+            nombreLabel.Text = currentUser.NombreApellido;
 
             // Actualizamos las tareas
             tareas.Items.Clear();
             tareas.AccessibilityObject.ToString();
-            List<Tarea> tareasFound = unitOfWork.TareaRepository.Get(
+            List<Tarea> tareasFound = Context.unitOfWork.TareaRepository.Get(
                 t => t.GrupoID == GrupoActual.ID
                 ).ToList();
 
@@ -166,7 +184,7 @@ namespace Taskker_Desktop
             gruposList.Items.Clear();
             gruposList.AccessibilityObject.ToString();
 
-            List<Grupo> grupos = unitOfWork.GrupoRepository.Get(
+            List<Grupo> grupos = Context.unitOfWork.GrupoRepository.Get(
                 g => g.Usuarios.Any(u => u.ID == UserSession.ID) || g.Usuario.ID == UserSession.ID
                 ).ToList();
 
@@ -211,7 +229,8 @@ namespace Taskker_Desktop
         {
             string grupoSelected = gruposList.SelectedItems[0].Text;
 
-            var grupo = unitOfWork.GrupoRepository.Get(g => g.Nombre == grupoSelected).SingleOrDefault();
+            var grupo = Context.unitOfWork.GrupoRepository.Get(
+                g => g.Nombre == grupoSelected).SingleOrDefault();
 
             if (grupo == null)
                 return;
@@ -224,10 +243,10 @@ namespace Taskker_Desktop
         private void reporteBtn_Click(object sender, EventArgs e)
         {
 
-            Usuario currentUser = unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
+            Usuario currentUser = Context.unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
 
             // Buscamos todos los registros de tiempo para el usuario actual
-            List<TimeTracked> tiemposRegistrados = unitOfWork.TtrackedRepository.Get(
+            List<TimeTracked> tiemposRegistrados = Context.unitOfWork.TtrackedRepository.Get(
                 tt => tt.Usuario.ID == currentUser.ID
             ).ToList();
 

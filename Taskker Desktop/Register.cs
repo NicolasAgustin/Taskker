@@ -15,10 +15,8 @@ namespace Taskker_Desktop
 {
     public partial class Register : Form
     {
-        private UnitOfWork unitOfWork { get; set; }
         public Register()
         {
-            unitOfWork = new UnitOfWork();
             InitializeComponent();
             
         }
@@ -40,10 +38,10 @@ namespace Taskker_Desktop
 
         private void registrarse_Click(object sender, EventArgs e)
         {
-            var res = unitOfWork.UsuarioRepository.Get(u => u.Email == email.Text);
+            var res = Context.unitOfWork.UsuarioRepository.Get(u => u.Email == email.Text);
             if(res.SingleOrDefault() == null)
             {
-                Rol defaultRole = unitOfWork.RolRepository.Get(r => r.Nombre == "Desarrollador").FirstOrDefault();
+                Rol defaultRole = Context.unitOfWork.RolRepository.Get(r => r.Nombre == "Desarrollador").FirstOrDefault();
                 Usuario nuevo = new Usuario();
                 nuevo.Roles = new List<Rol>() { defaultRole };
                 nuevo.Email = email.Text;
@@ -65,8 +63,8 @@ namespace Taskker_Desktop
                     nuevo.EncodedProfilePicture = UserSession.EncodedPicture;
                 }
 
-                unitOfWork.UsuarioRepository.Insert(nuevo);
-                unitOfWork.Save();
+                Context.unitOfWork.UsuarioRepository.Insert(nuevo);
+                Context.unitOfWork.Save();
 
                 UserSession.setUserData(nuevo);
                 var frm = new Home();

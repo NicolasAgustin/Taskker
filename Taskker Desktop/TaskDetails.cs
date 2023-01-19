@@ -16,12 +16,9 @@ namespace Taskker_Desktop
     public partial class TaskDetails : Form
     {
         private Tarea Displayed;
-        private UnitOfWork unitOfWork;
-        public TaskDetails(Tarea toDisplay, UnitOfWork unitOfWork)
+        public TaskDetails(Tarea toDisplay)
         {
             InitializeComponent();
-
-            this.unitOfWork = unitOfWork;
 
             Displayed = toDisplay;
 
@@ -56,7 +53,7 @@ namespace Taskker_Desktop
 
         private void DisplayTimesPerUser()
         {
-            List<TimeTracked> tiemposFound = unitOfWork.TtrackedRepository.Get(
+            List<TimeTracked> tiemposFound = Context.unitOfWork.TtrackedRepository.Get(
                 tt => tt.TareaID == Displayed.ID &&
                 tt.UsuarioID == UserSession.ID
             ).ToList();
@@ -77,7 +74,7 @@ namespace Taskker_Desktop
         public void LoadAsignees()
         {
             // Deberia filtrarse por el grupo
-            List<Usuario> usuarios = unitOfWork.UsuarioRepository.Get(
+            List<Usuario> usuarios = Context.unitOfWork.UsuarioRepository.Get(
                 u => u.Grupos.Any(gp => gp.ID == Displayed.GrupoID)
                 || u.CreatedGroups.Any(gc => gc.ID == Displayed.GrupoID)
             ).ToList();
@@ -100,7 +97,7 @@ namespace Taskker_Desktop
 
         private void FormToModel()
         {
-            Tarea toUpdate = unitOfWork.TareaRepository.GetByID(Displayed.ID);
+            Tarea toUpdate = Context.unitOfWork.TareaRepository.GetByID(Displayed.ID);
 
             toUpdate.Titulo = titulo.Text;
             toUpdate.Tipo = (TareaTipo)Enum.Parse(typeof(TareaTipo), tipo.SelectedItem.ToString());
@@ -118,7 +115,7 @@ namespace Taskker_Desktop
 
             if (regTiempoValue.ToString("HH:mm:ss") == "00:00:00")
             {
-                unitOfWork.Save();
+                Context.unitOfWork.Save();
                 return;
             }
 
@@ -131,7 +128,7 @@ namespace Taskker_Desktop
                     UsuarioID = UserSession.ID
                 };
 
-                unitOfWork.TtrackedRepository.Insert(tt);
+                Context.unitOfWork.TtrackedRepository.Insert(tt);
                 toUpdate.TiempoRegistrado.Add(tt);
 
             } else
@@ -143,7 +140,7 @@ namespace Taskker_Desktop
 
             }
 
-            unitOfWork.Save();
+            Context.unitOfWork.Save();
         }
 
         private void actualizar_Click(object sender, EventArgs e)

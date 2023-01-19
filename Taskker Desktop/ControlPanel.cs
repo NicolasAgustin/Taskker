@@ -15,15 +15,13 @@ namespace Taskker_Desktop
 {
     public partial class ControlPanel : Form
     {
-        private UnitOfWork unitOfWork;
         public ControlPanel()
         {
-            unitOfWork = new UnitOfWork();
             InitializeComponent();
 
-            List<Usuario> allUsuarios = unitOfWork.UsuarioRepository.Get().ToList();
-            List<Rol> allRoles = unitOfWork.RolRepository.Get().ToList();
-            List<Grupo> allGroups = unitOfWork.GrupoRepository.Get().ToList();
+            List<Usuario> allUsuarios = Context.unitOfWork.UsuarioRepository.Get().ToList();
+            List<Rol> allRoles = Context.unitOfWork.RolRepository.Get().ToList();
+            List<Grupo> allGroups = Context.unitOfWork.GrupoRepository.Get().ToList();
 
             foreach (var user in allUsuarios)
             {
@@ -40,11 +38,11 @@ namespace Taskker_Desktop
                 {
                     CustomControl ctrlCustom = (CustomControl)ctrl;
                     ControlData data = ctrlCustom.ObtainCheckedData();
-                    var usr = unitOfWork.UsuarioRepository.GetByID(data.IDUsuario);
+                    var usr = Context.unitOfWork.UsuarioRepository.GetByID(data.IDUsuario);
 
                     usr.Roles = data.Roles;
                     usr.Grupos = data.Grupos;
-                    unitOfWork.Save();
+                    Context.unitOfWork.Save();
                 }
                 catch (Exception)
                 {
