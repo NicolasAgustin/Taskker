@@ -43,6 +43,9 @@ namespace Taskker_Desktop
             this.label6 = new System.Windows.Forms.Label();
             this.gruposCreados = new System.Windows.Forms.ListView();
             this.label7 = new System.Windows.Forms.Label();
+            this.guardar = new System.Windows.Forms.Button();
+            this.exitoLabel = new System.Windows.Forms.Label();
+            this.seleccionarFoto = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.fotoPerfil)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,6 +56,7 @@ namespace Taskker_Desktop
             this.fotoPerfil.Size = new System.Drawing.Size(238, 213);
             this.fotoPerfil.TabIndex = 6;
             this.fotoPerfil.TabStop = false;
+            this.fotoPerfil.Click += new System.EventHandler(this.fotoPerfil_Click);
             // 
             // nombre
             // 
@@ -179,12 +183,34 @@ namespace Taskker_Desktop
             this.label7.TabIndex = 34;
             this.label7.Text = "creados";
             // 
+            // guardar
+            // 
+            this.guardar.Location = new System.Drawing.Point(238, 809);
+            this.guardar.Name = "guardar";
+            this.guardar.Size = new System.Drawing.Size(337, 34);
+            this.guardar.TabIndex = 35;
+            this.guardar.Text = "Guardar cambios";
+            this.guardar.UseVisualStyleBackColor = true;
+            this.guardar.Click += new System.EventHandler(this.guardar_Click);
+            // 
+            // exitoLabel
+            // 
+            this.exitoLabel.AutoSize = true;
+            this.exitoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.exitoLabel.ForeColor = System.Drawing.Color.White;
+            this.exitoLabel.Location = new System.Drawing.Point(584, 9);
+            this.exitoLabel.Name = "exitoLabel";
+            this.exitoLabel.Size = new System.Drawing.Size(0, 20);
+            this.exitoLabel.TabIndex = 36;
+            // 
             // Profile
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.ClientSize = new System.Drawing.Size(800, 837);
+            this.ClientSize = new System.Drawing.Size(800, 855);
+            this.Controls.Add(this.exitoLabel);
+            this.Controls.Add(this.guardar);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.gruposCreados);
             this.Controls.Add(this.label6);
@@ -201,6 +227,7 @@ namespace Taskker_Desktop
             this.Controls.Add(this.fotoPerfil);
             this.Name = "Profile";
             this.Text = "Profile";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Profile_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.fotoPerfil)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -223,5 +250,8 @@ namespace Taskker_Desktop
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ListView gruposCreados;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button guardar;
+        private System.Windows.Forms.Label exitoLabel;
+        private System.Windows.Forms.OpenFileDialog seleccionarFoto;
     }
 }

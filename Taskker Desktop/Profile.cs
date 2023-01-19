@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Taskker_Desktop.Models;
@@ -14,15 +15,22 @@ namespace Taskker_Desktop
 {
     public partial class Profile : Form
     {
-        private UnitOfWork unitOfWork = new UnitOfWork();
         private Usuario Displayed;
+        private string EncodedImage;
+        private System.Threading.Timer Timer;
         public Profile()
         {
             InitializeComponent();
-            Displayed = unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
+            Displayed = Context.unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
             nombre.Text = Displayed.Nombre;
             apellido.Text = Displayed.Apellido;
             email.Text = Displayed.Email;
+
+            EncodedImage = Displayed.EncodedProfilePicture;
+
+            Image profilePicture = Utils.ImageFromBase64(Displayed.EncodedProfilePicture);
+            fotoPerfil.SizeMode = PictureBoxSizeMode.StretchImage;
+            fotoPerfil.Image = profilePicture;
 
             // Implementar la carga y modificacion de la foto de perfil
 
@@ -60,5 +68,50 @@ namespace Taskker_Desktop
             }
         }
 
+        private void guardar_Click(object sender, EventArgs e)
+        {
+            //throw new NotImplementedException();
+            var currentUser = Context.unitOfWork.UsuarioRepository.GetByID(Displayed.ID);
+
+            currentUser.Nombre = nombre.Text;
+            currentUser.Apellido = apellido.Text;
+            currentUser.Email = email.Text;
+            currentUser.EncodedProfilePicture = EncodedImage;
+
+            Context.unitOfWork.Save();
+
+            exitoLabel.Text = "Perfil actualizado";
+            var dt = DateTime.Now.AddSeconds(6);
+            Timer = new System.Threading.Timer(
+                (obj) => {
+                    Invoke(new MethodInvoker(() =>
+                    {
+                        exitoLabel.Text = "";
+                    }));
+                },
+                null,
+                dt - DateTime.Now,
+                TimeSpan.FromHours(24)
+            );
+        }
+
+        private void fotoPerfil_Click(object sender, EventArgs e)
+        {
+            if (seleccionarFoto.ShowDialog() == DialogResult.OK)
+            {
+                Stream fileUploaded = seleccionarFoto.OpenFile();
+                string encoded = Utils.EncodeFromStream(fileUploaded);
+                EncodedImage = encoded;
+                Image profilePicture = Utils.ImageFromBase64(EncodedImage);
+                fotoPerfil.SizeMode = PictureBoxSizeMode.StretchImage;
+                fotoPerfil.Image = profilePicture;
+            }
+        }
+
+        private void Profile_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Timer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
+            Timer.Dispose();
+        }
     }
 }
