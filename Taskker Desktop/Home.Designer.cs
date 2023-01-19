@@ -123,6 +123,7 @@ namespace Taskker_Desktop
             this.perfilLink.TabIndex = 7;
             this.perfilLink.TabStop = true;
             this.perfilLink.Text = "Perfil";
+            this.perfilLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.perfilLink_LinkClicked);
             // 
             // button1
             // 

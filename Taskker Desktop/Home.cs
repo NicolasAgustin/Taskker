@@ -27,7 +27,6 @@ namespace Taskker_Desktop
             // - Implementar roles
             // - Implementar formulario para unirse o crear grupo, ver si se puede reutilizar
             // - Implementar editar perfil
-            // - Implementar panel de control
             /**/
             if (RedirectToGroupSwitcher())
             {
@@ -129,7 +128,9 @@ namespace Taskker_Desktop
 
         public void Reload()
         {
-
+            // Hay que chequear si el usuario tiene los mismos datos
+            // hace falta traerse el usuario desde el unitofwork y actualizar
+            // los datos desde ahi
             // Hay que chequear si el usuario sigue estando en el grupo
             if (!unitOfWork.UsuarioRepository.GetByID(UserSession.ID).Grupos.Any(g => g.ID == GrupoActual.ID))
             {
@@ -139,6 +140,7 @@ namespace Taskker_Desktop
             }
 
             // Actualizamos la foto de perfil
+            // Asegurar que usersession tenga info actualizada
             fotoPerfil.Image = Utils.ImageFromBase64(UserSession.EncodedPicture);
 
             // Actualizamos el nombre del usuario
@@ -282,6 +284,19 @@ namespace Taskker_Desktop
         private void panelBtn_Click(object sender, EventArgs e)
         {
             var frm = new ControlPanel();
+            frm.Location = Location;
+            frm.StartPosition = FormStartPosition.Manual;
+            frm.FormClosing += delegate {
+                Show();
+                Refresh();
+                Reload();
+            };
+            frm.Show();
+        }
+
+        private void perfilLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var frm = new Profile();
             frm.Location = Location;
             frm.StartPosition = FormStartPosition.Manual;
             frm.FormClosing += delegate {
