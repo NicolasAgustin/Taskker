@@ -114,16 +114,14 @@ namespace Taskker_Desktop
             }
 
             var details = new TaskDetails(toDisplay);
-            details.Location = this.Location;
-            details.StartPosition = FormStartPosition.CenterScreen;
+            details.Location = Location;
+            details.StartPosition = FormStartPosition.Manual;
             details.FormClosing += delegate { 
                 this.Show();
                 Refresh();
                 Reload();
             };
             details.Show();
-
-            Console.WriteLine("Seleccionado: " + titulo + " " + tipo + " " + estimado);
         }
 
         private void Home_Load(object sender, EventArgs e)
@@ -139,7 +137,8 @@ namespace Taskker_Desktop
             var currentUser = Context.unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
 
             // Hay que chequear si el usuario sigue estando en el grupo
-            if (!currentUser.Grupos.Any(g => g.ID == GrupoActual.ID))
+            if (!(currentUser.Grupos.Any(g => g.ID == GrupoActual.ID) || currentUser.CreatedGroups.Any(
+                gc => gc.ID == GrupoActual.ID)))
             {
                 // Aca revisamos si el usuario sigue teniendo grupos que podemos mostrar
                 // Si no tiene ningun grupo entonces hay que redirigir al formulario para unirse o crear
@@ -327,6 +326,34 @@ namespace Taskker_Desktop
             frm.Location = Location;
             frm.StartPosition = FormStartPosition.Manual;
             frm.FormClosing += delegate {
+                Show();
+                Refresh();
+                Reload();
+            };
+            frm.Show();
+        }
+
+        private void createGroupBtn_Click(object sender, EventArgs e)
+        {
+            var frm = new CreateGroup();
+            frm.Location = Location;
+            frm.StartPosition = FormStartPosition.Manual;
+            frm.FormClosing += delegate
+            {
+                Show();
+                Refresh();
+                Reload();
+            };
+            frm.Show();
+        }
+
+        private void unirseGroupBtn_Click(object sender, EventArgs e)
+        {
+            var frm = new JoinGroup();
+            frm.Location = Location;
+            frm.StartPosition = FormStartPosition.Manual;
+            frm.FormClosing += delegate
+            {
                 Show();
                 Refresh();
                 Reload();

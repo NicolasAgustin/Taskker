@@ -36,8 +36,8 @@ namespace Taskker_Desktop
             this.tareas = new System.Windows.Forms.ListView();
             this.salirLink = new System.Windows.Forms.LinkLabel();
             this.perfilLink = new System.Windows.Forms.LinkLabel();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.createGroupBtn = new System.Windows.Forms.Button();
+            this.unirseGroupBtn = new System.Windows.Forms.Button();
             this.grupos = new System.Windows.Forms.GroupBox();
             this.gruposList = new System.Windows.Forms.ListView();
             this.nombreLabel = new System.Windows.Forms.Label();
@@ -125,23 +125,25 @@ namespace Taskker_Desktop
             this.perfilLink.Text = "Perfil";
             this.perfilLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.perfilLink_LinkClicked);
             // 
-            // button1
+            // createGroupBtn
             // 
-            this.button1.Location = new System.Drawing.Point(3, 299);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(150, 23);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
+            this.createGroupBtn.Location = new System.Drawing.Point(3, 299);
+            this.createGroupBtn.Name = "createGroupBtn";
+            this.createGroupBtn.Size = new System.Drawing.Size(150, 23);
+            this.createGroupBtn.TabIndex = 8;
+            this.createGroupBtn.Text = "Crear grupo";
+            this.createGroupBtn.UseVisualStyleBackColor = true;
+            this.createGroupBtn.Click += new System.EventHandler(this.createGroupBtn_Click);
             // 
-            // button2
+            // unirseGroupBtn
             // 
-            this.button2.Location = new System.Drawing.Point(3, 328);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(150, 23);
-            this.button2.TabIndex = 9;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
+            this.unirseGroupBtn.Location = new System.Drawing.Point(3, 328);
+            this.unirseGroupBtn.Name = "unirseGroupBtn";
+            this.unirseGroupBtn.Size = new System.Drawing.Size(150, 23);
+            this.unirseGroupBtn.TabIndex = 9;
+            this.unirseGroupBtn.Text = "Unirse a un grupo";
+            this.unirseGroupBtn.UseVisualStyleBackColor = true;
+            this.unirseGroupBtn.Click += new System.EventHandler(this.unirseGroupBtn_Click);
             // 
             // grupos
             // 
@@ -223,8 +225,8 @@ namespace Taskker_Desktop
             this.Controls.Add(this.crearTareaBtn);
             this.Controls.Add(this.nombreLabel);
             this.Controls.Add(this.grupos);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.unirseGroupBtn);
+            this.Controls.Add(this.createGroupBtn);
             this.Controls.Add(this.perfilLink);
             this.Controls.Add(this.salirLink);
             this.Controls.Add(this.fotoPerfil);
@@ -254,8 +256,8 @@ namespace Taskker_Desktop
         private System.Windows.Forms.PictureBox fotoPerfil;
         private System.Windows.Forms.LinkLabel salirLink;
         private System.Windows.Forms.LinkLabel perfilLink;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button createGroupBtn;
+        private System.Windows.Forms.Button unirseGroupBtn;
         private System.Windows.Forms.GroupBox grupos;
         private System.Windows.Forms.Label nombreLabel;
         private System.Windows.Forms.Button crearTareaBtn;
