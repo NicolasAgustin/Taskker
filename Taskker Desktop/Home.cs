@@ -22,8 +22,9 @@ namespace Taskker_Desktop
 
             //**
             // TODO
-            // - Implementar roles
             // - Implementar formulario para unirse o crear grupo, ver si se puede reutilizar
+            // - Solucionar problema con los timers cuando se cierra el formulario
+            // antes de que se ejecute el callback para el timer
             /**/
             if (RedirectToGroupSwitcher())
             {
@@ -35,6 +36,13 @@ namespace Taskker_Desktop
                 Hide();
                 Close();
                 return;
+            }
+
+            if (!Context.unitOfWork.UsuarioRepository.GetByID(UserSession.ID)
+                .Roles.Any(r => r.Nombre == "Project Manager"))
+            {
+                panelBtn.Hide();
+                crearTareaBtn.Hide();
             }
 
             guardarReporte.RestoreDirectory = true;

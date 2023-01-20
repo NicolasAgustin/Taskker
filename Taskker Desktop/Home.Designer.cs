@@ -177,7 +177,7 @@ namespace Taskker_Desktop
             // 
             // crearTareaBtn
             // 
-            this.crearTareaBtn.Location = new System.Drawing.Point(162, 89);
+            this.crearTareaBtn.Location = new System.Drawing.Point(273, 89);
             this.crearTareaBtn.Name = "crearTareaBtn";
             this.crearTareaBtn.Size = new System.Drawing.Size(105, 22);
             this.crearTareaBtn.TabIndex = 12;
@@ -187,7 +187,7 @@ namespace Taskker_Desktop
             // 
             // reporteBtn
             // 
-            this.reporteBtn.Location = new System.Drawing.Point(273, 89);
+            this.reporteBtn.Location = new System.Drawing.Point(162, 89);
             this.reporteBtn.Name = "reporteBtn";
             this.reporteBtn.Size = new System.Drawing.Size(105, 22);
             this.reporteBtn.TabIndex = 13;
