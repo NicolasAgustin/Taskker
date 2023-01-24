@@ -20,12 +20,6 @@ namespace Taskker_Desktop
         {
             InitializeComponent();
 
-            //**
-            // TODO
-            // - Implementar formulario para unirse o crear grupo, ver si se puede reutilizar
-            // - Solucionar problema con los timers cuando se cierra el formulario
-            // antes de que se ejecute el callback para el timer
-            /**/
             if (RedirectToGroupSwitcher())
             {
                 var frm = new GroupSelector();

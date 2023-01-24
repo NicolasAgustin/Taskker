@@ -43,6 +43,7 @@ namespace Taskker_Desktop
             this.label5 = new System.Windows.Forms.Label();
             this.asignees = new System.Windows.Forms.CheckedListBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.exitoLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -177,12 +178,23 @@ namespace Taskker_Desktop
             this.label6.TabIndex = 29;
             this.label6.Text = "Asignar";
             // 
+            // exitoLabel
+            // 
+            this.exitoLabel.AutoSize = true;
+            this.exitoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.exitoLabel.ForeColor = System.Drawing.Color.White;
+            this.exitoLabel.Location = new System.Drawing.Point(537, 525);
+            this.exitoLabel.Name = "exitoLabel";
+            this.exitoLabel.Size = new System.Drawing.Size(0, 20);
+            this.exitoLabel.TabIndex = 32;
+            // 
             // TaskDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.ClientSize = new System.Drawing.Size(800, 568);
+            this.Controls.Add(this.exitoLabel);
             this.Controls.Add(this.asignees);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -220,5 +232,6 @@ namespace Taskker_Desktop
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.CheckedListBox asignees;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label exitoLabel;
     }
 }

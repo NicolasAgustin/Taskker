@@ -150,6 +150,23 @@ namespace Taskker_Desktop
             tiempos.AccessibilityObject.ToString();
             DisplayTimesPerUser();
 
+            exitoLabel.Text = "Cambios guardados";
+            var dt = DateTime.Now.AddSeconds(6);
+            System.Threading.Timer timer = new System.Threading.Timer(
+                (obj) => {
+                    if (!this.IsDisposed)
+                    {
+                        Invoke(new MethodInvoker(() =>
+                        {
+                            exitoLabel.Text = "";
+                        }));
+                    }
+                },
+                null,
+                dt - DateTime.Now,
+                TimeSpan.FromHours(24)
+            );
+
         }
 
     }

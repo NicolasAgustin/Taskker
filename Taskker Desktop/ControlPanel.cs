@@ -54,10 +54,13 @@ namespace Taskker_Desktop
             var dt = DateTime.Now.AddSeconds(6);
             System.Threading.Timer timer = new System.Threading.Timer(
                 (obj) => {
-                    Invoke(new MethodInvoker(() =>
+                    if (!this.IsDisposed)
                     {
-                        exitoLabel.Text = "";
-                    }));
+                        Invoke(new MethodInvoker(() =>
+                        {
+                            exitoLabel.Text = "";
+                        }));
+                    }
                 },
                 null,
                 dt - DateTime.Now,
