@@ -169,5 +169,12 @@ namespace Taskker_Desktop
 
         }
 
+        private void eliminarBtn_Click(object sender, EventArgs e)
+        {
+            Context.unitOfWork.TareaRepository.Delete(Displayed);
+            Context.unitOfWork.Save();
+
+            Close();
+        }
     }
 }

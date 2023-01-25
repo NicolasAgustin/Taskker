@@ -44,6 +44,7 @@ namespace Taskker_Desktop
             this.asignees = new System.Windows.Forms.CheckedListBox();
             this.label6 = new System.Windows.Forms.Label();
             this.exitoLabel = new System.Windows.Forms.Label();
+            this.eliminarBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -188,12 +189,26 @@ namespace Taskker_Desktop
             this.exitoLabel.Size = new System.Drawing.Size(0, 20);
             this.exitoLabel.TabIndex = 32;
             // 
+            // eliminarBtn
+            // 
+            this.eliminarBtn.BackColor = System.Drawing.Color.Firebrick;
+            this.eliminarBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.eliminarBtn.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.eliminarBtn.Location = new System.Drawing.Point(41, 525);
+            this.eliminarBtn.Name = "eliminarBtn";
+            this.eliminarBtn.Size = new System.Drawing.Size(112, 31);
+            this.eliminarBtn.TabIndex = 33;
+            this.eliminarBtn.Text = "Eliminar tarea";
+            this.eliminarBtn.UseVisualStyleBackColor = false;
+            this.eliminarBtn.Click += new System.EventHandler(this.eliminarBtn_Click);
+            // 
             // TaskDetails
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.ClientSize = new System.Drawing.Size(800, 568);
+            this.Controls.Add(this.eliminarBtn);
             this.Controls.Add(this.exitoLabel);
             this.Controls.Add(this.asignees);
             this.Controls.Add(this.label6);
@@ -233,5 +248,6 @@ namespace Taskker_Desktop
         private System.Windows.Forms.CheckedListBox asignees;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label exitoLabel;
+        private System.Windows.Forms.Button eliminarBtn;
     }
 }
