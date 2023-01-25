@@ -46,12 +46,14 @@ namespace Taskker_Desktop
             this.panelBtn = new System.Windows.Forms.Button();
             this.fotoPerfil = new System.Windows.Forms.PictureBox();
             this.guardarReporte = new System.Windows.Forms.SaveFileDialog();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.SuspendLayout();
             this.grupos.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fotoPerfil)).BeginInit();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -172,9 +174,10 @@ namespace Taskker_Desktop
             // nombreLabel
             // 
             this.nombreLabel.AutoSize = true;
-            this.nombreLabel.Location = new System.Drawing.Point(16, 227);
+            this.nombreLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.nombreLabel.Location = new System.Drawing.Point(46, 29);
             this.nombreLabel.Name = "nombreLabel";
-            this.nombreLabel.Size = new System.Drawing.Size(0, 13);
+            this.nombreLabel.Size = new System.Drawing.Size(0, 16);
             this.nombreLabel.TabIndex = 11;
             // 
             // crearTareaBtn
@@ -215,15 +218,23 @@ namespace Taskker_Desktop
             this.fotoPerfil.TabIndex = 5;
             this.fotoPerfil.TabStop = false;
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.nombreLabel);
+            this.panel2.Location = new System.Drawing.Point(12, 200);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(119, 61);
+            this.panel2.TabIndex = 15;
+            // 
             // Home
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1312, 658);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.panelBtn);
             this.Controls.Add(this.reporteBtn);
             this.Controls.Add(this.crearTareaBtn);
-            this.Controls.Add(this.nombreLabel);
             this.Controls.Add(this.grupos);
             this.Controls.Add(this.unirseGroupBtn);
             this.Controls.Add(this.createGroupBtn);
@@ -241,6 +252,8 @@ namespace Taskker_Desktop
             this.splitContainer1.ResumeLayout(false);
             this.grupos.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.fotoPerfil)).EndInit();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -265,5 +278,6 @@ namespace Taskker_Desktop
         private System.Windows.Forms.Button panelBtn;
         private System.Windows.Forms.ListView gruposList;
         private System.Windows.Forms.SaveFileDialog guardarReporte;
+        private System.Windows.Forms.Panel panel2;
     }
 }

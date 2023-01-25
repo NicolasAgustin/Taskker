@@ -45,6 +45,10 @@ namespace Taskker_Desktop
             guardarReporte.RestoreDirectory = true;
             guardarReporte.Filter = "Text files (*.txt)|*.txt|CSV (delimitado por comas) (*.csv)|*.csv";
 
+            nombreLabel.AutoSize = false;
+            nombreLabel.TextAlign = ContentAlignment.MiddleCenter;
+            nombreLabel.Dock = DockStyle.Fill;
+
             Image profilePicture = Utils.ImageFromBase64(UserSession.EncodedPicture);
             fotoPerfil.SizeMode = PictureBoxSizeMode.StretchImage;
             fotoPerfil.Image = profilePicture;
