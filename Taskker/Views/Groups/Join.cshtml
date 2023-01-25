@@ -6,6 +6,20 @@
     ViewBag.Title = "Join";
 }
 
+<style>
+    .theme-colour {
+        background-color: #d96d6d !important;
+    }
+
+    .theme-colour2 {
+        background-color: #bf5e62 !important;
+    }
+
+    .input-color {
+        color: white !important;
+    }
+</style>
+
 <script>
     $(document).ready(function () {
         var selected = ""
@@ -62,6 +76,20 @@
     </div>
 </nav>
 
+@Html.Partial("_Menu")
+
+<div class="row"></div>
+
+<div class="row">
+    <a class="waves-effect waves-light btn modal-trigger theme-colour" href="@Url.Action("Index", "Home")">
+        <i class="small material-icons left">arrow_back</i>Volver
+    </a>
+
+    <a href="#" data-target="slide-out" class="sidenav-trigger waves-effect waves-light btn theme-colour">
+        <i class="small material-icons left">menu</i>Menu
+    </a>
+</div>
+
 <div class="container">
     <!-- Fila -->
     <div class="row">
@@ -70,7 +98,7 @@
         </div>
         <!-- Columna -->
         <div class="col s6 offset-s3">
-            <div class="card blue-grey darken-1">
+            <div class="card darken-1 theme-colour2">
                 <div class="card-content white-text">
                     <span class="card-title">Unirse a un grupo</span>
                     <!--Fila para email-->
@@ -78,8 +106,11 @@
                         <div class="input-field col s12">
                             @Html.EditorFor(
                                model => model.Nombre,
-                               new { htmlAttributes = new {
-                                       @class = "autocomplete",
+                               new
+                                    {
+                                        htmlAttributes = new
+                                        {
+                                       @class = "autocomplete input-color",
                                        @id = "autocomplete-input"
                                     }
                                })

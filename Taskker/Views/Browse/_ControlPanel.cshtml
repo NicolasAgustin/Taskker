@@ -10,11 +10,26 @@
     .theme-colour {
         background-color: #d96d6d !important;
     }
+
+    .theme-colour2 {
+        background-color: #bf5e62 !important;
+    }
+
+    .user-cell {
+        background-color: rgba(0, 0, 0, 0.45);
+        border-radius: 5px;
+    }
+
+    .input-color {
+        color: white !important;
+    }
 </style>
 
 <!-- Modal Structure -->
-<div class="modal-content" id="panel-group">
-    <h4>Panel de control para @Model.Nombre</h4>
+<div class="modal-content theme-colour2" id="panel-group">
+    <div class="row">
+        <h4 class="center-align input-color">Panel de control para @Model.Nombre</h4>
+    </div>
     @Html.ValidationSummary(false, "", new { @style = "color:red;font-weight:bold" })
     @using (Html.BeginForm("ControlPanel", "Browse", FormMethod.Post, new { @class = "col s12", @id = "control-panel-form" }))
     {
@@ -22,47 +37,52 @@
         int i = 0;
         foreach (var user in Model.Usuarios)
         {
-            <div class="row" row-index="@user.ID">
+            <div class="row user-cell" row-index="@user.ID">
                 <!-- Nombre del usuario -->
-                <div class="col-s4">
-                    <a>@user.NombreApellido</a>
-                    <input type="hidden" value="@user.ID" name="usuarios[@i].ID" />
+                <div class="row">
+                    <div class="col s12 center-align">
+                        <a class="input-color">@user.NombreApellido</a>
+                        <input type="hidden" value="@user.ID" name="usuarios[@i].ID" />
+                    </div>
                 </div>
 
-                <!-- Cambiar rol del usuario -->
-                <div class="input-field col s4">
-                    <select name="usuarios[@i].Roles" multiple>
-                        @foreach (var rol in (List<Rol>)ViewData["roles"])
-                        {
-                            if (user.Roles.FirstOrDefault(r => r.ID == rol.ID) != null)
+                <div class="row">
+                    <!-- Cambiar rol del usuario -->
+                    <div class="input-field col s4 offset-s2">
+                        <select name="usuarios[@i].Roles" class="input-color" multiple>
+                            @foreach (var rol in (List<Rol>)ViewData["roles"])
                             {
-                                <option value="@rol.Nombre" selected>@rol.Nombre</option>
+                                if (user.Roles.FirstOrDefault(r => r.ID == rol.ID) != null)
+                                {
+                                    <option value="@rol.Nombre" selected>@rol.Nombre</option>
+                                }
+                                else
+                                {
+                                    <option value="@rol.Nombre">@rol.Nombre</option>
+                                }
                             }
-                            else
-                            {
-                                <option value="@rol.Nombre">@rol.Nombre</option>
-                            }
-                        }
-                    </select>
-                    <label>Seleccionar rol</label>
+                        </select>
+                        <label>Seleccionar rol</label>
+                    </div>
+
+                    <!-- Eliminar usuario del grupo -->
+                    <div class="input-field col s2 offset-s2">
+                        <a href="#"
+                           class="btn waves-effect waves-light btn-eliminar theme-colour"
+                           style="width: auto; font-size: 10px"
+                           data-index="@user.ID">
+                            Eliminar del grupo
+                            <i class="material-icons right">clear</i>
+                        </a>
+                    </div>
                 </div>
 
-                <!-- Eliminar usuario del grupo -->
-                <div class="col-s4">
-                    @*@Url.Action("DeleteUserFromGroup", "Groups", new { groupid = Model.ID, userid = user.ID})*@
-                    <a href="#"
-                       class="btn waves-effect waves-light btn-eliminar"
-                       data-index="@user.ID">
-                        Eliminar
-                        <i class="material-icons right">clear</i>
-                    </a>
-                </div>
             </div>
             i++;
         }
     }
 </div>
-<div class="modal-footer">
+<div class="modal-footer theme-colour2">
     <a href="#!" class="modal-close waves-effect waves-green btn-flat theme-colour">Close</a>
 </div>
 

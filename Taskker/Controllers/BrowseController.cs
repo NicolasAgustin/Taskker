@@ -33,6 +33,14 @@ namespace Taskker.Controllers
 
      */
 
+    /**
+     * TODO
+     * - Agregar botones para volver y cancelar las acciones
+     * - hacer mas accesible la carga de horas
+     * - Agregar mas columnas a la lista de tareas mostradas
+     * - Hacer mas accesible la busqueda de grupos
+     */
+
     [Authorize]
     [CustomAuthenticationFilter]
     public class BrowseController : Controller
@@ -59,16 +67,15 @@ namespace Taskker.Controllers
 
             // Buscar todos los grupos a los que pertenece el usuario para mostrarlos en el navbar
             // Si no tiene grupos redireccionar a Groups
-            Usuario loggedUser = null;
             List<Grupo> grupos = null;
             try 
             {
-                var usuario = from user in unitOfWork
-                                           .UsuarioRepository
-                                           .Get(u => u.Email == userSession.Email)
-                              select user;
+                Usuario loggedUser = unitOfWork.UsuarioRepository.Get(u => u.Email == userSession.Email).SingleOrDefault();
 
-                loggedUser = usuario.Single();
+                if (loggedUser == null)
+                {
+                    return RedirectToAction("Login", "Auth");
+                }
 
                 List<string> roles = new List<string>();
 

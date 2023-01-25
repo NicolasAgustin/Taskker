@@ -23,15 +23,11 @@ namespace Taskker.Models.DAL
         public string Email { get; set; }
         public string ProfilePicturePath { get; set; }
         public byte[] EncptPassword { get; set; }
+        public string EncodedProfilePicture { get; set; }
         public virtual ICollection<Grupo> Grupos { get; set; }
         public virtual ICollection<Grupo> CreatedGroups { get; set; }
         public virtual ICollection<Tarea> Tareas { get; set; }
         public virtual ICollection<Rol> Roles { get; set; }
         public virtual ICollection<TimeTracked> TiempoRegistrado { get; set; }
-    }
-
-    public class UsuarioData : Usuario
-    {
-        public string EncodedProfilePicture { get; set; }
     }
 }

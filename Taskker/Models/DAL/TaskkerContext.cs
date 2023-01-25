@@ -22,6 +22,7 @@ namespace Taskker.Models.DAL
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+            Database.SetInitializer<TaskkerContext>(null);
 
             // Cada Usuario tiene varios Roles
             modelBuilder.Entity<Rol>()

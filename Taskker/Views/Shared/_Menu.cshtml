@@ -106,8 +106,9 @@
                     </div>
                     <div class="collection" id="display-notes">
                         @{
-                            foreach (var note in ViewData["Notes"] as List<Note>)
-                            {
+                                List<Note> notas = (List<Note>)ViewData["Notes"];
+                                foreach (var note in notas ?? Enumerable.Empty<Note>())
+                                {
                                 <div class="collection-item" id="@note._id">
                                     <div class="row">
                                         <a href="#" data="@note._id" class="edit-trigger" contenteditable="true">@note.text</a>

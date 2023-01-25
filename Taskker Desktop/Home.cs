@@ -18,6 +18,9 @@ namespace Taskker_Desktop
         private Grupo GrupoActual { get; set; }
         public Home()
         {
+            // TODO:
+            // - Agregar boton para eliminar tarea
+
             InitializeComponent();
 
             if (RedirectToGroupSwitcher())

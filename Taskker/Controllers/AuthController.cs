@@ -81,42 +81,40 @@ namespace Taskker.Controllers
             byte[] hashed_password = Utils.HashPassword(_user.Password);
 
             // Buscamos el usuario en la base de datos
-            var user_found = from user in unitOfWork.UsuarioRepository.Get(
-                                    u => u.Email == _user.Email &&
-                                        hashed_password == u.EncptPassword
-                                )
-                             select user;
+            Usuario user_logged = unitOfWork.UsuarioRepository.Get(
+                u => u.Email == _user.Email && hashed_password == u.EncptPassword).SingleOrDefault();
 
-            try
-            {
-
-                Usuario user_logged = user_found.Single();
-
-                if (!System.IO.File.Exists(user_logged.ProfilePicturePath))
-                {
-                    user_logged.ProfilePicturePath = ConfigurationManager.AppSettings["DefaultProfile"];
-                }
-
-                // Agregamos la cookie a la respuesta
-                HttpContext.Response.Cookies.Add(CreateAuthCookie(user_logged));
-
-                UserSession userSession = new UserSession()
-                {
-                    NombreApellido = Utils.Capitalize(user_logged.NombreApellido),
-                    Email = user_logged.Email,
-                    EncodedPicture = Utils.EncodePicture(user_logged.ProfilePicturePath),
-                    ID = user_logged.ID
-                };
-
-                Session["UserSession"] = userSession;
-
-                return RedirectToAction("Index", "Browse");
-            }
-            catch(InvalidOperationException)
+            if (user_logged == null)
             {
                 ModelState.AddModelError("login", "Usuario incorrecto.");
                 return View(_user);
             }
+
+            string pictureEncoded = null;
+
+            if (user_logged.EncodedProfilePicture == null)
+            {
+                pictureEncoded = Utils.EncodePicture(ConfigurationManager.AppSettings["DefaultProfile"]);
+            } else
+            {
+                pictureEncoded = Utils.EncodePictureFromBase64(user_logged.EncodedProfilePicture);
+            }
+
+            // Agregamos la cookie a la respuesta
+            HttpContext.Response.Cookies.Add(CreateAuthCookie(user_logged));
+
+            UserSession userSession = new UserSession()
+            {
+                NombreApellido = Utils.Capitalize(user_logged.NombreApellido),
+                Email = user_logged.Email,
+                EncodedPicture = pictureEncoded,
+                ID = user_logged.ID
+            };
+
+            Session["UserSession"] = userSession;
+
+            return RedirectToAction("Index", "Browse");
+
         }
 
         [HttpGet]
@@ -149,85 +147,55 @@ namespace Taskker.Controllers
                 return View(_user);
 
             // Buscamos si el email ya esta registrado
-            var found = from user in unitOfWork.UsuarioRepository.Get(u => u.Email == _user.Email)
-                        select user;
+            Usuario found = unitOfWork.UsuarioRepository.Get(u => u.Email == _user.Email).SingleOrDefault();
 
-            try
+            if (found != null)
             {
-                // Si single no tira excepcion entonces el correo electronico
-                // ya esta registrado
-                found.Single();
                 ModelState.AddModelError("login", "El correo electronico ingresado ya esta en uso.");
                 return View(_user);
             }
-            catch (InvalidOperationException)
+
+
+            Usuario nuevo = new Usuario();
+            nuevo.Email = _user.Email;
+            // Hasheamos la password para guardarla en la base de datos
+            nuevo.EncptPassword = Utils.HashPassword(_user.Password);
+
+            // El rol por defecto siempre sera desarrollador
+            Rol defaultRole = unitOfWork.RolRepository.Get(r => r.Nombre == "Desarrollador").SingleOrDefault();
+
+            nuevo.Roles = new List<Rol>() { defaultRole };
+            nuevo.Nombre = _user.Nombre;
+            nuevo.Apellido = _user.Apellido;
+            // Si el usuario no subio una foto entonces se asigna la foto por defecto
+            if (_user.Photo == null)
             {
-                Usuario nuevo = new Usuario();
-                nuevo.Email = _user.Email;
-                // Hasheamos la password para guardarla en la base de datos
-                nuevo.EncptPassword = Utils.HashPassword(_user.Password);
-
-                // El rol por defecto siempre sera desarrollador
-                Rol defaultRole = unitOfWork.RolRepository.Get(r => r.Nombre == "Desarrollador").FirstOrDefault();
-
-                nuevo.Roles = new List<Rol>() { defaultRole };
-                nuevo.Nombre = _user.Nombre;
-                nuevo.Apellido = _user.Apellido;
-                // Si el usuario no subio una foto entonces se asigna la foto por defecto
-                if (_user.Photo == null)
-                {
-                    // Obtenemos el path desde appsettings en web.config
-                    nuevo.ProfilePicturePath = ConfigurationManager.AppSettings["DefaultProfile"];
-                }
-                else
-                {
-                    string serverPath = ConfigurationManager.AppSettings["ServerDirname"];
-                    DirectoryInfo info = new DirectoryInfo(serverPath);
-                    
-                    // Si el directorio no existe lo creo
-                    if (!info.Exists)
-                        info.Create();
-
-                    string filename = _user.Photo.FileName;
-
-                    string extension = Path.GetExtension(filename);
-                    string filenameOnly = Path.GetFileName(filename);
-                    filenameOnly = filenameOnly.Replace(extension, "");
-                    // Combinamos el path agregandole un UUID unico
-
-                    string uuid = Utils.GenerateUUID();
-                    string new_filepath = Path.Combine(
-                        serverPath, string.Format("{0}_{1}.{2}", filenameOnly, uuid, extension)
-                    );
-
-                    if (System.IO.File.Exists(new_filepath))
-                        System.IO.File.Delete(new_filepath);
-
-                    // Guardamos la foto que subio el usuario
-                    _user.Photo.SaveAs(new_filepath);
-                    nuevo.ProfilePicturePath = new_filepath;
-                }
-
-                // Agregamos el usuario nuevo al contexto
-                unitOfWork.UsuarioRepository.Insert(nuevo);
-
-                //AddDefaultRole(nuevo.Email);
-
-                // Hacemos un commit de los cambios
-                unitOfWork.Save();
-
-                HttpContext.Response.Cookies.Add(CreateAuthCookie(nuevo));
-
-                UserSession userSession = new UserSession()
-                {
-                    NombreApellido = nuevo.NombreApellido,
-                    Email = nuevo.Email,
-                    EncodedPicture = Utils.EncodePicture(nuevo.ProfilePicturePath),
-                    ID = nuevo.ID
-                };
-
-                Session["UserSession"] = userSession;
+                // Obtenemos el path desde appsettings en web.config
+                nuevo.EncodedProfilePicture = Utils.EncodePicture(ConfigurationManager.AppSettings["DefaultProfile"]);
             }
+            else
+            {
+                nuevo.EncodedProfilePicture = Utils.EncodeFromStream(_user.Photo.InputStream);
+            }
+
+            // Agregamos el usuario nuevo al contexto
+            unitOfWork.UsuarioRepository.Insert(nuevo);
+
+            // Hacemos un commit de los cambios
+            unitOfWork.Save();
+
+            HttpContext.Response.Cookies.Add(CreateAuthCookie(nuevo));
+
+            UserSession userSession = new UserSession()
+            {
+                NombreApellido = nuevo.NombreApellido,
+                Email = nuevo.Email,
+                EncodedPicture = nuevo.EncodedProfilePicture,
+                ID = nuevo.ID
+            };
+
+            Session["UserSession"] = userSession;
+
 
             return RedirectToAction("Index", "Browse");
         }

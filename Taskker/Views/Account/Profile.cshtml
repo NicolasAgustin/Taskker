@@ -8,6 +8,23 @@
     var picture = ((UserSession)Session["UserSession"]).EncodedPicture;
 }
 
+<style>
+    .theme-colour {
+        background-color: #d96d6d !important;
+    }
+
+    .theme-colour2 {
+        background-color: #bf5e62 !important;
+    }
+
+    .input-color {
+        color: white !important;
+    }
+</style>
+
+<script>
+</script>
+
 <nav>
     <div class="nav-wrapper">
         <a href="@Url.Action("Index", "Home")" class="brand-logo">Taskker</a>
@@ -16,6 +33,17 @@
 
 @Html.Partial("_Menu")
 
+<div class="row"></div>
+
+<div class="row">
+    <a class="waves-effect waves-light btn modal-trigger theme-colour" href="@Url.Action("Index", "Home")">
+        <i class="small material-icons left">arrow_back</i>Volver
+    </a>
+
+    <a href="#" data-target="slide-out" class="sidenav-trigger waves-effect waves-light btn theme-colour">
+        <i class="small material-icons left">menu</i>Menu
+    </a>
+</div>
 
 <div class="container">
     <div class="row">
@@ -24,7 +52,7 @@
         {
             @Html.AntiForgeryToken()
             <div class="col s6 offset-s3">
-                <div class="card blue-grey darken-1">
+                <div class="card darken-1 theme-colour2">
                     <div class="card-content white-text">
                         @* hay que agregar un boton para que se pueda cambiar la foto de perfil *@
                         <div class="row center-align">
@@ -39,14 +67,32 @@
                         @* hay que separar el nombre del apellido *@
                         <div class="row">
                             <div class="input-field col s6">
-                                @Html.EditorFor(model => model.Nombre)
+                                @Html.EditorFor(
+                                    model => model.Nombre,
+                                    new
+                                    {
+                                        htmlAttributes = new
+                                        {
+                                            @class = "input-color"
+                                        }
+                                    }
+                                )
                                 <!--<input id="first_name" type="text" class="validate">-->
                                 <label for="first_name">Nombre</label>
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-field col s6">
-                                @Html.EditorFor(model => model.Apellido)
+                                @Html.EditorFor(
+                                    model => model.Apellido,
+                                    new
+                                    {
+                                        htmlAttributes = new
+                                        {
+                                            @class = "input-color"
+                                        }
+                                    }
+                                )
                                 <!--<input id="first_name" type="text" class="validate">-->
                                 <label for="first_name">Apellido</label>
                             </div>
@@ -54,7 +100,16 @@
                         <!--Fila para email-->
                         <div class="row">
                             <div class="input-field col s12">
-                                @Html.EditorFor(model => model.Email)
+                                @Html.EditorFor(
+                                    model => model.Email,
+                                    new
+                                    {
+                                        htmlAttributes = new
+                                        {
+                                            @class = "input-color"
+                                        }
+                                    }
+                                )
                                 <!--<input id="email" type="email" class="validate">-->
                                 <label for="email">Correo electronico</label>
                             </div>
@@ -63,19 +118,19 @@
                     </div>
                     <div class="row">
                         <div class="file-field input-field col s12 offset-s2">
-                            <div class="btn">
+                            <div class="btn theme-colour">
                                 <span>Seleccionar</span>
                                 <input type="file" name="photo" />
                             </div>
 
                             <div class="file-path-wrapper">
-                                <input class="file-path validate" type="text" placeholder="Subir archivo" disabled />
+                                <input class="file-path validate input-color" type="text" placeholder="Subir archivo" disabled />
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row center-align">
-                    <button class="btn waves-effect waves-light" type="submit" name="action">
+                    <button class="btn waves-effect waves-light theme-colour" type="submit" name="action">
                         Guardar cambios
                     </button>
                 </div>

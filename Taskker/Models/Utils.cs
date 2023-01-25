@@ -61,6 +61,26 @@ namespace Taskker.Models
             }
         }
 
+        public static string EncodeFromStream(Stream stream)
+        {
+            byte[] content = null;
+
+            using (var mStream = new MemoryStream())
+            {
+                mStream.Seek(0, SeekOrigin.Begin);
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.CopyTo(mStream);
+                content = mStream.ToArray();
+            }
+
+            return $"data:image/jpg;base64,{Convert.ToBase64String(content, 0, content.Length)}";
+        }
+
+        public static string EncodePictureFromBase64(string encodedImg)
+        {
+            return $"data:image/jpg;base64,{encodedImg}";
+        }
+
         /// <summary>
         /// Funcion inversa a EncodePicture
         /// </summary>
