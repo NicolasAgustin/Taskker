@@ -35,9 +35,8 @@ namespace Taskker.Controllers
 
     /**
      * TODO
-     * - Agregar botones para volver y cancelar las acciones
-     * - hacer mas accesible la carga de horas
-     * - Agregar mas columnas a la lista de tareas mostradas
+     * - hacer mas accesible la carga de horas en task details
+     * - mejorar el estilo de task details
      * - Hacer mas accesible la busqueda de grupos
      */
 
@@ -183,7 +182,8 @@ namespace Taskker.Controllers
         public ActionResult CreateTask(TareaModel t)
         {
             // Parseamos el tiempo
-            DateTime timeEstimated = Utils.parseTime(t.Estimado);
+            DateTime timeEstimated = DateTime.Parse(t.Estimado);
+            //Utils.parseTime(t.Estimado);
 
             // Obtenemos los usuarios asignados a la tarea
             if (t.Asignees == null)

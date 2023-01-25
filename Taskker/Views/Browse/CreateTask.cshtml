@@ -24,6 +24,10 @@
     }
 </style>
 
+<script>
+
+</script>
+
 <!-- Modal Structure -->
 <div class="modal-content theme-colour2">
     <div class="row center-align">
@@ -64,7 +68,15 @@
                 <label for="textarea1">Descripcion</label>
             </div>
         </div>
+        
         <div class="row">
+            <div class="col s6 offset-s4">
+                <input type="time" class="input-color" min="00:00" max="23:59" value="00:00" name="estimado"/>
+            </div>
+        </div>
+
+        @*<div class="row">
+
             <div class="col s6 offset-s4">
                 <div class="input-field dropdown-trigger" data-target="dropdown-hours" id="input-hours">
                     <input id="hours" placeholder="Tiempo estimado" type="text" class="validate input-color" name="estimado">
@@ -75,7 +87,7 @@
                 <ul id="dropdown-hours" class="dropdown-content">
                 </ul>
             </div>
-        </div>
+        </div>*@
         <!-- Submit -->
         <div class="row">
             <div class="col s6 offset-s4">
