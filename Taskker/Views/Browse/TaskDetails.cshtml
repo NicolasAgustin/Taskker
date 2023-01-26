@@ -3,19 +3,31 @@
 @model Tarea
 
 <style>
-    [contenteditable] {
-        outline: 0px solid transparent;
-    }
-
-    #modal-title :hover {
-        background-color: rgba(0, 0, 0, 0.45);
-    }
 
     .modal {
         width: 85% !important;
-        height: 85% !important;
+        height: auto !important;
     }
 
+    .theme-colour {
+        background-color: #d96d6d !important;
+    }
+
+    .theme-colour2 {
+        background-color: #bf5e62 !important;
+    }
+
+    .danger {
+        background-color: #c64449 !important;
+    }
+
+    .control-color {
+        color: white !important;
+    }
+
+    .input, .select-dropdown {
+        color: white !important;
+    }
 </style>
 
 <script>
@@ -53,59 +65,71 @@
             
         })
 
+        $('#task-title-display').on('input', function (elem) {
+            var newTitle = document.getElementById("task-title-display").innerText
+            document.getElementById("task-title").value = newTitle
+        })
+
     })
 </script>
 
 <!-- Modal Structure -->
-<div class="modal-content red lighten-4"
+<div class="modal-content theme-colour2"
      id="details-task"
-     style="background-color: rgba(124, 11, 30, 0.82);"
      data-id="@Model.ID">
     <div class="container">
         <div class="row">
-            <nav>
-                <div class="nav-wrapper offset-s4">
+            <div class="col s4">
+
+                <i class="medium material-icons left control-color">assignment</i>
+                <h2 contenteditable="true" class="control-color" style="font-weight: bold" id="task-title-display">@Model.Titulo</h2>
+                @*<div class=" offset-s4">
                     <a href="#" class="brand-logo" id="modal-title" contenteditable="true">@Model.Titulo</a>
+                </div>*@
+            </div>
+            <div class="col s4 offset-s4">
+                <div class="row">
+                    @if (((List<string>)ViewData["Roles"]).Contains("Project Manager"))
+                    {
+                        using (Html.BeginForm("DeleteTask", "Browse", FormMethod.Post))
+                        {
+                            <input type="hidden" value="@Model.ID" name="id" />
+                            <button type="submit" class="btn waves-effect waves-light danger" style="margin-top: 15px">
+                                <i class="material-icons right">delete</i>Eliminar
+                            </button>
+                        }
+                    }
                 </div>
-            </nav>
-            @if (((List<string>)ViewData["Roles"]).Contains("Project Manager"))
-            {
-                using (Html.BeginForm("DeleteTask", "Browse", FormMethod.Post))
-                {
-                    <input type="hidden" value="@Model.ID" name="id" />
-                    <button type="submit" class="btn waves-effect waves-light">
-                        Eliminar
-                        <i class="material-icons right">delete</i>
-                    </button>
-                }
-            }
+            </div>
         </div>
         <div class="row">
             @* Probar con una lista donde cada elemento li tenga un atributo name como:
-                lista[0].tiempo
-                lista2[0].nombre
-                lista[1].tiempo ...
-                lista[n].tiempo ...
-             de esta forma usamos el model binding
-                *@
+           lista[0].tiempo
+           lista2[0].nombre
+           lista[1].tiempo ...
+           lista[n].tiempo ...
+        de esta forma usamos el model binding
+            *@
+            @Html.ValidationSummary(false, "", new { @style = "color:red;font-weight:bold" })
             @using (Html.BeginForm("UpdateTask", "Browse", FormMethod.Post, new { @class = "col s12", @id = "update-form" }))
             {
                 <input type="hidden" name="id" value="@Model.ID" />
                 <input type="hidden" id="task-title" name="titulo" value="@Model.Titulo" />
 
-                <div class="row">
-                    <div class="col s6">
+                <div class="col s6">
+
+                    <div class="row">
+
                         <div class="input-field">
                             <textarea id="textarea1"
-                                      class="materialize-textarea"
+                                      class="materialize-textarea control-color"
                                       placeholder="Descripcion"
-                                      style="color:black"
                                       name="descripcion">@Model.Descripcion</textarea>
                         </div>
+
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col s3" style="padding-top: 15px">
+
+                    <div class="row">
                         <select name="tipo">
                             @{
                                 if (Model.Tipo == TareaTipo.SinTipo)
@@ -128,78 +152,63 @@
                                 }
                             }
                         </select>
-                        <label>Tipo de tarea</label>
                     </div>
-                </div>
-                @*Asignees*@
-                <div class="row">
-                    <div class="col s9">
+
+                    @*Asignees*@
+                    <div class="row">
                         <input type="hidden" id="chips-values" name="asignees" />
-                        <div id="asignees-chips" class="chips-autocomplete" style="color: black"></div>
+                        <div id="asignees-chips" class="chips-autocomplete control-color"></div>
+                    </div>
+
+
+                    <div class="row">
+                        <p class="control-color">Estimado</p>
+                        <input type="time" class="control-color" min="00:00"
+                               max="23:59" value="@Model.Estimado.ToString("HH:mm")" name="estimado" />
+                    </div>
+
+                    <div class="row">
+                        <p class="control-color">Registrar</p>
+                        <input type="time" class="control-color" min="00:00"
+                               max="23:59" value="00:00" name="TiempoRegistrado" />
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col s6">
-                        <div class="input-field dropdown-trigger" data-target="dropdown-hours" id="input-hours">
-                            <input id="hours"
-                                   type="text"
-                                   placeholder="Tiempo estimado"
-                                   class="validate"
-                                   name="estimado"
-                                   value="@ViewBag.Time">
-                        </div>
 
-                    </div>
-
-                    <ul id="dropdown-hours" class="dropdown-content">
-                    </ul>
-                </div>
-                                // Input para trackeo de horas
-                                // cada vez que actualicemos la tarea hay que sumar las horas 
-                <div class="row">
-                    <div class="col s6">
-                        <div class="input-field dropdown-trigger" data-target="dropdown-hours2" id="input-hours2">
-                            <input id="hours2" placeholder="Registrar horas" type="text" class="validate" name="TiempoRegistrado">
-                        </div>
-                    </div>
-
-                    <div class="col s6">
-                        <ul id="dropdown-hours2" class="dropdown-content">
+                <div class="col s6">
+                    <div class="row">
+                        <ul class="collection" style="border: none">
+                            @{var i = 0;}
+                            @foreach (var tiempo in Model.TiempoRegistrado)
+                            {
+                                // vamos a agregar un index al boton, para que tenga el dato,
+                                // tambien agregamos el indice como id del item list
+                                // cuando presionemos el boton, este tomara el data-index
+                                // y buscara el li que tenga como id ese data-index y que tenga la clase
+                                // item-tiempo
+                                <li class="collection-item item-tiempo theme-colour" id="@i" style="border-radius: 25px">
+                                    <div class="row" style="padding-top: 5px; margin-bottom: 0px">
+                                        <div class="col s4 control-color">@tiempo.Time.ToString("HH:mm")</div>
+                                        <div class="col s4 control-color">@tiempo.Usuario.NombreApellido</div>
+                                        <div class="col s4">
+                                            <a href="#!" class="secondary-content control-color" data="@i"
+                                               data-id="@tiempo.ID"><i class="material-icons">delete</i></a>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="Tiempos[@i].Tiempo" value="@tiempo.Time.ToString()" />
+                                    <input type="hidden" name="Tiempos[@i].UsuarioID" value="@tiempo.UsuarioID" />
+                                    <input type="hidden" name="Tiempos[@i].TareaID" value="@tiempo.TareaID" />
+                                </li>
+                                i++;
+                            }
                         </ul>
                     </div>
                 </div>
-                <div class="row">
-                    <ul class="collection">
-                        @{var i = 0;}
-                        @foreach (var tiempo in Model.TiempoRegistrado)
-                        {
-                            // vamos a agregar un index al boton, para que tenga el dato,
-                            // tambien agregamos el indice como id del item list
-                            // cuando presionemos el boton, este tomara el data-index
-                            // y buscara el li que tenga como id ese data-index y que tenga la clase
-                            // item-tiempo
-                            <li class="collection-item item-tiempo" id="@i">
-                                <div class="row">
-                                    <div class="col s3">@tiempo.Time.ToString("HH:mm")</div>
-                                    <div class="col s3">@tiempo.Usuario.NombreApellido</div>
-                                    <div class="col s3">
-                                        <a href="#!" class="secondary-content" data="@i" data-id="@tiempo.ID"><i class="material-icons">clear</i></a>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="Tiempos[@i].Tiempo" value="@tiempo.Time.ToString()" />
-                                <input type="hidden" name="Tiempos[@i].UsuarioID" value="@tiempo.UsuarioID" />
-                                <input type="hidden" name="Tiempos[@i].TareaID" value="@tiempo.TareaID" />
-                            </li>
-                            i++;
-                        }
-                    </ul>
-                </div>
-                            }
+            }
         </div>
     </div>
     
 </div>
-<div class="modal-footer">
+<div class="modal-footer theme-colour2">
     <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
 </div>
 
@@ -216,94 +225,6 @@
                 coverTrigger: false
             }
         );
-
-        M.Dropdown.init(
-            document.querySelectorAll('#input-hours2'),
-            {
-                coverTrigger: false,
-                autoTrigger: false,
-                onCloseEnd: function () {
-                    // Una vez que se seleccione la opcion del dropdown
-                    // Se cierra, por lo que obtenemos la primer opcion que aparezca
-                    var textinput = document.getElementById('hours2')
-                    var elemText = this.dropdownEl.firstChild.innerText
-
-                    if (elemText != undefined)
-                        textinput.value = this.dropdownEl.firstChild.innerText
-                }
-            }
-        )
-
-        document.getElementById('hours2').addEventListener('input', function (elem) {
-
-            var estimated = {}
-            // Obtenemos el valor del input
-            var time = elem.srcElement.value
-            var matches = time.match(/\d+\s*[a-zA-Z]+/gu)
-            var hour = ''
-            var minute = ''
-            var second = ''
-
-            if (matches == null) {
-                return;
-            }
-
-            matches.forEach(function (value) {
-                var number = value.replace(/[a-zA-Z\s]+/, '')
-                var unit = value.replace(/[\d\s]+/, '')
-
-                if ('horas'.includes(unit.toLowerCase())) {
-                    estimated['H'] = (estimated['H'] ?? 0) + Number(number)
-                } else if ('minutos'.includes(unit.toLowerCase())) {
-                    estimated['M'] = (estimated['M'] ?? 0) + Number(number)
-                } else if ('segundos'.includes(unit.toLowerCase())) {
-                    estimated['S'] = (estimated['S'] ?? 0) + Number(number)
-                }
-
-            })
-
-            Object.keys(estimated).reduce(function (acum, key) {
-                var value = estimated[key]
-                switch (key) {
-                    case 'H':
-                        hour = `${value} ${value == 1 ? "Hora" : "Horas"}`
-                        break
-                    case 'M':
-                        minute = `${value} ${value == 1 ? "Minuto" : "Minutos"}`
-                        break
-                    case 'S':
-                        second = `${value} ${value == 1 ? "Segundo" : "Segundos"}`
-                }
-
-                return acum
-            }, {})
-
-            time = `${hour} ${minute} ${second}`
-
-            // Obtenemos la instancia del dropdown
-            var instance = M.Dropdown.getInstance($('#input-hours2'));
-
-            // Creamos un elemento para el dropdown
-            var complete = document.createElement('li')
-            complete.innerText = time
-
-            // Eliminamos todos los elementos hijos que pueda tener el dropdown
-            while (instance.dropdownEl.firstChild) {
-                instance.dropdownEl.removeChild(instance.dropdownEl.lastChild);
-            }
-
-            // Appendeamos el nuevo elemento creado
-            instance.dropdownEl.appendChild(complete)
-
-            // Abrimos el dropdown
-            instance.open()
-        });
-
-        // Funcion para actualizar el input oculto cada vez que se modifique el h4
-        // que posee el contenteditable
-        document.getElementById('modal-title').addEventListener('input', function (elem) {
-            document.getElementById('task-title').value = elem.target.innerText
-        })
 
         M.textareaAutoResize($('#textarea1'));
 

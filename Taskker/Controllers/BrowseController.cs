@@ -35,8 +35,6 @@ namespace Taskker.Controllers
 
     /**
      * TODO
-     * - hacer mas accesible la carga de horas en task details
-     * - mejorar el estilo de task details
      * - Hacer mas accesible la busqueda de grupos
      */
 
@@ -183,30 +181,25 @@ namespace Taskker.Controllers
         {
             // Parseamos el tiempo
             DateTime timeEstimated = DateTime.Parse(t.Estimado);
-            //Utils.parseTime(t.Estimado);
 
             // Obtenemos los usuarios asignados a la tarea
-            if (t.Asignees == null)
-            {
-                t.Asignees = "";
-            }
+            t.Asignees = t.Asignees == null ? "" : t.Asignees;
 
             List<string> asignees = new List<string>(t.Asignees.Split(','));
             List<Usuario> asigneesToAdd = new List<Usuario>();
             asignees.ForEach(nombre =>
             {
                 // Obtenemos el usuario en base al nombre
-                var found = from user in unitOfWork
-                                         .UsuarioRepository
-                                         .Get(u => nombre == u.NombreApellido)
-                            select user;
+                Usuario asigneeFound = unitOfWork.UsuarioRepository
+                        .Get(u => nombre == u.NombreApellido)
+                        .SingleOrDefault();
 
-                try
+                if (asigneeFound == null)
                 {
-                    // Si no existe el usuario no lo agregamos
-                    Usuario asigneeFound = found.Single();
-                    asigneesToAdd.Add(asigneeFound);
-                } catch (InvalidOperationException){}
+                    return;
+                }
+
+                asigneesToAdd.Add(asigneeFound);
             });
 
             Tarea newTarea = new Tarea()
@@ -278,6 +271,12 @@ namespace Taskker.Controllers
 
             try
             {
+                if (tm.Titulo == string.Empty)
+                {
+                    ModelState.AddModelError("Error", "El titulo de la tarea no puede estar vacio.");
+                    return View();
+                }
+
                 // Obtenemos la tarea que se debe actualizar
                 var tareaFound = unitOfWork.TareaRepository.GetByID(tm.Id);
 
@@ -285,12 +284,13 @@ namespace Taskker.Controllers
 
                 UserSession us = (UserSession) Session["UserSession"];
 
-                var user = from u in unitOfWork
-                                     .UsuarioRepository
-                                     .Get(u => u.Email == us.Email)
-                           select u;
+                Usuario found_user = unitOfWork.UsuarioRepository.Get(
+                    u => u.Email == us.Email).SingleOrDefault();
 
-                Usuario found_user = user.Single();
+                if (found_user == null)
+                {
+                    return RedirectToAction("Login", "Auth");
+                }
 
                 if (tm.Asignees != null)
                 {
@@ -303,25 +303,19 @@ namespace Taskker.Controllers
                 // Usuarios a agregar
                 foreach (var usrStr in usuarios)
                 {
-                    try
-                    {
-                        var userfound = from u in unitOfWork.UsuarioRepository
-                                            .Get(_us => _us.NombreApellido == usrStr)
-                                        select u;
+                    Usuario usuario = unitOfWork.UsuarioRepository
+                        .Get(_us => _us.NombreApellido == usrStr)
+                        .SingleOrDefault();
 
-                        Usuario usuario = userfound.Single();
+                    if (usuario == null)
+                        continue;
 
-                        if (!tareaFound.Usuarios.Contains(usuario))
-                        {
-                            filteredUsuarios.Add(usuario);
-                        }
-
-                    }
-                    catch (InvalidOperationException) { }
+                    if (!tareaFound.Usuarios.Contains(usuario))
+                        filteredUsuarios.Add(usuario);
                 }
 
                 // Usuarios a eliminar
-                foreach(var usr in tareaFound.Usuarios)
+                foreach (var usr in tareaFound.Usuarios)
                 {
                     var result = from userName in usuarios
                                  where usr.NombreApellido.ToLower() == userName.ToLower()
@@ -339,29 +333,26 @@ namespace Taskker.Controllers
                 TimeTracked tiempo = null;
                 bool newTrackedTime = false;
 
-                try
+
+                // Buscamos el time tracked
+                tiempo = tareaFound.TiempoRegistrado.SingleOrDefault(
+                    tr => tr.TareaID == tareaFound.ID &&
+                          tr.UsuarioID == found_user.ID
+                );
+
+                if (tiempo == null && tm.TiempoRegistrado != null)
                 {
-                    // Buscamos el time tracked
-                    tiempo = tareaFound.TiempoRegistrado.Single(
-                        tr => tr.TareaID == tareaFound.ID &&
-                              tr.UsuarioID == found_user.ID
-                    );
-                } catch (InvalidOperationException)
-                {
-                    if (tm.TiempoRegistrado != null)
+                    tiempo = new TimeTracked
                     {
-                        tiempo = new TimeTracked
-                        {
-                            UsuarioID = found_user.ID,
-                            TareaID = tareaFound.ID,
-                            Time = Utils.parseTime(tm.TiempoRegistrado)
-                        };
+                        UsuarioID = found_user.ID,
+                        TareaID = tareaFound.ID,
+                        Time = DateTime.Parse(tm.TiempoRegistrado)
+                    };
 
-                        unitOfWork.TtrackedRepository.Insert(tiempo);
-                        unitOfWork.Save();
+                    unitOfWork.TtrackedRepository.Insert(tiempo);
+                    unitOfWork.Save();
 
-                        newTrackedTime = true;
-                    }
+                    newTrackedTime = true;
                 }
 
                 tareaFound.Descripcion = tm.Descripcion;
@@ -372,11 +363,11 @@ namespace Taskker.Controllers
                     tareaFound.Usuarios.Add(usr);
                 }
 
-                tareaFound.Estimado = Utils.parseTime(tm.Estimado);
+                tareaFound.Estimado = DateTime.Parse(tm.Estimado);
 
                 if (tm.TiempoRegistrado != null && !newTrackedTime)
                 {
-                    DateTime parsedTime = Utils.parseTime(tm.TiempoRegistrado);
+                    DateTime parsedTime = DateTime.Parse(tm.TiempoRegistrado);
 
                     tiempo.Time = tiempo.Time
                         .AddHours(parsedTime.Hour)
@@ -390,16 +381,21 @@ namespace Taskker.Controllers
                 }
 
                 if (tm.Tipo == null)
+                {
                     tareaFound.Tipo = TareaTipo.SinTipo;
+                }
                 else
-                    tareaFound.Tipo = (TareaTipo)Enum.Parse(
-                        typeof(TareaTipo),
-                        tm.Tipo
-                    );
+                {
+                    tareaFound.Tipo = (TareaTipo)
+                        Enum.Parse(typeof(TareaTipo), tm.Tipo);
+                }
 
                 unitOfWork.Save();
             }
-            catch (InvalidOperationException){}
+            catch (Exception)
+            {
+                return RedirectToAction("Index");
+            }
 
             return RedirectToAction("Index");
         }
@@ -422,23 +418,12 @@ namespace Taskker.Controllers
         /// <returns></returns>
         private Dictionary<string, string> CreateUsersDict(List<Usuario> usuarios)
         {
-            TaskkerContext db = new TaskkerContext();
             Dictionary<string, string> UserNamePhoto = new Dictionary<string, string>();
             usuarios.ForEach(u => {
                 string encodedPhoto = null;
                 try
                 {
-                    byte[] obtainedPicture = System.IO.File.ReadAllBytes(
-                        u.ProfilePicturePath
-                    );
-
-                    encodedPhoto = Convert.ToBase64String(
-                        obtainedPicture,
-                        0,
-                        obtainedPicture.Length
-                    );
-
-                    encodedPhoto = $"data:image/jpg;base64,{encodedPhoto}";
+                    encodedPhoto = $"data:image/jpg;base64,{u.EncodedProfilePicture}";
                 } catch (Exception)
                 {
                     encodedPhoto = string.Empty;
@@ -454,15 +439,10 @@ namespace Taskker.Controllers
         [Route("GetUsersInTask/{id:int}")]
         public ActionResult GetUsersInTask(int id)
         {
-            TaskkerContext db = new TaskkerContext();
-
-            var tarea = from t in db.Tareas
-                        where t.ID == id
-                        select t;
+            Tarea foundTarea = unitOfWork.TareaRepository.GetByID(id);
 
             try
             {
-                Tarea foundTarea = tarea.Single();
                 Dictionary<string, string> UserNamePhoto = this.CreateUsersDict(
                     foundTarea.Usuarios.ToList()
                 );
@@ -479,25 +459,27 @@ namespace Taskker.Controllers
         [HttpGet]
         public ActionResult TaskDetails(string titulo)
         {
-            TaskkerContext db = new TaskkerContext();
-            
-            var tarea = from t in db.Tareas
-                        where t.Titulo == titulo
-                        select t;
+            if (titulo == string.Empty)
+            {
+                ModelState.AddModelError("Error", "El titulo de la tarea no puede estar vacio.");
+                return View();
+            }
+
+            Tarea display = unitOfWork.TareaRepository.Get(t => t.Titulo == titulo).SingleOrDefault();
+
+            if (display == null)
+            {
+                return RedirectToAction("Index", "Browse");
+            }
 
             try
             {
-                Tarea display = tarea.Single();
-
-                var users = from user in display.Usuarios
-                            select user;
-                
-                List<Usuario> usuariosAsignados = users.ToList();
+                List<Usuario> usuariosAsignados = display.Usuarios.ToList();
                 List<(string, Usuario)> photoUsuario = new List<(string, Usuario)>();
                 
                 usuariosAsignados.ForEach(user => {
                         photoUsuario.Add(
-                            (Utils.EncodePicture(user.ProfilePicturePath), user)
+                            (Utils.EncodePictureFromBase64(user.EncodedProfilePicture), user)
                         );
                     }
                 );
@@ -525,7 +507,7 @@ namespace Taskker.Controllers
 
                 return PartialView("TaskDetails", display);
             }
-            catch (InvalidOperationException)
+            catch (Exception)
             {
                 return RedirectToAction("Index");
             }
