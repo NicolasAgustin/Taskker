@@ -33,11 +33,6 @@ namespace Taskker.Controllers
 
      */
 
-    /**
-     * TODO
-     * - Hacer mas accesible la busqueda de grupos
-     */
-
     [Authorize]
     [CustomAuthenticationFilter]
     public class BrowseController : Controller
