@@ -90,8 +90,8 @@
         </div>*@
         <!-- Submit -->
         <div class="row">
-            <div class="col s6 offset-s4">
-                <button class="btn waves-effect waves-light" type="submit" name="action">
+            <div class="col s6 offset-s5">
+                <button class="btn waves-effect waves-light theme-colour" type="submit" name="action">
                     Crear
                     <i class="material-icons right">done</i>
                 </button>
@@ -102,7 +102,7 @@
 
 </div>
 <div class="modal-footer theme-colour2">
-    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+    <a href="#!" class="modal-close waves-effect theme-colour2 btn-flat">Close</a>
 </div>
 
 <script>
@@ -137,70 +137,6 @@
             }
         )
 
-        document.getElementById('hours').addEventListener('input', function (elem) {
-            var estimated = {}
-            // Obtenemos el valor del input
-            var time = elem.srcElement.value
-            var matches = time.match(/\d+\s*[a-zA-Z]+/gu)
-            var hour = ''
-            var minute = ''
-            var second = ''
-
-            if (matches == null) {
-                return;
-            }
-
-            matches.forEach(function (value) {
-                var number = value.replace(/[a-zA-Z\s]+/, '')
-                var unit = value.replace(/[\d\s]+/, '')
-
-                if ('horas'.includes(unit.toLowerCase())) {
-                    estimated['H'] = (estimated['H'] ?? 0) + Number(number)
-                } else if ('minutos'.includes(unit.toLowerCase())) {
-                    estimated['M'] = (estimated['M'] ?? 0) + Number(number)
-                } else if ('segundos'.includes(unit.toLowerCase())) {
-                    estimated['S'] = (estimated['S'] ?? 0) + Number(number)
-                }
-
-            })
-
-            Object.keys(estimated).reduce(function (acum, key) {
-                var value = estimated[key]
-                switch (key) {
-                    case 'H':
-                        hour = `${value} ${value == 1 ? "Hora" : "Horas"}`
-                        break
-                    case 'M':
-                        minute = `${value} ${value == 1 ? "Minuto" : "Minutos"}`
-                        break
-                    case 'S':
-                        second = `${value} ${value == 1 ? "Segundo" : "Segundos"}`
-                }
-
-                return acum
-            }, {})
-
-            time = `${hour} ${minute} ${second}`
-
-            // Obtenemos la instancia del dropdown
-            var instance = M.Dropdown.getInstance($('#input-hours'));
-
-            // Creamos un elemento para el dropdown
-            var complete = document.createElement('li')
-            complete.innerText = time
-
-            // Eliminamos todos los elementos hijos que pueda tener el dropdown
-            while (instance.dropdownEl.firstChild) {
-                instance.dropdownEl.removeChild(instance.dropdownEl.lastChild);
-            }
-
-            // Appendeamos el nuevo elemento creado
-            instance.dropdownEl.appendChild(complete)
-
-            // Abrimos el dropdown
-            instance.open()
-        });
-
         var usuarios = {}
         var chipsUsers = []
 
@@ -208,9 +144,10 @@
             type: 'GET',
             url: "/Browse/GetUsers",
             success: function (data) {
+                debugger;
                 for (const [key, value] of Object.entries(data)) {
                     usuarios[key] = value;
-                    chipsUsers[key] = value;
+                    chipsUsers.push({tag: key, image: value})
                 }
             }
         });
