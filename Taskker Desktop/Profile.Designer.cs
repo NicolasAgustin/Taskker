@@ -227,7 +227,6 @@ namespace Taskker_Desktop
             this.Controls.Add(this.fotoPerfil);
             this.Name = "Profile";
             this.Text = "Profile";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Profile_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.fotoPerfil)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

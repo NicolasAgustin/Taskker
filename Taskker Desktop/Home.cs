@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
 using System.Windows.Forms;
 using Taskker_Desktop.Models;
 using Taskker_Desktop.Models.DAL;
+using System.Collections.Generic;
 
 namespace Taskker_Desktop
 {
@@ -18,8 +15,6 @@ namespace Taskker_Desktop
         private Grupo GrupoActual { get; set; }
         public Home()
         {
-            // TODO:
-            // - Agregar boton para eliminar tarea
 
             InitializeComponent();
 
@@ -66,14 +61,21 @@ namespace Taskker_Desktop
 
         private bool RedirectToGroupSwitcher()
         {
+            int createdGroups = 0, joinedGroups = 0;
+
             Usuario currentUser = Context.unitOfWork.UsuarioRepository.GetByID(UserSession.ID);
 
-            if (currentUser.Grupos == null)
+            if (currentUser.Grupos != null)
             {
-                return true;
+                joinedGroups = currentUser.Grupos.Count;
             }
 
-            return ((currentUser.Grupos.Count + currentUser.CreatedGroups.Count) == 0);
+            if(currentUser.CreatedGroups != null)
+            {
+                createdGroups = currentUser.CreatedGroups.Count;
+            }
+
+            return (createdGroups + joinedGroups) == 0;
         }
         private void initializeGroupList()
         {

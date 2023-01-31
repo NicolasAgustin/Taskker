@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Threading.Tasks;
+using System.Linq;
+using System.Drawing;
 using System.Windows.Forms;
 using Taskker_Desktop.Models;
 using Taskker_Desktop.Models.DAL;
@@ -17,7 +12,7 @@ namespace Taskker_Desktop
     {
         private Usuario Displayed;
         private string EncodedImage;
-        private System.Threading.Timer Timer;
+
         public Profile()
         {
             InitializeComponent();
@@ -70,7 +65,6 @@ namespace Taskker_Desktop
 
         private void guardar_Click(object sender, EventArgs e)
         {
-            //throw new NotImplementedException();
             var currentUser = Context.unitOfWork.UsuarioRepository.GetByID(Displayed.ID);
 
             currentUser.Nombre = nombre.Text;
@@ -82,7 +76,7 @@ namespace Taskker_Desktop
 
             exitoLabel.Text = "Perfil actualizado";
             var dt = DateTime.Now.AddSeconds(6);
-            Timer = new System.Threading.Timer(
+            System.Threading.Timer timer = new System.Threading.Timer(
                 (obj) => {
                     if (!this.IsDisposed)
                     {
@@ -109,12 +103,6 @@ namespace Taskker_Desktop
                 fotoPerfil.SizeMode = PictureBoxSizeMode.StretchImage;
                 fotoPerfil.Image = profilePicture;
             }
-        }
-
-        private void Profile_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            Timer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
-            Timer.Dispose();
         }
     }
 }

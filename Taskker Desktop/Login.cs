@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-
 using Taskker_Desktop.Models;
 using Taskker_Desktop.Models.DAL;
 
@@ -24,9 +18,6 @@ namespace Taskker_Desktop
         {
             string insertedEmail = email.Text;
             string insertedPassword = password.Text;
-
-            //insertedEmail = "nicolas.a.sandez@gmail.com";
-            //insertedPassword = "pass123";
 
             byte[] hashed_pass = Utils.HashPassword(insertedPassword);
 
