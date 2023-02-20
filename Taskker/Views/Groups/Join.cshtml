@@ -1,16 +1,42 @@
 ﻿@using Taskker.Models
+@using Taskker.Models.DAL
 
 @model JoinGroupModel
 
 @{
     ViewBag.Title = "Join";
+    List<Grupo> grupos = (List<Grupo>)ViewData["Grupos"];
 }
 
+<style>
+    .theme-colour {
+        background-color: #d96d6d !important;
+    }
+
+    .theme-colour2 {
+        background-color: #bf5e62 !important;
+    }
+
+    .input-color {
+        color: white !important;
+    }
+
+    .control-color {
+        color: white !important;
+    }
+
+    .collection .collection-item:hover {
+        background-color: white !important;
+        color: #d96d6d !important;
+    }
+</style>
+
 <script>
+
     $(document).ready(function () {
         var selected = ""
         var elems = document.querySelectorAll('.modal');
-        var instances = M.Modal.init(
+        M.Modal.init(
             elems,
             {
                 onOpenStart: function (modal, trigger) {
@@ -52,6 +78,15 @@
                 );
             }
         });
+
+        $('.collection-item').on('click', function (e, elem) {
+            var modal = M.Modal.getInstance($("#group-details"));
+            selected = e.target.innerText
+            console.log(selected)
+            modal.open()
+        })
+
+
     })
 </script>
 
@@ -62,6 +97,20 @@
     </div>
 </nav>
 
+@Html.Partial("_Menu")
+
+<div class="row"></div>
+
+<div class="row">
+    <a class="waves-effect waves-light btn modal-trigger theme-colour" href="@Url.Action("Index", "Home")">
+        <i class="small material-icons left">arrow_back</i>Volver
+    </a>
+
+    <a href="#" data-target="slide-out" class="sidenav-trigger waves-effect waves-light btn theme-colour">
+        <i class="small material-icons left">menu</i>Menu
+    </a>
+</div>
+
 <div class="container">
     <!-- Fila -->
     <div class="row">
@@ -70,20 +119,37 @@
         </div>
         <!-- Columna -->
         <div class="col s6 offset-s3">
-            <div class="card blue-grey darken-1">
+            <div class="card darken-1 theme-colour2">
                 <div class="card-content white-text">
                     <span class="card-title">Unirse a un grupo</span>
-                    <!--Fila para email-->
                     <div class="row">
                         <div class="input-field col s12">
                             @Html.EditorFor(
                                model => model.Nombre,
-                               new { htmlAttributes = new {
-                                       @class = "autocomplete",
+                               new
+                                    {
+                                        htmlAttributes = new
+                                        {
+                                       @class = "autocomplete input-color",
                                        @id = "autocomplete-input"
                                     }
                                })
                             <label for="nombre">Nombre del grupo</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <i class="small material-icons left control-color">group</i>
+                        <h5 class="control-color">Grupos disponibles</h5>
+                    </div>
+                    <div class="row">
+                        <div class="collection theme-colour">
+                            @foreach (var grupo in grupos)
+                            {
+                                <a class="collection-item control-color theme-colour"
+                                   data="@grupo.Nombre" style="font-weight: bold">
+                                    @grupo.Nombre
+                                </a>
+                            }
                         </div>
                     </div>
                 </div>

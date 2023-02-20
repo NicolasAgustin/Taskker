@@ -6,25 +6,47 @@
     .dropdown-content {
         width: 200px !important;
     }
+
+    .theme-colour {
+        background-color: #d96d6d !important;
+    }
+
+    .theme-colour2 {
+        background-color: #bf5e62 !important;
+    }
+
+    .input-color {
+        color: white !important;
+    }
+
+    .input, .select-dropdown {
+        color: white !important;
+    }
 </style>
 
+<script>
+
+</script>
+
 <!-- Modal Structure -->
-<div class="modal-content">
-    <h4>Crear tarea</h4>
+<div class="modal-content theme-colour2">
+    <div class="row center-align">
+        <h4 class="input-color">Crear tarea</h4>
+    </div>
     @Html.ValidationSummary(false, "", new { @style = "color:red;font-weight:bold" })
     @using (Html.BeginForm("CreateTask", "Browse", FormMethod.Post, new { @class = "col s6"}))
     {
         <!-- Titulo -->
         <div class="row">
-            <div class="input-field col s6">
-                <input id="modal-task-titulo" type="text" class="validate" name="titulo">
+            <div class="input-field col s6 offset-s4">
+                <input id="modal-task-titulo" type="text" class="validate input-color" name="titulo">
                 <label for="modal-task-titulo">Titulo</label>
             </div>
         </div>
         <!-- Selector de tipo de tarea -->
         <div class="row">
-            <div class="input-field col s6">
-                <select name="tipo">
+            <div class="input-field col s4 offset-s4 input-color">
+                <select name="tipo" class="input-color">
                     <option value="@TareaTipo.SinTipo" disabled selected>Seleccionar tipo</option>
                     <option value="@TareaTipo.Desarrollo">Desarrollo</option>
                     <option value="@TareaTipo.Tarea">Tarea</option>
@@ -34,34 +56,42 @@
         </div>
         <!-- Chips para asignees -->
         <div class="row">
-            <div class="col s6">
+            <div class="col s4 offset-s4">
                 <input type="hidden" id="chips-values" name="asignees" />
-                <div id="asignees-chips" class="chips-autocomplete"></div>
+                <div id="asignees-chips" class="chips-autocomplete input-color"></div>
             </div>
         </div>
         <!-- Descripcion -->
         <div class="row">
-            <div class="input-field col s6">
-                <textarea id="textarea1" class="materialize-textarea" name="descripcion"></textarea>
+            <div class="input-field col s6 offset-s4">
+                <textarea id="textarea1" class="materialize-textarea input-color" name="descripcion"></textarea>
                 <label for="textarea1">Descripcion</label>
             </div>
         </div>
+        
         <div class="row">
-            <div class="col s6">
+            <div class="col s6 offset-s4">
+                <input type="time" class="input-color" min="00:00" max="23:59" value="00:00" name="estimado"/>
+            </div>
+        </div>
+
+        @*<div class="row">
+
+            <div class="col s6 offset-s4">
                 <div class="input-field dropdown-trigger" data-target="dropdown-hours" id="input-hours">
-                    <input id="hours" placeholder="Tiempo estimado" type="text" class="validate" name="estimado">
+                    <input id="hours" placeholder="Tiempo estimado" type="text" class="validate input-color" name="estimado">
                 </div>
             </div>
 
-            <div class="col s6">
+            <div class="col s6 offset-s4">
                 <ul id="dropdown-hours" class="dropdown-content">
                 </ul>
             </div>
-        </div>
+        </div>*@
         <!-- Submit -->
         <div class="row">
-            <div class="col s6">
-                <button class="btn waves-effect waves-light" type="submit" name="action">
+            <div class="col s6 offset-s5">
+                <button class="btn waves-effect waves-light theme-colour" type="submit" name="action">
                     Crear
                     <i class="material-icons right">done</i>
                 </button>
@@ -71,8 +101,8 @@
 
 
 </div>
-<div class="modal-footer">
-    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+<div class="modal-footer theme-colour2">
+    <a href="#!" class="modal-close waves-effect theme-colour2 btn-flat">Close</a>
 </div>
 
 <script>
@@ -107,70 +137,6 @@
             }
         )
 
-        document.getElementById('hours').addEventListener('input', function (elem) {
-            var estimated = {}
-            // Obtenemos el valor del input
-            var time = elem.srcElement.value
-            var matches = time.match(/\d+\s*[a-zA-Z]+/gu)
-            var hour = ''
-            var minute = ''
-            var second = ''
-
-            if (matches == null) {
-                return;
-            }
-
-            matches.forEach(function (value) {
-                var number = value.replace(/[a-zA-Z\s]+/, '')
-                var unit = value.replace(/[\d\s]+/, '')
-
-                if ('horas'.includes(unit.toLowerCase())) {
-                    estimated['H'] = (estimated['H'] ?? 0) + Number(number)
-                } else if ('minutos'.includes(unit.toLowerCase())) {
-                    estimated['M'] = (estimated['M'] ?? 0) + Number(number)
-                } else if ('segundos'.includes(unit.toLowerCase())) {
-                    estimated['S'] = (estimated['S'] ?? 0) + Number(number)
-                }
-
-            })
-
-            Object.keys(estimated).reduce(function (acum, key) {
-                var value = estimated[key]
-                switch (key) {
-                    case 'H':
-                        hour = `${value} ${value == 1 ? "Hora" : "Horas"}`
-                        break
-                    case 'M':
-                        minute = `${value} ${value == 1 ? "Minuto" : "Minutos"}`
-                        break
-                    case 'S':
-                        second = `${value} ${value == 1 ? "Segundo" : "Segundos"}`
-                }
-
-                return acum
-            }, {})
-
-            time = `${hour} ${minute} ${second}`
-
-            // Obtenemos la instancia del dropdown
-            var instance = M.Dropdown.getInstance($('#input-hours'));
-
-            // Creamos un elemento para el dropdown
-            var complete = document.createElement('li')
-            complete.innerText = time
-
-            // Eliminamos todos los elementos hijos que pueda tener el dropdown
-            while (instance.dropdownEl.firstChild) {
-                instance.dropdownEl.removeChild(instance.dropdownEl.lastChild);
-            }
-
-            // Appendeamos el nuevo elemento creado
-            instance.dropdownEl.appendChild(complete)
-
-            // Abrimos el dropdown
-            instance.open()
-        });
-
         var usuarios = {}
         var chipsUsers = []
 
@@ -178,9 +144,10 @@
             type: 'GET',
             url: "/Browse/GetUsers",
             success: function (data) {
+                debugger;
                 for (const [key, value] of Object.entries(data)) {
                     usuarios[key] = value;
-                    chipsUsers[key] = value;
+                    chipsUsers.push({tag: key, image: value})
                 }
             }
         });

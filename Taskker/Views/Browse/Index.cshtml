@@ -22,8 +22,16 @@
         border-radius: 5px;
     }
 
+    th {
+        background-color: #d96d6d !important;
+    }
+
     .theme-colour {
         background-color: #d96d6d !important;
+    }
+
+    .control-color {
+        color: white !important;
     }
 </style>
 
@@ -128,7 +136,10 @@
 @Html.Partial("_Menu")
 
 <div class="row">
-    <h2>@Model.Nombre</h2>
+    <div style="margin-left: 15px !important">
+        <i class="medium material-icons left control-color">group</i>
+        <h2 class="control-color">@Model.Nombre</h2>
+    </div>
 </div>
 
 <div class="row">
@@ -169,7 +180,10 @@
     <table class="highlight">
         <thead>
             <tr>
-                <th>Titulo</th>
+                <th class="control-color">Titulo</th>
+                <th class="control-color">Tipo</th>
+                <th class="control-color">Estimado</th>
+                <th class="control-color">Tiempo total registrado</th>
             </tr>
         </thead>
 
@@ -177,8 +191,21 @@
             @{
                 foreach (var tarea in Model.Tareas)
                 {
+                    DateTime total = new DateTime(2023, 1, 1, 0, 0, 0);
+                    List<DateTime> tiempos = tarea.TiempoRegistrado.Select(t => t.Time).ToList();
+
+                    if (tiempos.Count != 0)
+                    {
+                        total = tiempos.Aggregate((prev, next) => 
+                            prev.AddMinutes(next.Minute).AddHours(next.Hour).AddSeconds(next.Second)
+                        );
+                    }
+
                     <tr data-target="details" class="modal-trigger">
-                        <td>@tarea.Titulo</td>
+                        <td class="control-color">@tarea.Titulo</td>
+                        <td class="control-color">@tarea.Tipo.ToString()</td>
+                        <td class="control-color">@tarea.Estimado.ToString("HH:mm")</td>
+                        <td class="control-color">@total.ToString("HH:mm")</td>
                     </tr>
                 }
             }

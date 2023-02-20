@@ -9,6 +9,13 @@
     var gruposNombres = (List<string>)Session["Grupos"];
 }
 
+<style>
+    .sidenav li a:hover {
+        background-color: #d96d6d !important;
+        color: white !important;
+    }
+</style>
+
 <script>
     // Inicializamos el sidenav
     document.addEventListener('DOMContentLoaded', function () {
@@ -69,10 +76,10 @@
             <a href="@Url.Action("Logout", "Auth")">Salir</a> | <a href="@Url.Action("Index", "Account")">Perfil</a>
         </div>
     </li>
-    <li><a href="@Url.Action("Create", "Groups")"><i class="material-icons">group</i>Crear grupo</a></li>
-    <li><a href="@Url.Action("Join", "Groups")"><i class="material-icons">group_add</i>Unirse</a></li>
+    <li><a class="waves-effect" href="@Url.Action("Create", "Groups")"><i class="material-icons">group</i>Crear grupo</a></li>
+    <li><a class="waves-effect" href="@Url.Action("Join", "Groups")"><i class="material-icons">group_add</i>Unirse</a></li>
     <li><div class="divider"></div></li>
-    <li><a class="subheader">Grupos</a></li>
+    <li><a class="subheader" style="color: #d96d6d !important;">Grupos</a></li>
     @{
         foreach (var grupo in gruposNombres)
         {
@@ -106,8 +113,9 @@
                     </div>
                     <div class="collection" id="display-notes">
                         @{
-                            foreach (var note in ViewData["Notes"] as List<Note>)
-                            {
+                                List<Note> notas = (List<Note>)ViewData["Notes"];
+                                foreach (var note in notas ?? Enumerable.Empty<Note>())
+                                {
                                 <div class="collection-item" id="@note._id">
                                     <div class="row">
                                         <a href="#" data="@note._id" class="edit-trigger" contenteditable="true">@note.text</a>

@@ -29,6 +29,11 @@ namespace Taskker.Controllers
         [HttpGet]
         public ActionResult Join()
         {
+
+            List<Grupo> grupos = unitOfWork.GrupoRepository.Get().ToList();
+
+            ViewData["Grupos"] = grupos;
+
             return View();
         }
 
@@ -37,30 +42,26 @@ namespace Taskker.Controllers
         {
             UserSession us = (UserSession)Session["UserSession"];
 
-            var user = from u in unitOfWork
-                       .UsuarioRepository
-                       .Get(_user => _user.Email == us.Email)
-                       select u;
-            try
+            Usuario found = unitOfWork.UsuarioRepository.Get(_user => _user.Email == us.Email).SingleOrDefault();
+
+            if (found == null)
             {
-                Usuario found = user.Single();
+                return RedirectToAction("Index", "Browse");
+            }
+            
+            Grupo gFound = unitOfWork.GrupoRepository.Get(_grp => _grp.Nombre == nombre).SingleOrDefault();
 
-                var group = from g in unitOfWork
-                                .GrupoRepository
-                                .Get(_grp => _grp.Nombre == nombre)
-                            select g;
-
-                Grupo gFound = group.Single();
-                
-                // Chequemos si el usuario ya esta en el grupo
-                if(!gFound.Usuarios.Contains(found))
-                    gFound.Usuarios.Add(found);
-
-                unitOfWork.Save();
-            } catch (InvalidOperationException) {
+            if (gFound == null)
+            {
                 ModelState.AddModelError("Error", "El grupo no existe.");
                 return View();
             }
+
+            // Chequemos si el usuario ya esta en el grupo
+            if (!gFound.Usuarios.Contains(found))
+                gFound.Usuarios.Add(found);
+
+            unitOfWork.Save();
 
             return RedirectToAction("Index", "Browse");
         }

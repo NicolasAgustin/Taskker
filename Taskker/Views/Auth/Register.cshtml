@@ -4,6 +4,20 @@
     ViewBag.Title = "Registro";
 }
 
+<style>
+    .theme-colour {
+        background-color: #d96d6d !important;
+    }
+
+    .theme-colour2 {
+        background-color: #bf5e62 !important;
+    }
+
+    .input-color {
+        color: white !important;
+    }
+</style>
+
 <nav>
     <div class="nav-wrapper">
         <a href="@Url.Action("Index", "Home")" class="brand-logo">Taskker</a>
@@ -19,7 +33,7 @@
             @Html.AntiForgeryToken()
             <!-- Columna -->
             <div class="col s6 offset-s3">
-                <div class="card blue-grey darken-1">
+                <div class="card darken-1 theme-colour2">
                     <div class="card-content white-text">
                         <div class="row center-align">
                             <span class="card-title">Registrarse</span>
@@ -27,39 +41,71 @@
                         <!--Fila para nombre y apellido-->
                         <div class="row">
                             <div class="input-field col s12 offset-s2">
-                                @Html.EditorFor(model => model.Nombre)
+                                @Html.EditorFor(
+                                    model => model.Nombre,
+                                    new
+                                    {
+                                        htmlAttributes = new
+                                        {
+                                            @class = "input-color"
+                                        }
+                                    }
+                                )
                                 <!--<input id="first_name" type="text" class="validate">-->
                                 <label for="first_name">Nombre</label>
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-field col s12 offset-s2">
-                                @Html.EditorFor(model => model.Apellido)
-                                <!--<input id="last_name" type="text" class="validate">-->
+                                @Html.EditorFor(model => model.Apellido,
+                               new {
+                                   htmlAttributes = new
+                                   {
+                                       @class = "input-color"
+                                   }
+                               })
                                 <label for="last_name">Apellido</label>
                             </div>
                         </div>
                         <!--Fila para email-->
                         <div class="row">
                             <div class="input-field col s12 offset-s2">
-                                @Html.EditorFor(model => model.Email)
-                                <!--<input id="email" type="email" class="validate">-->
+                                @Html.EditorFor(
+                                    model => model.Email,
+                                    new
+                                    {
+                                        htmlAttributes = new
+                                        {
+                                            @class = "input-color"
+                                        }
+                                    }
+                                )
                                 <label for="email">Correo electronico</label>
                             </div>
                         </div>
                         <!--Fila para password-->
                         <div class="row">
                             <div class="input-field col s12 offset-s2">
-                                @Html.EditorFor(model => model.Password)
-                                <!--<input id="password" type="password" class="validate">-->
+                                @Html.EditorFor(
+                                    model => model.Password,
+                                    new
+                                    {
+                                        htmlAttributes = new
+                                        {
+                                            @class = "input-color"
+                                        }
+                                    }
+                                )
                                 <label for="password">Contraseña</label>
                             </div>
                         </div>
                         <!--Fila para input file-->
                         <div class="row">
-                            <label>Foto de perfil</label>
-                            <div class="file-field input-field s12 offset-s2">
-                                <div class="btn">
+                            <div class="file-field input-field col s12 offset-s2">
+                                <div class="row">
+                                    <label>Foto de perfil</label>
+                                </div>
+                                <div class="btn theme-colour">
                                     <span>Seleccionar</span>
                                     <input type="file" name="photo" />
                                 </div>
@@ -79,7 +125,7 @@
                             </blockquote>
                         </div>
                         <div class="row center-align">
-                            <button class="btn waves-effect waves-light" type="submit" name="action">
+                            <button class="btn waves-effect waves-light theme-colour" type="submit" name="action">
                                 Registrarse
                             </button>
                         </div>

@@ -4,6 +4,41 @@
     ViewBag.Title = "GroupDetails";
 }
 
+<style>
+
+    .modal {
+        width: 85% !important;
+        height: auto !important;
+    }
+
+    .theme-colour {
+        background-color: #d96d6d !important;
+    }
+
+    .theme-colour2 {
+        background-color: #bf5e62 !important;
+    }
+
+    .danger {
+        background-color: #c64449 !important;
+    }
+
+    .control-color {
+        color: white !important;
+    }
+
+    .input, .select-dropdown {
+        color: white !important;
+    }
+
+    .col-header {
+        padding-left: 5px !important;
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+        margin-bottom: 0px !important;
+    }
+</style>
+
 <script>
     $(document).ready(function () {
         $('#a-submit').on('click', function () {
@@ -12,16 +47,17 @@
     })
 </script>
 
-<div id="modal-group-details" class="modal-content red lighten-4">
+<div id="modal-group-details" class="modal-content theme-colour2">
     
     <div class="container">
         <div class="row">
-            <h4>@Model.Nombre</h4>
+            <i class="medium material-icons left control-color">group</i>
+            <h2 class="control-color" style="font-weight: bold" id="task-title-display">@Model.Nombre</h2
         </div>
 
         <div class="row">
-            <p>
-                Creado por @Model.Usuario.NombreApellido
+            <p class="control-color" style="font-weight: bold">
+                Creado por <i>@Model.Usuario.NombreApellido</i>
             </p>
         </div>
 
@@ -32,27 +68,31 @@
 
         <div class="row">
             <ul class="collection">
-                <li class="collection-header"><h2>Tareas en el grupo</h2></li>
+                <li class="collection-header theme-colour">
+                    <h4 class="control-color col-header">Tareas en el grupo</h4>
+                </li>
                 @foreach (var task in Model.Tareas.ToList())
                 {
-                    <li class="collection-item">@task.Titulo</li>
+                    <li class="collection-item" style="font-weight: bold">@task.Titulo</li>
                 }
             </ul>
         </div>
 
         <div class="row">
             <ul class="collection">
-                <li class="collection-header"><h2>Usuarios en el grupo</h2></li>
+                <li class="collection-header theme-colour">
+                    <h4 class="control-color col-header">Usuarios en el grupo</h4>
+                </li>
                 @foreach (var user in Model.Usuarios)
                 {
-                    <li class="collection-item">@user.NombreApellido</li>
+                    <li class="collection-item" style="font-weight: bold">@user.NombreApellido</li>
                 }
             </ul>
         </div>
     </div>
 </div>
 
-<div class="modal-footer">
-    <a href="#" id="a-submit" class="modal-close waves-effect waves-green btn-flat">Unirse</a>
+<div class="modal-footer theme-colour2">
+    <a href="#" id="a-submit" class="modal-close waves-effect waves-green btn-flat theme-colour">Unirse</a>
 </div>
 

@@ -6,13 +6,13 @@ using System.Security.Cryptography;
 
 namespace Taskker.Models.DAL
 {
-    public class TaskkerInitializer : System.Data.Entity.DropCreateDatabaseAlways<TaskkerContext>
+    public class TaskkerInitializer : System.Data.Entity.CreateDatabaseIfNotExists<TaskkerContext>
     {
         protected override void Seed(TaskkerContext context)
         {
             List<Usuario> usuarios = new List<Usuario>
             {
-                new Usuario{ 
+                new Usuario{
                     NombreApellido = "nicolas sandez",
                     Email = "nicolas.a.sandez@gmail.com",
                     ProfilePicturePath = "C:\\Users\\Nico\\Desktop\\Server\\nico.jpg",
