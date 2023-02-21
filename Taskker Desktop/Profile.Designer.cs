@@ -46,6 +46,7 @@ namespace Taskker_Desktop
             this.guardar = new System.Windows.Forms.Button();
             this.exitoLabel = new System.Windows.Forms.Label();
             this.seleccionarFoto = new System.Windows.Forms.OpenFileDialog();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.fotoPerfil)).BeginInit();
             this.SuspendLayout();
             // 
@@ -203,12 +204,21 @@ namespace Taskker_Desktop
             this.exitoLabel.Size = new System.Drawing.Size(0, 20);
             this.exitoLabel.TabIndex = 36;
             // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.AutoScroll = true;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 12);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(776, 840);
+            this.flowLayoutPanel1.TabIndex = 37;
+            // 
             // Profile
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.ClientSize = new System.Drawing.Size(800, 855);
+            this.ClientSize = new System.Drawing.Size(821, 482);
             this.Controls.Add(this.exitoLabel);
             this.Controls.Add(this.guardar);
             this.Controls.Add(this.label7);
@@ -225,6 +235,7 @@ namespace Taskker_Desktop
             this.Controls.Add(this.apellido);
             this.Controls.Add(this.nombre);
             this.Controls.Add(this.fotoPerfil);
+            this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "Profile";
             this.Text = "Profile";
             ((System.ComponentModel.ISupportInitialize)(this.fotoPerfil)).EndInit();
@@ -252,5 +263,6 @@ namespace Taskker_Desktop
         private System.Windows.Forms.Button guardar;
         private System.Windows.Forms.Label exitoLabel;
         private System.Windows.Forms.OpenFileDialog seleccionarFoto;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }
